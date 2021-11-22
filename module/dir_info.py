@@ -51,8 +51,11 @@ class Info() :
 				if str(facility_df.loc[i, cat]) != 'empty' :
 					facility_df.loc[i, cat] = model_dir + '\\' + str(facility_df.loc[i, cat])
 					
+
 		# preprocessing - sub directories
-		
-		sub_directories = ['1_weekends/weekdays', '2_]
+		sub_directories = ['1_weekends/weekdays', '2_delete_below_missing_data_standard', \
+					'3_outliers_deleted', '4_interpolated', '5_delete_below_interpolation_standard',\
+					'6_preprocessed', '7_preprocessed(spring_fall)', 'parameters', 'normalized']
+		self.condition_sub_dir = sub_directories
 					
 					
