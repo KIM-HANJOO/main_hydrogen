@@ -1,3 +1,20 @@
+'''
+note :
+
+'''
+
+###################################################################################
+import os
+import dir_info
+di = dir_info.Info()
+main_dir = di.main_dir
+prep_dir = di.prep_dir
+model_dir = di.model_dir
+module_dir = di.module_dir
+facility_dir = di.facility_dir
+plot_dir = di.plot_dir
+cluster_dir = di.cluster_dir
+
 import os
 import sys
 cwdir = os.getcwd()

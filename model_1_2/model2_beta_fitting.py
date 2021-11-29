@@ -5,12 +5,23 @@ a, b, s1, s2 = scipy.stats.beta.fit(x)
 note : x at here is list of data(variables)
 
 random variates :
-r = beta.rvs(a, b, size = n)
+r = beta.rvs(a, b, loc = s1, scale = s2, size = n)
 
 note : r is list of random variates with size of n
 		if wanting to pull 1 value ot of the beta distribution, n should be 1
 '''
 
+###################################################################################
+import os
+import dir_info
+di = dir_info.Info()
+main_dir = di.main_dir
+prep_dir = di.prep_dir
+model_dir = di.model_dir
+module_dir = di.module_dir
+facility_dir = di.facility_dir
+plot_dir = di.plot_dir
+cluster_dir = di.cluster_dir
 
 from scipy.stats import beta, kde
 import scipy.stats
@@ -18,8 +29,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
+
+
 import sys
-sys.path.append('C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module')
+sys.path.append(module_dir)
 import model_library as lib
 
 from matplotlib import font_manager, rc
@@ -35,64 +48,65 @@ plot_dir = os.getcwd() + '\\plot'
 
 # pull 'alpha', 'beta' of beta distribution out of model_1 data (beta distribution fitting)
 
-# ~ facility = []
-# ~ for excel in os.listdir(model1_dir) :
-	# ~ facility.append(str(excel[4 : -18]))
+facility = []
+for excel in os.listdir(model1_dir) :
+	facility.append(str(excel[4 : -18]))
 	
-# ~ m1_ab = pd.DataFrame(columns = facility, index = ['a', 'b', 'loc', 'scale'])
+m1_ab = pd.DataFrame(columns = facility, index = ['a', 'b', 'loc', 'scale'])
 
-# ~ fig = plt.figure(figsize = (16, 12))
+fig = plt.figure(figsize = (16, 12))
 
-# ~ for num, excel in enumerate(os.listdir(model1_dir)) :
-	# ~ print(num, excel)
-	# ~ os.chdir(model1_dir)	
-	# ~ facility = excel[4 : -18]
-	# ~ df = pd.read_excel(excel)
+for num, excel in enumerate(os.listdir(model1_dir)) :
+	os.chdir(model1_dir)	
+	facility = excel[4 : -18]
+	df = pd.read_excel(excel)
 		
-	# ~ m1 = df.loc[:, df.columns[0]].tolist()
-	# ~ m1.append(df.columns[0])
+	m1 = df.loc[:, df.columns[0]].tolist()
+	m1.append(df.columns[0])
 	
-	# ~ drop_list = []
-	# ~ for i in range(len(m1)) :
-		# ~ if str(m1[i]) == 'NaN' :
-			# ~ drop_list.append(i)
+	drop_list = []
+	for i in range(len(m1)) :
+		if str(m1[i]) == 'NaN' :
+			drop_list.append(i)
 			
-	# ~ if len(drop_list) > 0 :
-		# ~ m1 = m1.remove(drop_list)
+	if len(drop_list) > 0 :
+		m1 = m1.remove(drop_list)
 	
-	# ~ a, b, s1, s2 = scipy.stats.beta.fit(m1)
+	a, b, s1, s2 = scipy.stats.beta.fit(m1)
 	
 
-	# ~ # plot
-	# ~ ax = fig.add_subplot(2, 3, 1 + num)
-	# ~ ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
-	# ~ ax.set_xlabel('model 1')
-	# ~ ax.set_ylabel('density')
+	# plot
+	ax = fig.add_subplot(2, 3, 1 + num)
+	ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
+	ax.set_xlabel('model 1')
+	ax.set_ylabel('density')
 	
-	# ~ r = beta.rvs(a, b, loc = s1, scale = s2, size = 10000)
-	# ~ density_real = kde.gaussian_kde(m1)
-	# ~ density_sample = kde.gaussian_kde(r)
-	# ~ x = np.linspace(min(r), max(r), 300)
+	r = beta.rvs(a, b, loc = s1, scale = s2, size = 10000)
+	density_real = kde.gaussian_kde(m1)
+	density_sample = kde.gaussian_kde(r)
+	x = np.linspace(min(r), max(r), 300)
 	
-	# ~ y_real = density_real(x)
-	# ~ y_sample = density_sample(x)
+	y_real = density_real(x)
+	y_sample = density_sample(x)
 	
-	# ~ ax.grid()
-	# ~ ax.plot(x, y_sample, 'b--', label = 'random variates')
-	# ~ ax.plot(x, y_real, 'r', label = 'real value')
-	# ~ ax.legend()
+	ax.grid()
+	ax.plot(x, y_sample, 'b--', label = 'random variates')
+	ax.plot(x, y_real, 'r', label = 'real value')
+	ax.legend()
 	
-	# ~ m1_ab.loc['a', facility] = a
-	# ~ m1_ab.loc['b', facility] = b
-	# ~ m1_ab.loc['loc', facility] = s1
-	# ~ m1_ab.loc['scale', facility] = s2
+	m1_ab.loc['a', facility] = a
+	m1_ab.loc['b', facility] = b
+	m1_ab.loc['loc', facility] = s1
+	m1_ab.loc['scale', facility] = s2
 
-# ~ os.chdir(plot_dir)
-# ~ plt.savefig('model1_fig.png', dpi = 400)
-# ~ plt.show()
-# ~ os.chdir(model1_2_dir)
+os.chdir(plot_dir)
+fig.subplots_adjust(hspace=1)
+# plt.tight_layout()
+plt.savefig('model1_fig.png', dpi = 400)
+plt.show()
+os.chdir(model1_2_dir)
 
-# ~ m1_ab.to_excel('model1_beta_fitting.xlsx')
+m1_ab.to_excel('model1_beta_fitting.xlsx')
 
 
 # pull 'alpha', 'beta' of beta distribution out of model_2 data (beta distribution fitting)
@@ -147,6 +161,7 @@ for num, fc in enumerate(unique_list) :
 m2_ab.to_excel('model2_beta_fitting.xlsx')
 
 os.chdir(plot_dir)
+fig.subplots_adjust(hspace=1)
 plt.savefig('model2_fig.png', dpi = 400)
 plt.show()
 
