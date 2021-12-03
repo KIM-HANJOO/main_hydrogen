@@ -89,9 +89,14 @@ for i in range(len(want)):
     var_1 = test.cov()
     mean_1 = test.mean()
     changed_profile_week = pd.DataFrame()
+    print(test)
+    print('var\n', var_1)
+    print('mean\n', mean_1)
 
+	
     for t in range(261):
         # 평균과 표준편차를 이용하여 1일 사용량 도출
+        # ~ print(ave_week_1day, st_week)
         while 1:
             week_1day = np.random.normal(ave_week_1day, st_week)
             if week_1day > 0:
@@ -157,4 +162,6 @@ for i in range(len(want)):
     # 완성된 파일 저장
     changed_profile_week.to_excel('{}번째 세대 전력프로필(평일).xlsx'.format(i+1))
     changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(i+1))
+    
+    break
 
