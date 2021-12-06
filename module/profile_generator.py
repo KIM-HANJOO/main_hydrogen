@@ -244,6 +244,39 @@ def profile_generator(facility, save_dir, profile_num, model1_file, \
 		break
 	
 	
+	
+def generate_fc(facility, group) :
+	# excel names
+	m1_xlna = 'model1_beta_fitting.xlsx'
+	m2_xlna = 'model2_beta_fitting.xlsx'
+	m3_xlna = 'profile_48_group_0.xlsx'
+	m4_xlna = 'model4_weekdays.xlsx'
+	
+	# main
+	m1 = facility_dir + '\\model1'
+	m2 = facility_dir + '\\model2'
+	m3 = facility_dir + '\\model3_cluster'
+	m4 = facility_dir + '\\model4'
+	
+	os.chdir(m1)
+	m1 = lib.read_excel(
+	
+	
+	
+	
+	if group == 'all' :
+		pass
+		
+	else :
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 os.chdir(main_dir + '\\temp')
 model1_file = lib.read_excel('model1_beta_fitting.xlsx')
