@@ -4,10 +4,10 @@ from pathlib import Path
 import pandas as pd
 
 class Info() :
-	def __init__(self) :
+	def __init__(self, main_module_dir) :
 		
 		# directories
-		module_dir = os.getcwd()
+		module_dir = main_module_dir
 		self.module_dir = module_dir
 		
 		self.main_dir = str(Path(module_dir).parent.absolute())
@@ -34,7 +34,7 @@ class Info() :
 				
 		# temp2 => conditions included in facility_list[1]
 		temp2 = ['도매 및 소매업', '숙박 및 음식점업']
-		
+
 		# temp3 => conditions included in facility_list[2]
 		temp3 = ['예술 스포츠 및 여가관련 서비스업']
 		
@@ -42,6 +42,13 @@ class Info() :
 		temp4 = ['교육 서비스업']
 		
 		# make dataframe for directory table
+		facility_dict = dict()
+		for num, fc in enumerate(facility_list_merge) :
+			facility_dict[fc] = locals()[f'temp{num + 1}']
+		
+		self.facility_dict = facility_dict
+		
+		
 		facility_df = pd.DataFrame(columns = facility_list)
 		
 		self.facility_df = facility_df
@@ -70,6 +77,3 @@ class Info() :
 					# ~ '3_outliers_deleted', '4_interpolated', '5_delete_below_interpolation_standard',\
 					# ~ '6_preprocessed', '7_preprocessed(spring_fall)', 'parameters', 'normalized']
 		# ~ self.condition_sub_dir = sub_directories
-					
-					
-a = Info()

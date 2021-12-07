@@ -259,7 +259,11 @@ def generate_fc(facility, group) :
 	m4 = facility_dir + '\\model4'
 	
 	os.chdir(m1)
-	m1 = lib.read_excel(
+	m1 = lib.read_excel(m1_xlna)
+	
+	m2 = lib.read_excel(m2_xlna)
+	
+	
 	
 	
 	

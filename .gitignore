@@ -2,3 +2,6 @@ __pycache__/
 model/
 시설군별/
 전체 업태/
+module/.ipynb_checkpoints
+module/__pycache__
+FACILITIES/
