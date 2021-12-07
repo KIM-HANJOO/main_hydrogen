@@ -44,6 +44,7 @@ class Info() :
 		# make dataframe for directory table
 		facility_df = pd.DataFrame(columns = facility_list)
 		
+		self.facility_df = facility_df
 		# ~ max_len = 0
 		# ~ for num in range(len(facility_list)) :
 			# ~ if max_len < len(locals()['temp{}'.format(num + 1)]) :
