@@ -94,20 +94,24 @@ def generate_fc(nfc_dir, facility, group) :
 	m4_end_xlna = 'model4_weekends.xlsx'
 	
 	# import files
-	
+	print(f'\nworking on {facility}')
 	os.chdir(model1_dir)
 	model1_file = dich.read_excel(m1_xlna)
+	print('model1 loaded')
 	
 	os.chdir(model2_dir)
 	model2_file = dich.read_excel(m2_xlna)
-	
+	print('model2 loaded')
 
 	os.chdir(model3_dir + f'\\group_{group}')
 	model3_file = dich.read_excel(locals()[f'm3_{group}_xlna'])
+	print('model3 loaded')
 	
 	os.chdir(model4_dir + f'\\group_{group}_model4')
 	model4_file_day = dich.read_excel(m4_day_xlna)
 	model4_file_end = dich.read_excel(m4_end_xlna)
+	print('model4 weekdays loaded')
+	print('model4 weekends loaded')
 	
 	main_dir = str(Path(facility_dir).parent.absolute())
 	save_dir = main_dir + f'\\GENERATED_PROFILES\\{facility}\\group_{group}\\raw'
@@ -379,13 +383,13 @@ print(maker_df)
 
 for facility in facility_list :
 	for group in range(2) : # group_number
-		
-		for i in range(maker_df.shape[0]) :
-			if (maker_df.loc[i, 'facility'] == facility) & (maker_df.loc[i, 'group'] == i) :
-				profile_num = maker_df.loc[i, 'number']
-		
-		key_list, file_dict = generate_fc(nfc_dir, facility, group)
-		profile_generator(profile_num, key_list, file_dict)
+		if (facility != '교육시설') & (facility != '문화시설') :
+			for i in range(maker_df.shape[0]) :
+				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
+					profile_num = maker_df.loc[i, 'number']
+			
+			key_list, file_dict = generate_fc(nfc_dir, facility, group)
+			profile_generator(profile_num, key_list, file_dict)
 
 	
 	
