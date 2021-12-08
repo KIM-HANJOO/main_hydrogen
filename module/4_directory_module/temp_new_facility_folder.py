@@ -8,6 +8,8 @@ prep_dir = di.prep_dir
 model_dir = di.model_dir
 module_dir = di.module_dir
 facility_dir = di.facility_dir
+nfc_dir = di.nfc_dir
+
 plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df
@@ -43,110 +45,112 @@ nfc_dir = main_dir + '\\FACILITIES'
 dich.newfolder(nfc_dir)
 
 for key in facility_dict :
-	print(f'\n\n{key}\n\n')
-	temp_dir = nfc_dir + f'\\{key}'
-	dich.newfolder(temp_dir)
-	dich.newfolderlist(temp_dir, subdir_list)
+	check = 0
+	if key != '업무시설' :
+		check = 1
 	
-	ndir_m1 = temp_dir + '\\model1'
-	ndir_m2 = temp_dir + '\\model2'
-	ndir_m3 = temp_dir + '\\model3'
-	ndir_m4 = temp_dir + '\\model4'
-	ndir_pre = temp_dir + '\\preprocessed'
-	
-	odir_m1 = facility_dir + '\\model1'
-	odir_m2 = facility_dir + '\\model2'
-	odir_m3 = facility_dir + '\\model3_cluster\\{}'.format(key)
-	odir_m4 = facility_dir + '\\model4\\{}'.format(key)
-	odir_pre = facility_dir + '\\봄가을\\{}'.format(key)
-	
-	os.chdir(odir_m1)
-	model1_df = dich.read_excel('model1_beta_fitting.xlsx')
-	model1_df.columns = m1_col_list
-	
-	if key == '판매및숙박' :
-		new_model1 = pd.DataFrame(model1_df['판매시설', '숙박시설'])
-		new_model1.reset_index(drop = True, inplace = True)
-		os.chdir(ndir_m1)
-		new_model1.to_excel('model_1.xlsx')
+	if check == 1 :
+		print(f'\n\n{key}\n\n')
+		temp_dir = nfc_dir + f'\\{key}'
+		dich.newfolder(temp_dir)
+		dich.newfolderlist(temp_dir, subdir_list)
 		
-		pass
+		ndir_m1 = temp_dir + '\\model1'
+		ndir_m2 = temp_dir + '\\model2'
+		ndir_m3 = temp_dir + '\\model3'
+		ndir_m4 = temp_dir + '\\model4'
+		ndir_pre = temp_dir + '\\preprocessed'
 		
-	else :
-		new_model1 = pd.DataFrame(model1_df[f'{key}'])
-		new_model1.reset_index(drop = True, inplace = True)
-		os.chdir(ndir_m1)
-		new_model1.to_excel('model_1.xlsx')
-	
-	model1_df = None
-	new_model1 = None
-	print('model 1 ended')
-	
-	os.chdir(odir_m2)
-	model2_df = dich.read_excel('model2_beta_fitting.xlsx')
-	model2_df.columns = m2_col_list
-	
-	if key == '판매및숙박' :
-		new_model2 = model2_df[['판매시설', '숙박시설']]
-		new_model2.reset_index(drop = True, inplace = True)
-		os.chdir(ndir_m2)
-		new_model2.to_excel('model_2.xlsx')
+		odir_m1 = facility_dir + '\\model1'
+		odir_m2 = facility_dir + '\\model2'
+		odir_m3 = facility_dir + '\\model3_cluster\\{}'.format(key)
+		odir_m4 = facility_dir + '\\model4\\{}'.format(key)
+		odir_pre = facility_dir + '\\봄가을\\{}'.format(key)
 		
-		pass
+		os.chdir(odir_m1)
+		model1_df = dich.read_excel('model1_beta_fitting.xlsx')
+		model1_df.columns = m1_col_list
 		
-	else :
-		col_all = []
-		for col in model2_df.columns :
-			if key in col :
-				col_all.append(col)
+		if key == '판매및숙박' :
+			new_model1 = model1_df[['판매시설', '숙박시설']]
+			new_model1.reset_index(drop = True, inplace = True)
+			os.chdir(ndir_m1)
+			new_model1.to_excel('model_1.xlsx')
+			
+			pass
+			
+		else :
+			new_model1 = pd.DataFrame(model1_df[f'{key}'])
+			new_model1.reset_index(drop = True, inplace = True)
+			os.chdir(ndir_m1)
+			new_model1.to_excel('model_1.xlsx')
+		
+		model1_df = None
+		new_model1 = None
+		print('model 1 ended')
+		
+		os.chdir(odir_m2)
+		model2_df = dich.read_excel('model2_beta_fitting.xlsx')
+		model2_df.columns = m2_col_list
+		
+		if key == '판매및숙박' :
+			new_model2 = model2_df[['판매및숙박_주중', '판매및숙박_주말']]
+			new_model2.reset_index(drop = True, inplace = True)
+			os.chdir(ndir_m2)
+			new_model2.to_excel('model_2.xlsx')
+			
+			pass
+			
+		else :
+			col_all = []
+			for col in model2_df.columns :
+				if key in col :
+					col_all.append(col)
+					
+			new_model2 = pd.DataFrame(model2_df[col_all])
+			new_model2.reset_index(drop = True, inplace = True)
+			os.chdir(ndir_m2)
+			new_model2.to_excel('model_2.xlsx')
+		
+		model2_df = None
+		new_model2 = None
+		print('model 2 ended')
+		
+	
+		dich.copydir_f(odir_m3, ndir_m3)
+		
+		os.chdir(ndir_m3)
+		if 'group_0_preprocessed' not in os.listdir(ndir_m3) :
+			os.rename(ndir_m3 + '\\group_0', ndir_m3 + '\\group_0_preprocessed')
+			
+		if 'group_1_preprocessed' not in os.listdir(ndir_m3) :
+			os.rename(ndir_m3 + '\\group_1', ndir_m3 + '\\group_1_preprocessed')
+		
+		if os.path.isdir(ndir_m3 + '\\group_0') :
+			dich.remove(ndir_m3 + '\\group_0')
+		
+		if os.path.isdir(ndir_m3 + '\\group_1') :
+			dich.remove(ndir_m3 + '\\group_1')
+			
+		dich.newfolder(ndir_m3 + '\\group_0')
+		dich.newfolder(ndir_m3 + '\\group_1')
+	
+		for direc in os.listdir(ndir_m3) :
+			
+			if 'group_0' in direc :
+				if direc != 'group_0' :
+					src = ndir_m3 + '\\' + direc
+					dst = ndir_m3 + '\\group_0\\' + direc
+					
+					dich.move(src, dst)
 				
-		new_model2 = pd.DataFrame(model2_df[col_all])
-		new_model2.reset_index(drop = True, inplace = True)
-		os.chdir(ndir_m2)
-		new_model2.to_excel('model_2.xlsx')
-	
-	model2_df = None
-	new_model2 = None
-	print('model 2 ended')
-	
-	# ~ for files in os.listdir(odir_m3) :
-		# ~ dich.copyfile(odir_m3, ndir_m3, files)
-		
-	# ~ for files in os.listdir(odir_m4) :
-		# ~ dich.copyfile(odir_m4, ndir_m4, files)
-		
-	# ~ for files in os.listdir(odir_pre) :
-		# ~ dich.copyfile(odir_pre, ndir_pre, files)
-	dich.copydir_f(odir_m3, ndir_m3)
-	
-	os.chdir(ndir_m3)
-	if 'group_0_preprocessed' not in os.listdir(ndir_m3) :
-		os.rename('group_0', 'group_0_preprocessed')
-		
-	if 'group_1_preprocessed' not in os.listdir(ndir_m3) :
-		os.rename('group_1', 'group_1_preprocessed')
-	
-	dich.newfolder(ndir_m3 + '\\group_0')
-	dich.newfolder(ndir_m3 + '\\group_1')
-
-	for direc in os.listdir(ndir_m3) :
-		if 'group_0' in direc :
-			src = ndir_m3 + '\\' + direc
-			dst = ndir_m3 + '\\group_0\\' + direc
+			elif 'group_1' in direc :
+				if direc != 'group_1' :
+					src = ndir_m3 + '\\' + direc
+					dst = ndir_m3 + '\\group_1\\' + direc
+					
+					dich.move(src, dst)
 				
-			if os.path.isdir(direc) :
-				dich.copydir_f(src, dst)
-				dich.remove(src)
-			else :
-				shutil.copyfile(src, dst)
-				dich.remove(src)
-			
-		elif 'group_1' in direc :
-			src = ndir_m3 + '\\' + direc
-			dst = ndir_m3 + '\\group_1\\' + direc
-			
-			dich.copydir_f(src, dst)
-			dich.remove(src)
-			
-	dich.copydir_f(odir_m4, ndir_m4)
-	dich.copydir_f(odir_pre, ndir_pre)
+		dich.copydir_f(odir_m4, ndir_m4)
+		dich.copydir_f(odir_pre, ndir_pre)
+	

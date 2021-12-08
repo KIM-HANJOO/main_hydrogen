@@ -78,9 +78,24 @@ def copyfile(src_dir, dst_dir, src_file) :
 def copydir(src_dir, dst_dir) :
 	shutil.copytree(src_dir, dst_dir)
 
+
 def copydir_f(src_dir, dst_dir) :
-	copy_tree(src_dir, dst_dir)
+	if os.path.isdir(dst_dir) :
+		copy_tree(src_dir, dst_dir)
+	
+	elif os.path.isfile(dst_dir) :
+		shutil.copyfile(src_dir, dst_dir)
+		
+	else :
+		newfolder(dst_dir)
+		copy_tree(src_dir, dst_dir)
+	
 	print(f'{src_dir} copied to {dst_dir}')
+
+
+def move(src, dst) :
+	shutil.move(src, dst)
+
 
 def newfolder(directory):
     try:

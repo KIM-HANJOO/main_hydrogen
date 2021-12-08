@@ -31,6 +31,7 @@ prep_dir = di.prep_dir
 model_dir = di.model_dir
 module_dir = di.module_dir
 facility_dir = di.facility_dir
+nfc_dir = di.nfc_dir
 plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df

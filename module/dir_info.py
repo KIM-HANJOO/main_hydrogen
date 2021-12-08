@@ -19,6 +19,7 @@ class Info() :
 		self.facility_dir = main_dir + '\\시설군별'
 		self.plot_dir = main_dir + '\\plot'
 		self.cluster_dir = main_dir + '\\0_temp_dir(clustering)'
+		self.nfc_dir = main_dir + '\\FACILITIES'
 		self.cluster_info = [2, 2, 2, 2, 2]
 		
 		
