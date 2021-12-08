@@ -23,6 +23,7 @@ import model_library as lib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib import font_manager, rc
 font_path = "C:/Windows/Fonts/malgunbd.TTF"
 font = font_manager.FontProperties(fname=font_path).get_name()
@@ -160,6 +161,16 @@ def profile_generator(profile_num, key_list, file_dict) :
 	model3_file_end = model3_file.loc[:, '25' : '48']
 	model3_file_end.columns = model3_file_day.columns
 	
+	hours = []
+	for i in range(1, 25) :
+		hours.append(str(i))
+	
+	passed_model4 = pd.DataFrame(columsn = hours)
+	p_num = 0
+	
+	all_model4 = pd.DataFrame(columns = hours)
+	a_num = 0
+	
 	for profile_num_now in range(profile_num):
 		'''
 		모델 1
@@ -276,6 +287,10 @@ def profile_generator(profile_num, key_list, file_dict) :
 		mean_1 = test.mean()
 		changed_profile_week = pd.DataFrame()
 		
+
+
+		
+			
 		for t in range(261):
 			# 평균과 표준편차를 이용하여 1일 사용량 도출
 			while 1:
@@ -286,33 +301,44 @@ def profile_generator(profile_num, key_list, file_dict) :
 			# 1일 프로필에 변화를 주는 프로필 생산
 			Y = []
 			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore') # mean_1, var_1 : model 4
+
 			
 			
-			count_neg = 0
-			hours = []
-			for i in range(1, 25) :
-				hours.append(str(i))
-				
-			all_model4 = pd.DataFrame(columns = hours)
+			for k in range(24) :
+				x = fixed_profile_week.iloc[k, 0] + X[k]
+				all_model4.loc[a_num, str(k + 1)] = x
+			a_num += 1
+			
 			
 			while 1:
+				
+				for k in range(24) :
+					x = fixed_profile_week.iloc[k, 0] + X[k]
+					all_model4.loc[a_num, str(k + 1)] = x
+				a_num += 1
+				
 				for k in range(24):
-					x = fixed_profile_week.iloc[k,0] + X[k] # fixed_profile_week : 24시간짜리 model 3
+					x = fixed_profile_week.iloc[k,0] + X[k] # fixed_profile_week : 24시간짜리 model 3에 model 4 더함
+					# ~ all_model4.loc[a_num, str(k + 1)] = x
+					
+					
 					if x < 0:
-						X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-						a = 0
-						
-						# count under 0
-						count_neg += 1
+						X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')						
 						break
 					a = 1
+					
 				if a is 0:
 					continue
+					
 				break
 			for f in range(24):
 				y = (fixed_profile_week.iloc[f,0] + X[f])
 				Y.append(y)
 			Y = Y/sum(Y)
+			
+			passed_model4.loc[p_num, '1' : '24'] = Y
+			p_num += 1
+			
 			Y = Y * week_1day
 			changed_profile_week['{}일'.format(t+1)] = Y
 	
@@ -330,14 +356,26 @@ def profile_generator(profile_num, key_list, file_dict) :
 		for t in range(104):
 			# 평균과 표준편차를 이용하여 1일 사용량 도출
 			#week_1day = np.random.normal(ave_week_1day, st_week)
+			
+			
+			
+			
 			while 1:
 				weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
+				
+				
 				if weekend_1day > 0:
 					break
 			# 1일 프로필에 변화를 주는 프로필 생산
 			Y = []
 			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
 			while 1:
+				
+				for k in range(24) :
+					x = fixed_profile_week.iloc[k, 0] + X[k]
+					all_model4.loc[a_num, str(k + 1)] = x
+				a_num += 1
+			
 				for k in range(24):
 					x = fixed_profile_weekend.iloc[k,0] + X[k]
 					if x < 0:
@@ -351,7 +389,12 @@ def profile_generator(profile_num, key_list, file_dict) :
 			for f in range(24):
 				y = (fixed_profile_weekend.iloc[f,0] + X[f])
 				Y.append(y)
+			
+			passed_model4.loc[p_num, '1' : '24'] = Y
+			p_num += 1
+			
 			Y = Y/sum(Y)
+			
 			Y = Y * weekend_1day
 			changed_profile_weekend['{}일'.format(t+1)] = Y
 		
@@ -365,10 +408,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 		changed_profile_weekend.columns = hours
 			
 		print('{}번째전력프로필 완성'.format(profile_num_now + 1))
-		
-		
-
-		
+			
 		
 print('\n\n######################################################\n\n')
 
@@ -394,15 +434,31 @@ print(maker_df)
 
 for facility in facility_list :
 	for group in range(2) : # group_number
-		if (facility != '교육시설') & (facility != '문화시설') :
+		if (facility == '교육시설') :
 			for i in range(maker_df.shape[0]) :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
 			
+			profile_num = 10
+			
 			key_list, file_dict = generate_fc(nfc_dir, facility, group)
 			profile_generator(profile_num, key_list, file_dict)
 
-
+			redprops = dict(linestyle = '--', color = 'red', markerfacecolor = 'red')
+			for i in range(all_model4.shape[0]) :
+				plt.boxplot(all_model4.loc[:, str(i)], positions = [i], c = 'dimgrey')	
+				
+			for i in range(passed_model4.shape[0]) :
+				plt.boxplot(passed_model4.loc[:, str(i)], positions = [i], flierprops = redprops, c = 'red')	
+				
+			num1 = all_model4.shape[0]
+			num2 = passed_model4.shape[0]
+			
+			plt.xlim([0, 25])
+			plt.title(f'{facility}, group_{group}, {num2} / {num1}')
+			plt.xticks(hours)
+			plt.grid()
+			plt.show()	
 # ~ os.chdir(main_dir + '\\temp')
 # ~ model1_file = lib.read_excel('model1_beta_fitting.xlsx')
 # ~ model2_file = lib.read_excel('model2_beta_fitting.xlsx')
