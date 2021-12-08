@@ -165,7 +165,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 	for i in range(1, 25) :
 		hours.append(str(i))
 	
-	passed_model4 = pd.DataFrame(columsn = hours)
+	passed_model4 = pd.DataFrame(columns = hours)
 	p_num = 0
 	
 	all_model4 = pd.DataFrame(columns = hours)
@@ -240,7 +240,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 					a = 0
 					break
 				a = 1
-			if a is 0:
+			if a == 0:
 				continue
 			break
 		fixed_profile_week['fixed'] = X
@@ -263,7 +263,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 					a = 0
 					break
 				a = 1
-			if a is 0:
+			if a == 0:
 				continue
 			break
 		fixed_profile_weekend['fixed'] = X
@@ -318,26 +318,29 @@ def profile_generator(profile_num, key_list, file_dict) :
 				a_num += 1
 				
 				for k in range(24):
-					x = fixed_profile_week.iloc[k,0] + X[k] # fixed_profile_week : 24시간짜리 model 3에 model 4 더함
-					# ~ all_model4.loc[a_num, str(k + 1)] = x
-					
-					
+					x = fixed_profile_week.iloc[k, 0] + X[k] # fixed_profile_week : 24시간짜리 model 3에 model 4 더함
+									
 					if x < 0:
 						X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')						
+						a = 0
 						break
 					a = 1
 					
-				if a is 0:
+				if a == 0:
 					continue
 					
 				break
+				
 			for f in range(24):
 				y = (fixed_profile_week.iloc[f,0] + X[f])
 				Y.append(y)
-			Y = Y/sum(Y)
-			
+				if y < 0 :
+					print("\n\n\n\n\n\n\n dfdfdfdfdfdf?\n\n\n\n\n\n\n")
 			passed_model4.loc[p_num, '1' : '24'] = Y
 			p_num += 1
+			
+					
+			Y = Y/sum(Y)
 			
 			Y = Y * week_1day
 			changed_profile_week['{}일'.format(t+1)] = Y
@@ -383,12 +386,15 @@ def profile_generator(profile_num, key_list, file_dict) :
 						a = 0
 						break
 					a = 1
-				if a is 0:
+				if a == 0:
 					continue
 				break
+				
 			for f in range(24):
 				y = (fixed_profile_weekend.iloc[f,0] + X[f])
 				Y.append(y)
+				if y < 0 :
+					print("\n\n\n\n\n\n\n what's wrong?\n\n\n\n\n\n\n")
 			
 			passed_model4.loc[p_num, '1' : '24'] = Y
 			p_num += 1
@@ -408,6 +414,90 @@ def profile_generator(profile_num, key_list, file_dict) :
 		changed_profile_weekend.columns = hours
 			
 		print('{}번째전력프로필 완성'.format(profile_num_now + 1))
+		
+	print('\n###################################\n')
+	print(all_model4)
+	print('\n###################################\n')
+	print(passed_model4)
+	print('\n###################################\n')
+	
+	plt.figure(figsize = (14, 6))
+
+	hours_int = []
+	for i in range(1, 25) :
+		hours_int.append(i)
+		
+		
+	for i in range(all_model4.shape[0]) :
+		plt.plot(hours_int, all_model4.loc[i, :], marker = 'o', color = 'black', ls = 'none')
+		
+	for i in range(passed_model4.shape[0]) :
+		plt.plot(hours_int, passed_model4.loc[i, :], marker = 'o', color = 'red', ls = 'none')
+	
+	plt.plot([-1, 26], [0, 0], color = 'blue')
+	
+	num1 = all_model4.shape[0]
+	num2 = passed_model4.shape[0]
+	
+	plt.xlim([0, 25])
+	plt.title(f'{facility}, group_{group}, {num2} / {num1}')
+	plt.xticks(hours_int)
+	plt.grid()
+	
+	import os
+	plot_dir = 'C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module\\3_profile_generator\\temp_plot'
+	os.chdir(plot_dir)
+	plt.savefig(f'{facility},group_{group},{num2} of {num1}.png', dpi = 400)
+	plt.show()
+	
+	
+	# boxplot
+			
+	plt.figure(figsize = (14, 6))
+
+	red_boxprops = dict(color = 'darkred', facecolor = 'red', linewidth = 1)
+	red_whiskerprops = dict(color = 'red', linestyle = '-', linewidth = 2)
+	red_flierprops = dict(linestyle = '-', color = 'red', markerfacecolor = 'red', markeredgecolor = 'darkred', markersize = 5)
+	red_medprops = dict(color = 'darkred', linewidth = 1.2)
+	red_capprops = dict(color = 'red', linewidth = 2)
+	
+	
+	default_boxprops = dict(color = 'black', facecolor = 'dimgrey', linewidth = 1)
+	default_whiskerprops = dict(color = 'dimgrey', linestyle = '-', linewidth = 2)
+	default_flierprops = dict( color = 'dimgrey', linestyle = '-', markerfacecolor = 'dimgrey', markeredgecolor = 'black', markersize = 5)
+	default_medprops = dict(color = 'black', linewidth = 1.2)
+	default_capprops = dict(color = 'black', linewidth = 2)
+	
+	for i in range(1, 25) :
+		plt.boxplot(all_model4.loc[:, str(i)], positions = [i], widths = 0.6, patch_artist = True,\
+		flierprops = default_flierprops, boxprops = default_boxprops, medianprops = default_medprops, \
+		whiskerprops = default_whiskerprops, capprops = default_capprops)	
+		
+	for i in range(1, 25) :
+		boxes2 = plt.boxplot(passed_model4.loc[:, str(i)], positions = [i], widths = 0.6, patch_artist = True, \
+		flierprops = red_flierprops, boxprops = red_boxprops, medianprops = red_medprops, \
+		whiskerprops = red_whiskerprops, capprops = red_capprops)	
+	
+	
+	# ~ for box in boxes['boxes'] :
+		# ~ box.set(facecolor = 'dimgrey')
+		
+	# ~ for box in boxes2['boxes'] :
+		# ~ box.set(facecolor = 'dimgrey')
+		
+	plt.plot([-1, 26], [0, 0], color = 'blue')
+	
+	plt.xlim([0, 25])
+	plt.title(f'{facility}, group_{group}, {num2} / {num1}, boxplot')
+	plt.xticks(hours_int)
+	plt.grid()
+	
+	import os
+	plot_dir = 'C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module\\3_profile_generator\\temp_plot'
+	os.chdir(plot_dir)
+	plt.savefig(f'{facility},group_{group},{num2} of {num1}, boxplot.png', dpi = 400)
+	plt.show()
+	
 			
 		
 print('\n\n######################################################\n\n')
@@ -439,26 +529,12 @@ for facility in facility_list :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
 			
-			profile_num = 10
+			profile_num = 1
 			
 			key_list, file_dict = generate_fc(nfc_dir, facility, group)
 			profile_generator(profile_num, key_list, file_dict)
 
-			redprops = dict(linestyle = '--', color = 'red', markerfacecolor = 'red')
-			for i in range(all_model4.shape[0]) :
-				plt.boxplot(all_model4.loc[:, str(i)], positions = [i], c = 'dimgrey')	
 				
-			for i in range(passed_model4.shape[0]) :
-				plt.boxplot(passed_model4.loc[:, str(i)], positions = [i], flierprops = redprops, c = 'red')	
-				
-			num1 = all_model4.shape[0]
-			num2 = passed_model4.shape[0]
-			
-			plt.xlim([0, 25])
-			plt.title(f'{facility}, group_{group}, {num2} / {num1}')
-			plt.xticks(hours)
-			plt.grid()
-			plt.show()	
 # ~ os.chdir(main_dir + '\\temp')
 # ~ model1_file = lib.read_excel('model1_beta_fitting.xlsx')
 # ~ model2_file = lib.read_excel('model2_beta_fitting.xlsx')
