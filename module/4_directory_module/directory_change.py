@@ -70,7 +70,7 @@ def remove(path):
 
 def copyfile(src_dir, dst_dir, src_file) :
     src = src_dir + '\\' + src_file
-    dst = dst_dir
+    dst = dst_dir + '\\' + src_file
     shutil.copyfile(src, dst)
     print(f'{src_file} copied')
     

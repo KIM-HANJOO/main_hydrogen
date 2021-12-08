@@ -48,6 +48,12 @@ import model_library as lib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib import font_manager, rc
+font_path = "C:/Windows/Fonts/malgunbd.TTF"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
+matplotlib.rcParams['axes.unicode_minus'] = False
 import os
 import glob
 import os.path

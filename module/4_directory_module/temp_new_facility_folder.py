@@ -135,6 +135,9 @@ for key in facility_dict :
 		dich.newfolder(ndir_m3 + '\\group_0')
 		dich.newfolder(ndir_m3 + '\\group_1')
 	
+			
+			
+		
 		for direc in os.listdir(ndir_m3) :
 			
 			if 'group_0' in direc :
@@ -157,7 +160,7 @@ for key in facility_dict :
 		if key == '판매및숙박' :
 			
 			dich.newfolderlist(ndir_pre, ['주중', '주말'])
-			odir_pre_1 = facility_dir + '\\봄가을\\업무시설'
+			odir_pre_1 = facility_dir + '\\봄가을\\숙박시설'
 			odir_pre_2 = facility_dir + '\\봄가을\\판매시설'
 			
 			for ed in ['주중', '주말'] :
@@ -166,6 +169,28 @@ for key in facility_dict :
 				
 		else :
 			dich.copydir_f(odir_pre, ndir_pre)
+			
+		
+		if key == '판매및숙박' :
+			for gp in [0, 1] :
+				gp_pre = ndir_m3 + f'\\group_{gp}\\group_{gp}_preprocessed'
+				
+				dich.remove(gp_pre)
+				dich.newfolder(gp_pre)
+				dich.newfolderlist(gp_pre, ['주중', '주말'])
+				
+				gdir = ndir_m3 + f'\\group_{gp}\\group_{gp}_model3'
+				pdir = ndir_pre
+				
+				for sd in ['주중', '주말'] :
+					temp_src = pdir + '\\' + sd
+					temp_compare = gdir + '\\' + sd
+					temp_dst = gp_pre + '\\' + sd
+					
+					for excel in os.listdir(temp_compare) :
+						dich.copyfile(temp_src, temp_dst, excel)
+						
+					print(f'{excel} copied to {temp_dst}')
 			
 			
 			

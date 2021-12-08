@@ -23,6 +23,12 @@ import model_library as lib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib import font_manager, rc
+font_path = "C:/Windows/Fonts/malgunbd.TTF"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
+matplotlib.rcParams['axes.unicode_minus'] = False
 import os
 import glob
 import os.path
@@ -72,14 +78,33 @@ print(maker_df)
 ratio = maker_df.loc[:, 'percentage'].tolist()
 labels = []
 for i in range(maker_df.shape[0]) :
-	name = f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group'}"
+	if maker_df.loc[i, 'facility'] == '문화시설' :
+		if maker_df.loc[i, 'group'] == 1 :
+			name = ''
+			
+		else :
+			name = f"{ratio[i]}%, {ratio[i + 1]}%\n문화시설(0,1)"
+			
+			
+	elif maker_df.loc[i, 'facility'] == '교육시설' :
+		if maker_df.loc[i, 'group'] == 1 :
+			name = f"\n\n{ratio[i]}%\n{maker_df.loc[i, 'facility']}({maker_df.loc[i, 'group']})"
+		else :
+			name = f"\n\n\n{ratio[i]}%\n{maker_df.loc[i, 'facility']}({maker_df.loc[i, 'group']})"
+	else :
+		name = f"{ratio[i]}%\n{maker_df.loc[i, 'facility']}({maker_df.loc[i, 'group']})"
+		
 	labels.append(name)
 	
 explode = []
 for i in range(len(labels)) :
 	explode.append(0.05)
-	
-colors = ['silver', 'whitesmoke', 'lightgray', 'silver', 'firebrick', 'darkred', 'whitesmoke', 'lightgray']
-plt.pie(ratio, labels = labels, autopct='%.1f%%', startangle = 260, counterclock = False, explode = explode, shadow = True, colors = colors)
+
+
+plt.figure(figsize = (8, 8))
+colors = ['dimgrey', 'grey', 'dimgrey', 'grey', 'brown', 'brown', 'indianred', 'indianred']
+plt.pie(ratio, labels = labels, startangle = 260, counterclock = False, explode = explode, shadow = False, colors = colors)
+plt.title('percentages')
 os.chdir('C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module\\3_profile_generator\\temp_plot')
 plt.savefig('group_percentage_piechart.png')
+plt.show()
