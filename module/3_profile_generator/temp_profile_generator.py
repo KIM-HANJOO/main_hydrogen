@@ -109,8 +109,8 @@ def generate_fc(nfc_dir, facility, group) :
 	
 	os.chdir(model4_dir + f'\\group_{group}_model4')
 	model4_file_day = dich.read_excel(m4_day_xlna)
-	model4_file_end = dich.read_excel(m4_end_xlna)
 	print('model4 weekdays loaded')
+	model4_file_end = dich.read_excel(m4_end_xlna)
 	print('model4 weekends loaded')
 	
 	main_dir = str(Path(facility_dir).parent.absolute())
@@ -160,6 +160,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 		'''
 		model1_file.index = ['a', 'b', 'loc', 'scale']
 		for col in model1_file.columns :
+			print(col, '\t', facility)
 			if facility in col :
 				a = model1_file.loc['a', col]
 				b = model1_file.loc['b', col]
@@ -363,7 +364,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 print('\n\n######################################################\n\n')
 
 facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
-all_profiles_perc = 50 #%
+all_profiles_perc = 100 #%
 
 maker_df = profile_num_maker(nfc_dir)
 for i in range(maker_df.shape[0]) :
@@ -383,7 +384,7 @@ print(maker_df)
 
 for facility in facility_list :
 	for group in range(2) : # group_number
-		if (facility != '교육시설') & (facility != '문화시설') :
+		if (facility != '판매및숙박') :
 			for i in range(maker_df.shape[0]) :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
