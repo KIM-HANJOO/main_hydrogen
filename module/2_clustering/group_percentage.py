@@ -67,3 +67,19 @@ def profile_num_maker(nfc_dir) :
 maker_df = profile_num_maker(nfc_dir)
 
 print(maker_df)
+
+
+ratio = maker_df.loc[:, 'percentage'].tolist()
+labels = []
+for i in range(maker_df.shape[0]) :
+	name = f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group'}"
+	labels.append(name)
+	
+explode = []
+for i in range(len(labels)) :
+	explode.append(0.05)
+	
+colors = ['silver', 'whitesmoke', 'lightgray', 'silver', 'firebrick', 'darkred', 'whitesmoke', 'lightgray']
+plt.pie(ratio, labels = labels, autopct='%.1f%%', startangle = 260, counterclock = False, explode = explode, shadow = True, colors = colors)
+os.chdir('C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module\\3_profile_generator\\temp_plot')
+plt.savefig('group_percentage_piechart.png')

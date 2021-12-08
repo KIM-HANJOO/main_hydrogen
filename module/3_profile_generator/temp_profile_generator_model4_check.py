@@ -360,9 +360,6 @@ def profile_generator(profile_num, key_list, file_dict) :
 			# 평균과 표준편차를 이용하여 1일 사용량 도출
 			#week_1day = np.random.normal(ave_week_1day, st_week)
 			
-			
-			
-			
 			while 1:
 				weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
 				
@@ -448,17 +445,17 @@ def profile_generator(profile_num, key_list, file_dict) :
 	plot_dir = 'C:\\Users\\joo09\\Documents\\GitHub\\main_hydrogen\\module\\3_profile_generator\\temp_plot'
 	os.chdir(plot_dir)
 	plt.savefig(f'{facility},group_{group},{num2} of {num1}.png', dpi = 400)
-	plt.show()
+	plt.clf()
 	
 	
 	# boxplot
 			
 	plt.figure(figsize = (14, 6))
 
-	red_boxprops = dict(color = 'darkred', facecolor = 'red', linewidth = 1)
+	red_boxprops = dict(color = 'k', facecolor = 'red', linewidth = 1)
 	red_whiskerprops = dict(color = 'red', linestyle = '-', linewidth = 2)
-	red_flierprops = dict(linestyle = '-', color = 'red', markerfacecolor = 'red', markeredgecolor = 'darkred', markersize = 5)
-	red_medprops = dict(color = 'darkred', linewidth = 1.2)
+	red_flierprops = dict(linestyle = '-', color = 'red', markerfacecolor = 'red', markeredgecolor = 'k', markersize = 7)
+	red_medprops = dict(color = 'k', linewidth = 1.2)
 	red_capprops = dict(color = 'red', linewidth = 2)
 	
 	
@@ -497,6 +494,7 @@ def profile_generator(profile_num, key_list, file_dict) :
 	os.chdir(plot_dir)
 	plt.savefig(f'{facility},group_{group},{num2} of {num1}, boxplot.png', dpi = 400)
 	plt.show()
+
 	
 			
 		
@@ -529,10 +527,12 @@ for facility in facility_list :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
 			
-			profile_num = 1
+			profile_num = 100
 			
 			key_list, file_dict = generate_fc(nfc_dir, facility, group)
 			profile_generator(profile_num, key_list, file_dict)
+			
+			break
 
 				
 # ~ os.chdir(main_dir + '\\temp')
