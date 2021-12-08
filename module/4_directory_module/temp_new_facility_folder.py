@@ -16,7 +16,7 @@ facility_df = di.facility_df
 facility_dict = di.facility_dict
 
 sys.path.append(module_dir)
-sys.path.append(module_dir + '\\4_directory_moduel')
+sys.path.append(module_dir + '\\4_directory_module')
 import directory_change as dich
 import model_library as lib
 
@@ -46,7 +46,7 @@ dich.newfolder(nfc_dir)
 
 for key in facility_dict :
 	check = 0
-	if key != '업무시설' :
+	if key == '판매및숙박' :
 		check = 1
 	
 	if check == 1 :
@@ -150,7 +150,23 @@ for key in facility_dict :
 					dst = ndir_m3 + '\\group_1\\' + direc
 					
 					dich.move(src, dst)
-				
+			else : pass
+			
 		dich.copydir_f(odir_m4, ndir_m4)
-		dich.copydir_f(odir_pre, ndir_pre)
+		
+		if key == '판매및숙박' :
+			
+			dich.newfolderlist(ndir_pre, ['주중', '주말'])
+			odir_pre_1 = facility_dir + '\\봄가을\\업무시설'
+			odir_pre_2 = facility_dir + '\\봄가을\\판매시설'
+			
+			for ed in ['주중', '주말'] :
+				dich.copydir_f(odir_pre_1 + f'\\{ed}', ndir_pre + f'\\{ed}')
+				dich.copydir_f(odir_pre_2 + f'\\{ed}', ndir_pre + f'\\{ed}')
+				
+		else :
+			dich.copydir_f(odir_pre, ndir_pre)
+			
+			
+			
 	

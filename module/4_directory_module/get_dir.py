@@ -41,7 +41,7 @@ facility_df = di.facility_df
 ### additional imports
 
 sys.path.append(module_dir)
-sys.path.append(module_dir + '\\4_directory_moduel')
+sys.path.append(module_dir + '\\4_directory_module')
 import directory_change as dich
 import model_library as lib
 

@@ -16,7 +16,7 @@ facility_df = di.facility_df
 facility_dict = di.facility_dict
 
 sys.path.append(module_dir)
-sys.path.append(module_dir + '\\4_directory_moduel')
+sys.path.append(module_dir + '\\4_directory_module')
 import directory_change as dich
 import model_library as lib
 
@@ -31,65 +31,102 @@ import random
 from scipy.stats import beta, kde
 import scipy.stats
 import shutil
+import pathlib
+from pathlib import Path
 
 '''
 note
+
+before running,
+run 'temp_new_facility_folder.py'
+run 'generated_profiles_directory.py'
+
 '''
 
+facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] #profile_num_maker에서 쓰이며, model1, model2 파일 사전작업에 사용되었음
+
+def profile_num_maker(nfc_dir) :
+	
+	facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박']
+			
+	maker_df = pd.DataFrame(columns = ['facility', 'group', 'number', 'percentage'])
+	maker_num = 0
+	
+	for num, fc in enumerate(facility_list) :
+		for i in range(2) : # group_number
+			tempdir = nfc_dir + f'\\{fc}\\model3\\group_{i}\\group_{i}_model3\\주중'
+			op_num = len(os.listdir(tempdir))
+			
+			maker_df.loc[maker_num, 'facility'] = fc
+			maker_df.loc[maker_num, 'group'] = i
+			maker_df.loc[maker_num, 'number'] = op_num
+			maker_num += 1
+	
+	all_profile_numbers = sum(maker_df.loc[:, 'number'].tolist())
+	
+	for i in range(maker_df.shape[0]) :
+		maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / all_profile_numbers * 100, 2)
+	
+	return maker_df
+			
 	
 	
-def generate_fc(facility_dir, facility, group) :
+def generate_fc(nfc_dir, facility, group) :	
+	# need
+	# facility, save_dir, profile_num, model1_file, \
+	# model2_file, model3_file, model4_file_day, model4_file_end
+	
 	# directories
-	wd = facility_dir + f'\\{facility}'
+	wd = nfc_dir + f'\\{facility}'
 	model1_dir = wd + '\\model1'
 	model2_dir = wd + '\\model2'
-	model3_dir = wd + '\\model3'
-	model4_dir = wd + '\\model4'
-	
-	model3_group = 
+	model3_dir = wd + '\\model3' # + '\\group_0', '\\group_1' -> 'profile_48_group_0.xlsx'
+	model4_dir = wd + '\\model4' # + '\\group_0_model4'
 	
 	# excel names
-	m1_xlna = 'model1_beta_fitting.xlsx'
-	m2_xlna = 'model2_beta_fitting.xlsx'
-	m3_xlna = 'profile_48_group_0.xlsx'
-	m4_xlna = 'model4_weekdays.xlsx'
+	m1_xlna = 'model_1.xlsx'
+	m2_xlna = 'model_2.xlsx'
 	
-	# main
-	m1 = facility_dir + '\\model1'
-	m2 = facility_dir + '\\model2'
-	m3 = facility_dir + '\\model3_cluster'
-	m4 = facility_dir + '\\model4'
+	m3_0_xlna = 'profile_48_group_0.xlsx'
+	m3_1_xlna = 'profile_48_group_1.xlsx'
 	
-	os.chdir(m1)
-	m1 = lib.read_excel(m1_xlna)
+	m4_day_xlna = 'model4_weekdays.xlsx'
+	m4_end_xlna = 'model4_weekends.xlsx'
 	
-	m2 = lib.read_excel(m2_xlna)
+	# import files
 	
-	os.chdir(main_dir + '\\temp')
-	model1_file = lib.read_excel('model1_beta_fitting.xlsx')
-	model2_file = lib.read_excel('model2_beta_fitting.xlsx')
+	os.chdir(model1_dir)
+	model1_file = dich.read_excel(m1_xlna)
 	
-	facility = '교육'
-	excel_name = '[P.교육 서비스업(85)]_0_'
-	model3_file = lib.read_excel('profile_48_group_0.xlsx')
+	os.chdir(model2_dir)
+	model2_file = dich.read_excel(m2_xlna)
 	
+
+	os.chdir(model3_dir + f'\\group_{group}')
+	model3_file = dich.read_excel(locals()[f'm3_{group}_xlna'])
 	
-	model4_file_day = lib.read_excel('model4_weekdays.xlsx')
-	model4_file_end = lib.read_excel('model4_weekends.xlsx')
+	os.chdir(model4_dir + f'\\group_{group}_model4')
+	model4_file_day = dich.read_excel(m4_day_xlna)
+	model4_file_end = dich.read_excel(m4_end_xlna)
 	
-	save_dir = main_dir + '\\temp'
-	profile_num = 5
+	main_dir = str(Path(facility_dir).parent.absolute())
+	save_dir = main_dir + f'\\GENERATED_PROFILES\\{facility}\\group_{group}\\raw'
+	save_dir_day = save_dir + '\\주중'
+	save_dir_end = save_dir + '\\주말'
 	
-	profile_generator(facility, save_dir, profile_num, model1_file, \
-					model2_file, model3_file, model4_file_day, model4_file_end)
-		
-		
-		
+	file_dict = dict()
+
+	key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', \
+	'model1_file', 'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end']
 	
-	if group == 'all' :
-		pass
-		
-	else :
+	for key in key_list :
+		file_dict[key] = locals()[f'{key}']
+	
+	print('files all loaded')
+	
+	return key_list, file_dict
+
+	
 	
 	
 	
@@ -98,8 +135,13 @@ def generate_fc(facility_dir, facility, group) :
 	
 
 # 원하는 세대 수와 세대 특징 입력된 파일 읽기
-def profile_generator(facility, save_dir, profile_num, model1_file, \
-				model2_file, model3_file, model4_file_day, model4_file_end) :
+def profile_generator(profile_num, key_list, file_dict) :
+	
+	for key in key_list :
+		globals()[f'{key}'] = file_dict[key]
+		
+	file_dict = None
+		
 	hours = []
 	for i in range(1, 25) :
 		hours.append(str(i))
@@ -108,7 +150,7 @@ def profile_generator(facility, save_dir, profile_num, model1_file, \
 	model3_file_end = model3_file.loc[:, '25' : '48']
 	model3_file_end.columns = model3_file_day.columns
 	
-	for i in range(profile_num):
+	for profile_num_now in range(profile_num):
 		'''
 		모델 1
 		'''
@@ -128,8 +170,10 @@ def profile_generator(facility, save_dir, profile_num, model1_file, \
 		'''
 		model2_file.index = ['a', 'b', 'loc', 'scale']
 	
-		model2_file.columns = ['교육주중', '교육주말', '판매숙박주중', '판매숙박주말', '업무주중', '업무주말', \
-								'문화주중', '문화주말']
+		# seperated columns already
+		# ~ model2_file.columns = ['교육주중', '교육주말', '판매숙박주중', '판매숙박주말', '업무주중', '업무주말', \
+								# ~ '문화주중', '문화주말']
+								
 		for col in model2_file.columns :
 			if facility in col :
 				if '주중' in col :
@@ -298,38 +342,69 @@ def profile_generator(facility, save_dir, profile_num, model1_file, \
 		changed_profile_weekend.reset_index(drop = True, inplace = True)
 		changed_profile_weekend.columns = hours
 			
-		print('{}번째전력프로필 완성'.format(i+1))
+		print('{}번째전력프로필 완성'.format(profile_num_now + 1))
 		
 		
 		
 		os.chdir(save_dir)
 		
 		# 완성된 파일 저장
-		changed_profile_week.to_excel('{}번째 세대 전력프로필(평일).xlsx'.format(i+1))
-		changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(i+1))
+		os.chdir(save_dir_day)
+		changed_profile_week.to_excel('{}번째 세대 전력프로필(주중).xlsx'.format(profile_num_now + 1))
 		
-		break
+		os.chdir(save_dir_end)
+		changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(profile_num_now + 1))
+		
+		
+print('\n\n######################################################\n\n')
+
+facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
+all_profiles_perc = 50 #%
+
+maker_df = profile_num_maker(nfc_dir)
+for i in range(maker_df.shape[0]) :
+	maker_df.loc[i, 'number'] = round(maker_df.loc[i, 'number'] * all_profiles_perc / 100)
+
+tempsum = sum(maker_df.loc[:, 'number'].tolist())
+
+for i in range(maker_df.shape[0]) :
+	maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / tempsum * 100, 2)
+	
+for i in range(maker_df.shape[0]) :
+	if maker_df.loc[i, 'number'] > 100 :
+		maker_df.loc[i, 'number'] = 100
+		
+print(maker_df)
+
+
+for facility in facility_list :
+	for group in range(2) : # group_number
+		
+		for i in range(maker_df.shape[0]) :
+			if (maker_df.loc[i, 'facility'] == facility) & (maker_df.loc[i, 'group'] == i) :
+				profile_num = maker_df.loc[i, 'number']
+		
+		key_list, file_dict = generate_fc(nfc_dir, facility, group)
+		profile_generator(profile_num, key_list, file_dict)
+
+	
+	
+	
 	
 
-	
-	
-	
-	
+# ~ os.chdir(main_dir + '\\temp')
+# ~ model1_file = lib.read_excel('model1_beta_fitting.xlsx')
+# ~ model2_file = lib.read_excel('model2_beta_fitting.xlsx')
 
-os.chdir(main_dir + '\\temp')
-model1_file = lib.read_excel('model1_beta_fitting.xlsx')
-model2_file = lib.read_excel('model2_beta_fitting.xlsx')
-
-facility = '교육'
-excel_name = '[P.교육 서비스업(85)]_0_'
-model3_file = lib.read_excel('profile_48_group_0.xlsx')
+# ~ facility = '교육'
+# ~ excel_name = '[P.교육 서비스업(85)]_0_'
+# ~ model3_file = lib.read_excel('profile_48_group_0.xlsx')
 
 
-model4_file_day = lib.read_excel('model4_weekdays.xlsx')
-model4_file_end = lib.read_excel('model4_weekends.xlsx')
+# ~ model4_file_day = lib.read_excel('model4_weekdays.xlsx')
+# ~ model4_file_end = lib.read_excel('model4_weekends.xlsx')
 
-save_dir = main_dir + '\\temp'
-profile_num = 5
+# ~ save_dir = main_dir + '\\temp'
+# ~ profile_num = 5
 
-profile_generator(facility, save_dir, profile_num, model1_file, \
-				model2_file, model3_file, model4_file_day, model4_file_end)
+
