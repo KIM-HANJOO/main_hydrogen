@@ -20,6 +20,7 @@ class Info() :
 		self.plot_dir = main_dir + '\\plot'
 		self.cluster_dir = main_dir + '\\0_temp_dir(clustering)'
 		self.nfc_dir = main_dir + '\\FACILITIES'
+		self.gp_dir = main_dir + '\\GENERATED_PROFILES'
 		self.cluster_info = [2, 2, 2, 2, 2]
 		
 		
