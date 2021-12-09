@@ -380,19 +380,28 @@ def model_4(model3_dir, model4_dir) :
 				df.to_excel('model4_weekdays.xlsx')
 
 
-def model1_plot(model1_dir, plot_dir) :
+def model1_plot(facility_name, group, model1_dir, plot_dir) :
 	os.chdir(model1_dir)
 	temp = read_excel('model_1_var.xlsx')
+	info = read_excel('model_1_beta.xlsx')
+	info.index = ['a', 'b', 'loc', 'scale']
+	
+	a = info.loc['a', facility_name]
+	b = info.loc['b', facility_name]
+	loc = info.loc['loc', facility_name]
+	scale = info.loc['scale', facility_name]
+	
 	m1 = temp.loc[:, 'var'].tolist()
-
+	
 	plt.figure(figsize = (8, 8))
-	plt.title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
+	plt.title('{}\nBeta Distribution(a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3)))
 	plt.xlabel('model 1')
 	plt.ylabel('density')
 	
+	r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
 	density = kde.gaussian_kde(m1)
 	
-	x = np.linspace(min(r), max(r), 300)
+	x = np.linspace(min(m1), max(m1), 300)
 	y_real = density(x)
 	
 	plt.grid()
@@ -400,26 +409,37 @@ def model1_plot(model1_dir, plot_dir) :
 	plt.plot(x, y_real, 'r', label = 'real value')
 	plt.legend()
 	os.chdir(plot_dir)
-	plt.savefit(f'model1_{facility}_solo.png', dpi = 400)
+	plt.savefig(f'model1_{facility_name}_{group}.png', dpi = 400)
 	plt.clf()
 	plt.cla()
 	plt.close()
 	pass
 
-def model2_plot(model2_dir, plot_dir) :
+def model2_plot(facility_name, group, model2_dir, plot_dir) :
 	os.chdir(model2_dir)
 	temp_day = read_excel('model2_weekdays_std.xlsx')
 	temp_end = read_excel('model2_weekends_std.xlsx')
 	m2_day = temp_day.loc[:, 'std'].tolist()
 	m2_end = temp_end.loc[:, 'std'].tolist()
+	info = read_excel('model_2_beta.xlsx')
+	info.index = ['a', 'b', 'loc', 'scale']
 	
+	min_all = min([min(m2_day), min(m2_end)])
+	max_all = max([max(m2_day), max(m2_end)])
 	fig = plt.figure(figsize = (16, 10))
 	
 	for i in range(2) :
 		ax = fig.add_subplot(2, 1, 1 + i)
-		facility = temp.columns[i]
 		
-		ax.figure(figsize = (8, 8))
+		facility = info.columns[i]
+		
+		a = info.loc['a', facility]
+		b = info.loc['b', facility]
+		loc = info.loc['loc', facility]
+		scale = info.loc['scale', facility]
+		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
+		
+		# ~ ax.figure(figsize = (8, 8))
 		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
 		ax.set_xlabel('model 2')
 		ax.set_ylabel('density')
@@ -430,7 +450,7 @@ def model2_plot(model2_dir, plot_dir) :
 		if i == 1 :
 			density_real = kde.gaussian_kde(m2_end)
 			
-		x = np.linspace(min(r), max(r), 300)
+		x = np.linspace(min_all, max_all, 300)
 		y_real = density_real(x)
 		
 		ax.grid()
@@ -438,7 +458,7 @@ def model2_plot(model2_dir, plot_dir) :
 		ax.legend()
 		
 	os.chdir(plot_dir)
-	plt.savefit(f'model2_{facility[ : -3]}_all.png', dpi = 400)
+	plt.savefig(f'model2_{facility_name}_{group}_all.png', dpi = 400)
 	plt.clf()
 	plt.cla()
 	plt.close()
@@ -482,7 +502,7 @@ os.chdir(model2_dir)
 	plt.savefit(f'model1_{facility}_solo.png', dpi = 400)
 	plt.show()
 '''
-def model3_plot(facility_name, model3_dir, plot_dir) :
+def model3_plot(facility_name, group, model3_dir, plot_dir) :
 	os.chdir(model3_dir)
 	pf_48 = read_excel('profile_48.xlsx')
 	
@@ -491,9 +511,14 @@ def model3_plot(facility_name, model3_dir, plot_dir) :
 	
 	xticks_6 = [6, 12, 18, 24, 30, 36, 42, 48]
 	xticks_48 = []
+	hours_ex = []
 	for i in range(1, 49) :
 		xticks_48.append(i)
+		hours_ex.append(i)
 		
+	line_1 = 22.5
+	line_2 = 45.5
+
 	print('\tplot start')
 		# model 3 group_0
 
@@ -513,19 +538,27 @@ def model3_plot(facility_name, model3_dir, plot_dir) :
 	ax.grid()
 	
 	os.chdir(plot_dir)
-	plt.save('{}_{}_model3.png'.format(facility_name, group), dpi = 400)
+	plt.savefig('{}_{}_model3.png'.format(facility_name, group), dpi = 400)
 	plt.clf()
 	plt.cla()
 	plt.close()
 	pass
 	
-def model4_plot(facility_name, model4_dir, plot_dir) :
-	fig = plt.figure(figsize = (14, 7))
+def model4_plot(facility_name, group, model4_dir, plot_dir) :
+	fig = plt.figure(figsize = (10, 5))
 	ax = fig.add_subplot(1, 1, 1)
 	
 	flierprops = dict(marker='o', markerfacecolor='g', markersize= 2 ,\
 					linestyle='none', markeredgecolor='dimgrey')
-					
+	xticks_48 = []
+	hours_ex = []
+	for i in range(1, 49) :
+		xticks_48.append(i)
+		hours_ex.append(i)
+		
+	line_1 = 22.5
+	line_2 = 45.5
+				
 	os.chdir(model4_dir)
 	m4_day = read_excel('model4_weekdays.xlsx')
 	m4_end = read_excel('model4_weekends.xlsx')
@@ -550,7 +583,77 @@ def model4_plot(facility_name, model4_dir, plot_dir) :
 	ax.grid()
 
 	os.chdir(plot_dir)
-	plt.save('{}_{}_model4.png'.format(facility_name, group), dpi = 400)
+	plt.savefig('{}_{}_model4.png'.format(facility_name, group), dpi = 400)
+	plt.clf()
+	plt.cla()
+	plt.close()
+	pass
+
+
+def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
+	
+	os.chdir(nfc_dir + f'\\{facility_name}\\model1')
+	
+	smpl = read_excel('model_1.xlsx')
+	smpl.index = ['a', 'b', 'loc', 'scale']
+	
+	if facility_name == '판매및숙박' :
+		smvar1 = read_excel('모델1_숙박시설.xlsx')
+		smvar2 = read_excel('모델1_판매시설.xlsx')
+		smvar1 = smvar1.iloc[:, 0]
+		smvar2 = smvar2.iloc[:, 0]
+		smvar1.columns = ['var']
+		smvar2.columns = ['var']
+		
+		smvar = pd.concat([smvar1, smvar2])
+		smvar.reset_index(drop = True, inplace = True)
+		smvar = smvar.loc[:, 'var'].tolist()
+		
+	else :
+		smvar = read_excel(f'모델1_{facility_name}.xlsx')
+		smvar = smvar.iloc[:, 0].tolist()
+		
+		
+		
+	ass = smpl.loc['a', facility_name]
+	bs = smpl.loc['b', facility_name]
+	locs = smpl.loc['loc', facility_name]
+	scales = smpl.loc['scale', facility_name]
+	
+	os.chdir(model1_dir)
+	temp = read_excel('model_1_var.xlsx')
+	info = read_excel('model_1_beta.xlsx')
+	info.index = ['a', 'b', 'loc', 'scale']
+	
+	a = info.loc['a', facility_name]
+	b = info.loc['b', facility_name]
+	loc = info.loc['loc', facility_name]
+	scale = info.loc['scale', facility_name]
+	
+	m1 = temp.loc[:, 'var'].tolist()
+	
+	plt.figure(figsize = (8, 8))
+	plt.title('{}\nBeta Distribution(a = {}, b = {}) \n(smpl : a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3), round(ass, 3), round(bs, 3)))
+	plt.xlabel('model 1')
+	plt.ylabel('density')
+	
+	r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
+	density = kde.gaussian_kde(m1)
+	density_smpl = kde.gaussian_kde(smvar)
+	
+	x_smpl = np.linspace(min(smvar), max(smvar), 300)
+	y_smpl = density_smpl(x_smpl)
+	
+	x = np.linspace(min(m1), max(m1), 300)
+	y_real = density(x)
+	
+	plt.grid()
+	# ~ plt.plot(x, y_sample, 'b--', label = 'random variates')
+	plt.plot(x_smpl, y_smpl, 'b--', label = 'sample')
+	plt.plot(x, y_real, 'r', label = 'generated profiles')
+	plt.legend()
+	os.chdir(plot_dir)
+	plt.savefig(f'model1_{facility_name}_{group}_compare.png', dpi = 400)
 	plt.clf()
 	plt.cla()
 	plt.close()
