@@ -53,7 +53,7 @@ for fc in fc_list_2 :
 		dich.newfolderlist(tempdir + f'\\group_{i}', subdir_list)
 		
 		for sd in subdir_list :
-			if sd == 'raw' :
+			if (sd == 'raw') | (sd == 'model3'):
 				dich.newfolderlist(tempdir + f'\\group_{i}\\{sd}', ['주중', '주말'])
 	
 	print(f'{fc} directory all made')

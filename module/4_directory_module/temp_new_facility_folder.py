@@ -135,7 +135,7 @@ for key in facility_dict :
 		dich.newfolder(ndir_m3 + '\\group_0')
 		dich.newfolder(ndir_m3 + '\\group_1')
 	
-			
+		
 			
 		
 		for direc in os.listdir(ndir_m3) :
