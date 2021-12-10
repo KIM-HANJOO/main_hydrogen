@@ -59,11 +59,7 @@ for facility in os.listdir(gp_dir) :
 			dich.newfolder(plot_dir)
 			
 			print('\nmodel_1 running')
-<<<<<<< HEAD
-			# ~ mu.model_1(facility, final_dir, model1_dir)
-=======
 			mu.model_1(facility, final_dir, model1_dir)
->>>>>>> da562bc45dea5073243897e504d4f9df329ffdc0
 			print('\nmodel_2 running')
 			mu.model_2(facility, final_dir, model2_dir)
 			print('\nmodel_3 running')
@@ -78,10 +74,9 @@ for facility in os.listdir(gp_dir) :
 			print('\nmodel_3 plotting')
 			mu.model3_plot(facility, group, model3_dir, plot_dir)
 			print('\nmodel_4 plotting')
-<<<<<<< HEAD
 			mu.model4_plot(facility, group, model4_dir, plot_dir)
 			
-			nplot_dir = nplot_dir + '\\compare'
+			nplot_dir = plot_dir + '\\compare'
 			dich.newfolder(nplot_dir)
 			
 			print('\nmodel_1 compare')
@@ -92,11 +87,3 @@ for facility in os.listdir(gp_dir) :
 			mu.model3_compare(facility, group, model3_dir, nplot_dir, nfc_dir)
 			print('\nmodel_4 compare')
 			mu.model4_compare(facility, group, model4_dir, nplot_dir, nfc_dir)
-=======
-			
-			mu.model4_plot(facility, group, model4_dir, plot_dir)
-			mu.model1_compare(facility, group, model1_dir, plot_dir, nfc_dir)
-			mu.model2_compare(facility, group, model2_dir, plot_dir, nfc_dir)
-			mu.model3_compare(facility, group, model3_dir, plot_dir, nfc_dir)
-			mu.model4_compare(facility, group, model4_dir, plot_dir, nfc_dir)
->>>>>>> da562bc45dea5073243897e504d4f9df329ffdc0

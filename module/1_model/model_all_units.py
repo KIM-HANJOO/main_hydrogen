@@ -158,31 +158,18 @@ def model_2(facility_name, final_dir, model2_dir) :
 				alllist = []
 				all_day = []
 				for i in range(temp.shape[0]) :
-<<<<<<< HEAD
-					tempsum = temp.loc[i, :].sum()
-					all_day.append(tempsum)
-				print('step_1')
+					tempave = np.average(temp.loc[i, :])
+					all_day.append(tempave)
 				ave_day = np.average(all_day)
 				for i in range(temp.shape[0]) :
 					for col in temp.columns :
 						alllist.append(temp.loc[i, col] / ave_day)
-				print('step_2')
 				for index in range(len(alllist)) :
 					df.loc[df_num, 'excel'] = f'{excel}_{index}'
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
-				print('step_3')
 				print(f'{excel} done', end = '\r')
-=======
-					for col in temp.columns :
-						alllist.append(temp.loc[i, col])
-	
-				temp_std = np.std(alllist)
-				df.loc[df_num, 'excel'] = excel
-				df.loc[df_num, 'std'] = temp_std
-				df_num += 1
->>>>>>> da562bc45dea5073243897e504d4f9df329ffdc0
 	
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekdays_std.xlsx')
@@ -208,8 +195,8 @@ def model_2(facility_name, final_dir, model2_dir) :
 				alllist = []
 				all_day = []
 				for i in range(temp.shape[0]) :
-					tempsum = temp.loc[i, :].sum()
-					all_day.append(tempsum)
+					tempave = np.average(temp.loc[i, :])
+					all_day.append(tempave)
 				
 				ave_day = np.average(all_day)
 				for i in range(temp.shape[0]) :

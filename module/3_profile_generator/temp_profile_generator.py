@@ -43,6 +43,36 @@ run 'generated_profiles_directory.py'
 
 '''
 
+
+subdir_list = ['raw', 'model1', 'model2', 'model3', 'model4']
+fc_list = ['교육시설', '문화시설', '숙박시설', '업무시설', '판매시설']
+fc_list_2 = ['교육시설', '문화시설', '판매및숙박', '업무시설']
+
+				
+gfc_dir = main_dir + '\\GENERATED_PROFILES'
+dich.newfolder(gfc_dir)
+
+dich.newfolderlist(gfc_dir, fc_list_2)
+for fc in fc_list_2 :
+	tempdir = gfc_dir + f'\\{fc}'
+	dich.newfolderlist(tempdir, ['group_0', 'group_1'])
+	
+	for i in range(2) :
+		dich.newfolderlist(tempdir + f'\\group_{i}', subdir_list)
+		
+		for sd in subdir_list :
+			if (sd == 'raw') | (sd == 'model3'):
+				dich.newfolderlist(tempdir + f'\\group_{i}\\{sd}', ['주중', '주말'])
+	
+	print(f'{fc} directory all made')
+
+
+
+'''
+note
+'''
+
+
 facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] #profile_num_maker에서 쓰이며, model1, model2 파일 사전작업에 사용되었음
 
 def profile_num_maker(nfc_dir) :
@@ -189,7 +219,10 @@ def profile_generator(profile_num, key_list, file_dict) :
 					scale2 = model2_file.loc['scale', col]
 		
 		st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
-		
+		while st_week < 0 :
+			print('negative value for st_weekend')
+			st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+			
 		for col in model2_file.columns :
 			if facility in col :
 				if '주말' in col :
@@ -200,8 +233,10 @@ def profile_generator(profile_num, key_list, file_dict) :
 					scale2 = model2_file.loc['scale', col]
 		
 		st_weekend = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
-	
-
+		while st_weekend < 0 :
+			print('negative value for st_weekend')
+			st_weekend = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+		
 	
 	
 	
@@ -281,17 +316,13 @@ def profile_generator(profile_num, key_list, file_dict) :
 			# 1일 프로필에 변화를 주는 프로필 생산
 			Y = []
 			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-			while 1:
-				for k in range(24):
-					x = fixed_profile_week.iloc[k,0] + X[k]
-					if x < 0:
-						X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-						a = 0
-						break
-					a = 1
-				if a is 0:
-					continue
-				break
+			
+			# check if model3 + model4 < 0 ; if < 0, convert to 0
+			for k in range(24):
+				x = fixed_profile_week.iloc[k,0] + X[k]
+				if x < 0 :
+					X[k] = 0
+						
 			for f in range(24):
 				y = (fixed_profile_week.iloc[f,0] + X[f])
 				Y.append(y)
@@ -320,17 +351,12 @@ def profile_generator(profile_num, key_list, file_dict) :
 			# 1일 프로필에 변화를 주는 프로필 생산
 			Y = []
 			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-			while 1:
-				for k in range(24):
-					x = fixed_profile_weekend.iloc[k,0] + X[k]
-					if x < 0:
-						X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-						a = 0
-						break
-					a = 1
-				if a is 0:
-					continue
-				break
+			# check if model3 + model4 < 0 ; if < 0, convert to 0
+			for k in range(24):
+				x = fixed_profile_weekend.iloc[k,0] + X[k]
+				if x < 0 :
+					X[k] = 0
+						
 			for f in range(24):
 				y = (fixed_profile_weekend.iloc[f,0] + X[f])
 				Y.append(y)
@@ -374,21 +400,30 @@ tempsum = sum(maker_df.loc[:, 'number'].tolist())
 
 for i in range(maker_df.shape[0]) :
 	maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / tempsum * 100, 2)
-	
+
 for i in range(maker_df.shape[0]) :
-	if maker_df.loc[i, 'number'] > 100 :
-		maker_df.loc[i, 'number'] = 100
+	print(f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group']}, generate n = {maker_df.loc[i, 'number']}\n")
+# ~ for i in range(maker_df.shape[0]) :
+	# ~ if maker_df.loc[i, 'number'] > 100 :
+		# ~ maker_df.loc[i, 'number'] = 100
 		
 print(maker_df)
 
 
 for facility in facility_list :
 	for group in range(2) : # group_number
-		if (facility == '문화시설') :
+		check = 1
+		if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '문화시설') :
+			check = 0
+			print(f'{facility}, {group} X')
+		# ~ if (facility == '교육시설') & (group == 0) :
+			# ~ check = 0
+			# ~ print(f'{facility}, {group} X')
+		if check == 1 :
 			for i in range(maker_df.shape[0]) :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
-			
+			print(f"{facility}, group_{group}, n = {profile_num}")
 			key_list, file_dict = generate_fc(nfc_dir, facility, group)
 			profile_generator(profile_num, key_list, file_dict)
 
