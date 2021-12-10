@@ -45,7 +45,7 @@ use 'model_all_units.py' as one and only module
 import model_all_units as mu
 
 for facility in os.listdir(gp_dir) :
-	if facility != '판매및숙박' :
+	if facility == '문화시설' :
 		tdir = gp_dir + '\\' + facility
 		for group in range(2) :
 			print(facility, '\t', 'group number', group)
@@ -58,21 +58,24 @@ for facility in os.listdir(gp_dir) :
 			plot_dir = main_dir + '\\GENERATED_PLOTS\\' + facility
 			dich.newfolder(plot_dir)
 			
-			# ~ print('\nmodel_1 running')
-			# ~ mu.model_1(facility, final_dir, model1_dir)
-			# ~ print('\nmodel_2 running')
-			# ~ mu.model_2(facility, final_dir, model2_dir)
-			# ~ print('\nmodel_3 running')
-			# ~ mu.model_3(final_dir, model3_dir)
-			# ~ print('\nmodel_4 running')
-			# ~ mu.model_4(model3_dir, model4_dir)
+			print('\nmodel_1 running')
+			mu.model_1(facility, final_dir, model1_dir)
+			print('\nmodel_2 running')
+			mu.model_2(facility, final_dir, model2_dir)
+			print('\nmodel_3 running')
+			mu.model_3(final_dir, model3_dir)
+			print('\nmodel_4 running')
+			mu.model_4(model3_dir, model4_dir)
 			
-			# ~ print('\nmodel_1 plotting')
-			# ~ mu.model1_plot(facility, group, model1_dir, plot_dir)
-			# ~ print('\nmodel_2 plotting')
-			# ~ mu.model2_plot(facility, group, model2_dir, plot_dir)
-			# ~ print('\nmodel_3 plotting')
-			# ~ mu.model3_plot(facility, group, model3_dir, plot_dir)
-			# ~ print('\nmodel_4 plotting')
-			# ~ mu.model4_plot(facility, group, model4_dir, plot_dir)
+			print('\nmodel_1 plotting')
+			mu.model1_plot(facility, group, model1_dir, plot_dir)
+			print('\nmodel_2 plotting')
+			mu.model2_plot(facility, group, model2_dir, plot_dir)
+			print('\nmodel_3 plotting')
+			mu.model3_plot(facility, group, model3_dir, plot_dir)
+			print('\nmodel_4 plotting')
+			mu.model4_plot(facility, group, model4_dir, plot_dir)
 			mu.model1_compare(facility, group, model1_dir, plot_dir, nfc_dir)
+			mu.model2_compare(facility, group, model2_dir, plot_dir, nfc_dir)
+			mu.model3_compare(facility, group, model3_dir, plot_dir, nfc_dir)
+			mu.model4_compare(facility, group, model4_dir, plot_dir, nfc_dir)

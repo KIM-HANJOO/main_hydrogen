@@ -183,23 +183,23 @@ def profile_generator(profile_num, key_list, file_dict) :
 			if facility in col :
 				if '주중' in col :
 					print(col)
-					a = model2_file.loc['a', col]
-					b = model2_file.loc['b', col]
-					loc = model2_file.loc['loc', col]
-					scale = model2_file.loc['scale', col]
+					a2 = model2_file.loc['a', col]
+					b2 = model2_file.loc['b', col]
+					loc2 = model2_file.loc['loc', col]
+					scale2 = model2_file.loc['scale', col]
 		
-		st_week = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
+		st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
 		
 		for col in model2_file.columns :
 			if facility in col :
 				if '주말' in col :
 					print(col)
-					a = model2_file.loc['a', col]
-					b = model2_file.loc['b', col]
-					loc = model2_file.loc['loc', col]
-					scale = model2_file.loc['scale', col]
+					a2 = model2_file.loc['a', col]
+					b2 = model2_file.loc['b', col]
+					loc2 = model2_file.loc['loc', col]
+					scale2 = model2_file.loc['scale', col]
 		
-		st_weekend = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
+		st_weekend = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
 	
 
 	
@@ -384,7 +384,7 @@ print(maker_df)
 
 for facility in facility_list :
 	for group in range(2) : # group_number
-		if (facility != '판매및숙박') :
+		if (facility == '문화시설') :
 			for i in range(maker_df.shape[0]) :
 				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
 					profile_num = maker_df.loc[i, 'number']
