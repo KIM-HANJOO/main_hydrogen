@@ -45,7 +45,7 @@ use 'model_all_units.py' as one and only module
 import model_all_units as mu
 
 for facility in os.listdir(gp_dir) :
-	if facility == '문화시설' :
+	if facility != '판매및숙박' :
 		tdir = gp_dir + '\\' + facility
 		for group in range(2) :
 			print(facility, '\t', 'group number', group)
@@ -74,6 +74,7 @@ for facility in os.listdir(gp_dir) :
 			print('\nmodel_3 plotting')
 			mu.model3_plot(facility, group, model3_dir, plot_dir)
 			print('\nmodel_4 plotting')
+			
 			mu.model4_plot(facility, group, model4_dir, plot_dir)
 			mu.model1_compare(facility, group, model1_dir, plot_dir, nfc_dir)
 			mu.model2_compare(facility, group, model2_dir, plot_dir, nfc_dir)

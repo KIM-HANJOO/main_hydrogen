@@ -157,8 +157,8 @@ def model_2(facility_name, final_dir, model2_dir) :
 				temp = lib.read_excel(excel)
 				alllist = []
 				for i in range(temp.shape[0]) :
-					tempsum = temp.loc[i, :].sum()
-					alllist.append(tempsum)
+					for col in temp.columns :
+						alllist.append(temp.loc[i, col])
 	
 				temp_std = np.std(alllist)
 				df.loc[df_num, 'excel'] = excel
