@@ -158,6 +158,7 @@ def model_2(facility_name, final_dir, model2_dir) :
 				alllist = []
 				all_day = []
 				for i in range(temp.shape[0]) :
+<<<<<<< HEAD
 					tempsum = temp.loc[i, :].sum()
 					all_day.append(tempsum)
 				print('step_1')
@@ -173,6 +174,15 @@ def model_2(facility_name, final_dir, model2_dir) :
 					df_num += 1
 				print('step_3')
 				print(f'{excel} done', end = '\r')
+=======
+					for col in temp.columns :
+						alllist.append(temp.loc[i, col])
+	
+				temp_std = np.std(alllist)
+				df.loc[df_num, 'excel'] = excel
+				df.loc[df_num, 'std'] = temp_std
+				df_num += 1
+>>>>>>> da562bc45dea5073243897e504d4f9df329ffdc0
 	
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekdays_std.xlsx')
@@ -673,6 +683,219 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
 	plt.legend()
 	os.chdir(plot_dir)
 	plt.savefig(f'model1_{facility_name}_{group}_compare.png', dpi = 400)
+	plt.clf()
+	plt.cla()
+	plt.close()
+	pass
+	
+def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
+	
+	if facility_name == '판매및숙박' :
+		pass
+	else :
+		os.chdir(nfc_dir + f'\\{facility_name}\\model2')
+		smpl = read_excel('Model2_daily fractoin.xlsx')
+		
+		col_list = []
+		for col in smpl.columns :
+			if facility_name in col :
+				col_list.append(col)
+				
+		smpl1 = smpl.loc[:, col_list[0]].tolist()
+		smpl1 = [x for x in smpl1 if str(x) != 'nan']
+		
+		smpl2 = smpl.loc[:, col_list[1]].tolist()
+		smpl2 = [x for x in smpl2 if str(x) != 'nan']
+		
+	os.chdir(model2_dir)
+	temp_day = read_excel('model2_weekdays_std.xlsx')
+	temp_end = read_excel('model2_weekends_std.xlsx')
+	m2_day = temp_day.loc[:, 'std'].tolist()
+	m2_end = temp_end.loc[:, 'std'].tolist()
+	info = read_excel('model_2_beta.xlsx')
+	info.index = ['a', 'b', 'loc', 'scale']
+	
+	min_all = min([min(m2_day), min(m2_end)])
+	max_all = max([max(m2_day), max(m2_end)])
+	fig = plt.figure(figsize = (16, 10))
+	
+	for i in range(2) :
+		ax = fig.add_subplot(2, 1, 1 + i)
+		
+		facility = info.columns[i]
+		
+		a = info.loc['a', facility]
+		b = info.loc['b', facility]
+		loc = info.loc['loc', facility]
+		scale = info.loc['scale', facility]
+		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
+		
+		# ~ ax.figure(figsize = (8, 8))
+		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
+		ax.set_xlabel('model 2')
+		ax.set_ylabel('density')
+		
+		if i == 0 :
+			density_real = kde.gaussian_kde(m2_day)
+			density_smpl = kde.gaussian_kde(smpl1)
+			xs = np.linspace(min(smpl1), max(smpl1), 300)
+		if i == 1 :
+			density_real = kde.gaussian_kde(m2_end)
+			density_smpl = kde.gaussian_kde(smpl2)
+			xs = np.linspace(min(smpl2), max(smpl2), 300)
+		
+		
+		
+		x = np.linspace(min_all, max_all, 300)
+		y_real = density_real(x)
+		y_smpl = density_smpl(xs)
+		
+		ax.grid()
+		ax.plot(xs, y_smpl, 'b--', label = 'sample')
+		ax.plot(x, y_real, 'r', label = 'generated profiles')
+		ax.legend()
+		
+	os.chdir(plot_dir)
+	plt.savefig(f'model2_{facility_name}_{group}_all_compare.png', dpi = 400)
+	plt.clf()
+	plt.cla()
+	plt.close()
+	pass
+	
+	
+def model3_compare(facility_name, group, model3_dir, plot_dir, nfc_dir) :
+	
+	os.chdir(nfc_dir + '\\' + facility_name + f'\\model3\\group_{group}')
+	org_48 = read_excel(f'profile_48_group_{group}.xlsx')
+	
+	os.chdir(model3_dir)
+	pf_48 = read_excel('profile_48.xlsx')
+	
+	fig = plt.figure(figsize = (14, 14))
+	ax = fig.add_subplot(2, 1, 1)
+	ax2 = fig.add_subplot(2, 1, 2)
+	
+	xticks_6 = [6, 12, 18, 24, 30, 36, 42, 48]
+	xticks_48 = []
+	hours_ex = []
+	for i in range(1, 49) :
+		xticks_48.append(i)
+		hours_ex.append(i)
+		
+	line_1 = 22.5
+	line_2 = 45.5
+
+	print('\tplot start')
+		# model 3 group_0
+
+	for i in range(pf_48.shape[0]) :
+		ax.plot(hours_ex, pf_48.loc[i, '1' : '48'], alpha = 1)	
+	
+	ax.plot([24, 24], [-2, 2], color = 'dimgrey') 
+	ax.plot([48, 48], [-2, 2], color = 'dimgrey')
+	ax.text(line_1, 0.17, 'weekdays', rotation = 90, color = 'dimgrey')
+	ax.text(line_2 + 1, 0.17, 'weekends', rotation = 90, color = 'dimgrey')
+	
+	ax.set_xlim([1, 48])
+	ax.set_ylim([0, 0.2])
+	ax.set_title('{}_{}_model3'.format(facility_name, group))
+	ax.set_xlabel('hours')
+	ax.set_xticks(xticks_6)
+	ax.grid()
+	
+	##
+	
+	for i in range(org_48.shape[0]) :
+		ax2.plot(hours_ex, org_48.loc[i, '1' : '48'], alpha = 1)	
+	
+	ax2.plot([24, 24], [-2, 2], color = 'dimgrey') 
+	ax2.plot([48, 48], [-2, 2], color = 'dimgrey')
+	ax2.text(line_1, 0.17, 'weekdays', rotation = 90, color = 'dimgrey')
+	ax2.text(line_2 + 1, 0.17, 'weekends', rotation = 90, color = 'dimgrey')
+	
+	ax2.set_xlim([1, 48])
+	ax2.set_ylim([0, 0.2])
+	ax2.set_title('{}_{}_sample'.format(facility_name, group))
+	ax2.set_xlabel('hours')
+	ax2.set_xticks(xticks_6)
+	ax2.grid()
+	
+	##
+	
+	os.chdir(plot_dir)
+	plt.savefig('{}_{}_model3_compare.png'.format(facility_name, group), dpi = 400)
+	plt.clf()
+	plt.cla()
+	plt.close()
+	pass
+
+def model4_compare(facility_name, group, model4_dir, plot_dir, nfc_dir) :
+	fig = plt.figure(figsize = (10, 10))
+	ax = fig.add_subplot(2, 1, 1)
+	ax2 = fig.add_subplot(2, 1, 2)
+	
+	flierprops = dict(marker='o', markerfacecolor='g', markersize= 2 ,\
+					linestyle='none', markeredgecolor='dimgrey')
+	xticks_48 = []
+	hours_ex = []
+	for i in range(1, 49) :
+		xticks_48.append(i)
+		hours_ex.append(i)
+		
+	line_1 = 22.5
+	line_2 = 45.5
+	os.chdir(nfc_dir + f'\\{facility_name}\\model4\\group_{group}_model4')
+	smpl_day = read_excel('model4_weekdays.xlsx')
+	smpl_end = read_excel('model4_weekends.xlsx')
+	
+	os.chdir(model4_dir)
+	m4_day = read_excel('model4_weekdays.xlsx')
+	m4_end = read_excel('model4_weekends.xlsx')
+	
+	for i in range(1, 49) :
+		if i < 25 : # plot from weekday df
+			temp = ax.boxplot(m4_day.loc[:, f'{i}'], positions = [i], flierprops = flierprops)
+		else :
+			temp = ax.boxplot(m4_end.loc[:, f'{i - 24}'], positions = [i], flierprops = flierprops)
+			
+	ax.set_xlabel('hours')
+	ax.set_title('{}_{}_model4'.format(facility_name, group))
+	
+	ax.plot([24, 24], [-2, 2], color = 'dimgrey') 
+
+	ax.text(line_1, 0.8, 'weekdays', rotation = 90, color = 'dimgrey')
+	ax.text(line_2 + 2, 0.8, 'weekends', rotation = 90, color = 'dimgrey')
+	ax.set_xticklabels(xticks_48, rotation = 90)
+	
+	ax.set_xlim([0, 49])
+	ax.set_ylim([-0.2, 1])
+	ax.grid()
+
+	##
+	
+	for i in range(1, 49) :
+		if i < 25 : # plot from weekday df
+			temp = ax2.boxplot(smpl_day.loc[:, f'{i}'], positions = [i], flierprops = flierprops)
+		else :
+			temp = ax2.boxplot(smpl_end.loc[:, f'{i - 24}'], positions = [i], flierprops = flierprops)
+			
+	ax2.set_xlabel('hours')
+	ax2.set_title('{}_{}_sample'.format(facility_name, group))
+	
+	ax2.plot([24, 24], [-2, 2], color = 'dimgrey') 
+
+	ax2.text(line_1, 0.8, 'weekdays', rotation = 90, color = 'dimgrey')
+	ax2.text(line_2 + 2, 0.8, 'weekends', rotation = 90, color = 'dimgrey')
+	ax2.set_xticklabels(xticks_48, rotation = 90)
+	
+	ax2.set_xlim([0, 49])
+	ax2.set_ylim([-0.2, 1])
+	ax2.grid()
+	
+	##
+	
+	os.chdir(plot_dir)
+	plt.savefig('{}_{}_model4_compare.png'.format(facility_name, group), dpi = 400)
 	plt.clf()
 	plt.cla()
 	plt.close()
