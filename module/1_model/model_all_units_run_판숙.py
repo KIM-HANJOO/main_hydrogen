@@ -42,10 +42,10 @@ note
 
 use 'model_all_units.py' as one and only module
 '''
-import model_all_units as mu
+import model_all_units_판숙 as mu
 
 for facility in os.listdir(gp_dir) :
-	if facility != '판매및숙박' :
+	if facility == '판매및숙박' :
 		tdir = gp_dir + '\\' + facility
 		for group in range(2) :
 			print(facility, '\t', 'group number', group)
@@ -57,33 +57,32 @@ for facility in os.listdir(gp_dir) :
 			final_dir = nmaindir + '\\raw'
 			plot_dir = main_dir + '\\GENERATED_PLOTS\\' + facility
 			dich.newfolder(plot_dir)
+			tempdir_0 = 'C:\\Users\\김한주\\Documents\\GitHub\\main_hydrogen\\temp_model3\\group_0'
+			tempdir_1 = 'C:\\Users\\김한주\\Documents\\GitHub\\main_hydrogen\\temp_model3\\group_1'
 			
+			srcdir_0 = 'C:\\Users\\김한주\\Documents\\GitHub\\main_hydrogen\\FACILITIES\\판매및숙박\\model3\\group_0\\group_0_preprocessed'
+			srcdir_1 = 'C:\\Users\\김한주\\Documents\\GitHub\\main_hydrogen\\FACILITIES\\판매및숙박\\model3\\group_1\\group_1_preprocessed'
 			print('\nmodel_1 running')
-			# ~ mu.model_1(facility, final_dir, model1_dir)
-			print('\nmodel_2 running')
-			mu.model_2(facility, final_dir, model2_dir)
-			print('\nmodel_3 running')
-			mu.model_3(final_dir, model3_dir)
-			print('\nmodel_4 running')
-			mu.model_4(model3_dir, model4_dir)
 			
-			print('\nmodel_1 plotting')
-			mu.model1_plot(facility, group, model1_dir, plot_dir)
-			print('\nmodel_2 plotting')
-			mu.model2_plot(facility, group, model2_dir, plot_dir)
-			print('\nmodel_3 plotting')
-			mu.model3_plot(facility, group, model3_dir, plot_dir)
-			print('\nmodel_4 plotting')
-			mu.model4_plot(facility, group, model4_dir, plot_dir)
+			# ~ mu.model_1(facility, srcdir_0, tempdir_0)
+			# ~ mu.model_1(facility, srcdir_1, tempdir_1)
 			
-			nplot_dir = nplot_dir + '\\compare'
-			dich.newfolder(nplot_dir)
+			print('1')
+			mu.model1_compare(facility, group, tempdir_0, main_dir, nfc_dir)
+			mu.model1_compare(facility, group, tempdir_1, main_dir, nfc_dir)
+			# ~ print('\nmodel_2 running')
+			# ~ mu.model_2(facility, final_dir, model2_dir)
+			# ~ print('\nmodel_3 running')
+			# ~ mu.model_3(final_dir, model3_dir)
+			# ~ print('\nmodel_4 running')
+			# ~ mu.model_4(model3_dir, model4_dir)
 			
-			print('\nmodel_1 compare')
-			mu.model1_compare(facility, group, model1_dir, nplot_dir, nfc_dir)
-			print('\nmodel_2 compare')
-			mu.model2_compare(facility, group, model2_dir, nplot_dir, nfc_dir)
-			print('\nmodel_3 compare')
-			mu.model3_compare(facility, group, model3_dir, nplot_dir, nfc_dir)
-			print('\nmodel_4 compare')
-			mu.model4_compare(facility, group, model4_dir, nplot_dir, nfc_dir)
+			# ~ print('\nmodel_1 plotting')
+			# ~ mu.model1_plot(facility, group, model1_dir, plot_dir)
+			# ~ print('\nmodel_2 plotting')
+			# ~ mu.model2_plot(facility, group, model2_dir, plot_dir)
+			# ~ print('\nmodel_3 plotting')
+			# ~ mu.model3_plot(facility, group, model3_dir, plot_dir)
+			# ~ print('\nmodel_4 plotting')
+			# ~ mu.model4_plot(facility, group, model4_dir, plot_dir)
+			

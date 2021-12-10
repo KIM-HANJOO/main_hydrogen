@@ -156,23 +156,14 @@ def model_2(facility_name, final_dir, model2_dir) :
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
 				alllist = []
-				all_day = []
 				for i in range(temp.shape[0]) :
 					tempsum = temp.loc[i, :].sum()
-					all_day.append(tempsum)
-				print('step_1')
-				ave_day = np.average(all_day)
-				for i in range(temp.shape[0]) :
-					for col in temp.columns :
-						alllist.append(temp.loc[i, col] / ave_day)
-				print('step_2')
-				for index in range(len(alllist)) :
-					df.loc[df_num, 'excel'] = f'{excel}_{index}'
-					df.loc[df_num, 'std'] = alllist[index]
-					
-					df_num += 1
-				print('step_3')
-				print(f'{excel} done', end = '\r')
+					alllist.append(tempsum)
+	
+				temp_std = np.std(alllist)
+				df.loc[df_num, 'excel'] = excel
+				df.loc[df_num, 'std'] = temp_std
+				df_num += 1
 	
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekdays_std.xlsx')
@@ -196,24 +187,14 @@ def model_2(facility_name, final_dir, model2_dir) :
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
 				alllist = []
-				all_day = []
 				for i in range(temp.shape[0]) :
 					tempsum = temp.loc[i, :].sum()
-					all_day.append(tempsum)
-				
-				ave_day = np.average(all_day)
-				for i in range(temp.shape[0]) :
-					for col in temp.columns :
-						alllist.append(temp.loc[i, col] / ave_day)
-				
-				for index in range(len(alllist)) :
-					df.loc[df_num, 'excel'] = f'{excel}_{index}'
-					df.loc[df_num, 'std'] = alllist[index]
-					
-					df_num += 1
-			
-				print(f'{excel} done', end = '\r')
-					
+					alllist.append(tempsum)
+	
+				temp_std = np.std(alllist)
+				df.loc[df_num, 'excel'] = excel
+				df.loc[df_num, 'std'] = temp_std
+				df_num += 1
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekends_std.xlsx')
 			print('{} done'.format(excel), end = '\r')
@@ -609,7 +590,7 @@ def model4_plot(facility_name, group, model4_dir, plot_dir) :
 	pass
 
 
-def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
+def model1_compare(facility_name, group, tempdir, plot_dir, nfc_dir) :
 	
 	os.chdir(nfc_dir + f'\\{facility_name}\\model1')
 	
@@ -619,14 +600,15 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
 	if facility_name == '판매및숙박' :
 		smvar1 = read_excel('모델1_숙박시설.xlsx')
 		smvar2 = read_excel('모델1_판매시설.xlsx')
-		smvar1 = smvar1.iloc[:, 0]
-		smvar2 = smvar2.iloc[:, 0]
-		smvar1.columns = ['var']
-		smvar2.columns = ['var']
+		smvar1 = smvar1.iloc[:, 0].tolist()
+		smvar2 = smvar2.iloc[:, 0].tolist()
+		# ~ smvar1.columns = ['var']
+		# ~ smvar2.columns = ['var']
 		
-		smvar = pd.concat([smvar1, smvar2])
-		smvar.reset_index(drop = True, inplace = True)
-		smvar = smvar.loc[:, 'var'].tolist()
+		# ~ smvar = pd.concat([smvar1, smvar2])
+		# ~ smvar.reset_index(drop = True, inplace = True)
+		# ~ smvar = smvar.loc[:, 'var'].tolist()
+		smvar = smvar1 + smvar2
 		
 	else :
 		smvar = read_excel(f'모델1_{facility_name}.xlsx')
@@ -634,12 +616,12 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
 		
 		
 		
-	ass = smpl.loc['a', facility_name]
-	bs = smpl.loc['b', facility_name]
-	locs = smpl.loc['loc', facility_name]
-	scales = smpl.loc['scale', facility_name]
+	# ~ ass = smpl.loc['a', facility_name]
+	# ~ bs = smpl.loc['b', facility_name]
+	# ~ locs = smpl.loc['loc', facility_name]
+	# ~ scales = smpl.loc['scale', facility_name]
 	
-	os.chdir(model1_dir)
+	os.chdir(tempdir)
 	temp = read_excel('model_1_var.xlsx')
 	info = read_excel('model_1_beta.xlsx')
 	info.index = ['a', 'b', 'loc', 'scale']
@@ -652,7 +634,7 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
 	m1 = temp.loc[:, 'var'].tolist()
 	
 	plt.figure(figsize = (8, 8))
-	plt.title('{}\nBeta Distribution(a = {}, b = {}) \n(smpl : a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3), round(ass, 3), round(bs, 3)))
+	plt.title('{}\nBeta Distribution(a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3)))
 	plt.xlabel('model 1')
 	plt.ylabel('density')
 	
