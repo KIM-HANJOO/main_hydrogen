@@ -45,7 +45,7 @@ use 'model_all_units.py' as one and only module
 import model_all_units as mu
 
 for facility in os.listdir(gp_dir) :
-	if facility != '판매및숙박' :
+	if (facility != '판매및숙박') & (facility != '교육시설') :
 		tdir = gp_dir + '\\' + facility
 		for group in range(2) :
 			print(facility, '\t', 'group number', group)

@@ -227,15 +227,15 @@ def profile_generator(profile_num, key_list, file_dict) :
 			if facility in col :
 				if '주말' in col :
 					print(col)
-					a2 = model2_file.loc['a', col]
-					b2 = model2_file.loc['b', col]
-					loc2 = model2_file.loc['loc', col]
-					scale2 = model2_file.loc['scale', col]
+					a3 = model2_file.loc['a', col]
+					b3 = model2_file.loc['b', col]
+					loc3 = model2_file.loc['loc', col]
+					scale3 = model2_file.loc['scale', col]
 		
-		st_weekend = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+		st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
 		while st_weekend < 0 :
 			print('negative value for st_weekend')
-			st_weekend = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+			st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
 		
 	
 	

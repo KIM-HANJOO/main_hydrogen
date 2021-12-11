@@ -188,7 +188,6 @@ def model_2(facility_name, final_dir, model2_dir) :
 		if '주말' in folder :
 			df = pd.DataFrame(columns = ['excel', 'std'])
 			df_num = 0
-	
 			for excel in os.listdir(tempdir) :
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
@@ -197,20 +196,17 @@ def model_2(facility_name, final_dir, model2_dir) :
 				for i in range(temp.shape[0]) :
 					tempave = np.average(temp.loc[i, :])
 					all_day.append(tempave)
-				
 				ave_day = np.average(all_day)
 				for i in range(temp.shape[0]) :
 					for col in temp.columns :
 						alllist.append(temp.loc[i, col] / ave_day)
-				
 				for index in range(len(alllist)) :
 					df.loc[df_num, 'excel'] = f'{excel}_{index}'
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
-			
 				print(f'{excel} done', end = '\r')
-					
+								
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekends_std.xlsx')
 			print('{} done'.format(excel), end = '\r')
