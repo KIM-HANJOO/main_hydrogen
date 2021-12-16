@@ -45,9 +45,16 @@ use 'model_all_units.py' as one and only module
 import model_all_units as mu
 
 for facility in os.listdir(gp_dir) :
-	if (facility != '판매및숙박') & (facility != '교육시설') :
-		tdir = gp_dir + '\\' + facility
-		for group in range(2) :
+	for group in range(2) :
+		check = 0
+		if (facility == '교육시설') & (group == 1) :
+			check = 1
+			
+		if (facility == '업무시설') & (group == 1):
+			check = 1
+
+		if check == 1 :
+			tdir = gp_dir + '\\' + facility
 			print(facility, '\t', 'group number', group)
 			nmaindir = tdir + f'\\group_{group}'
 			model1_dir = nmaindir + '\\model1'

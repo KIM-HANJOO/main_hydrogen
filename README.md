@@ -19,13 +19,16 @@ able to check the sign of the parameter 's'
 
 
 ---
-problem arises when the scale value (st_week) is shown to be a negative value.
+problem arises when the scale value (st_week) is shown to be negative.
 st_week is made at previous lines, with random sampling code 'beta.rvs(alpha, beta, loc, scale, num)'
 
 adjusted code by adding while-loop until st_week is not negative.
-with the alpha, beta, loc, scale values given, have to aware that there are chances of the random sampled values to be negative.
+with the alpha, beta, loc, scale values given, have to aware that there are chances for the random sampled values to be negative.
 
 
+
+2. in making model2, with a little chance -
+sheet size can go beyond the limit size.
 
 ## facing problems
 
