@@ -34,7 +34,7 @@ import math
 import random
 from scipy.stats import beta, kde
 import scipy.stats
-
+import time
 
 '''
 note
@@ -147,81 +147,160 @@ def model_2(facility_name, final_dir, model2_dir) :
 	
 	for folder in os.listdir(final_dir) :
 		tempdir = final_dir + '\\' + folder
-			
 		if '주중' in folder :
 			df = pd.DataFrame(columns = ['excel', 'std'])
 			df_num = 0
-	
 			for excel in os.listdir(tempdir) :
+				#
+				start = time.time()
+				#
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
 				alllist = []
 				all_day = []
+				
+				#
+				m1 = time.time()
+				#
+				
 				for i in range(temp.shape[0]) :
 					tempave = np.average(temp.loc[i, :])
 					all_day.append(tempave)
 				ave_day = np.average(all_day)
+				
+				#
+				m2 = time.time()
+				#
+				
 				for i in range(temp.shape[0]) :
 					for col in temp.columns :
 						alllist.append(temp.loc[i, col] / ave_day)
+				#
+				m3 = time.time()
+				#
+				
 				for index in range(len(alllist)) :
 					df.loc[df_num, 'excel'] = f'{excel}_{index}'
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
-				print(f'{excel} done', end = '\r')
+				#
+				end = time.time()
+				#
+				time_all = [m1 - start, m2 - m1, m3 - m2, end - m3]
+				pset = sorted(time_all)
+				pset.reverse()
+				
+				ind = []
+				
+				for i in time_all :
+					ind.append(pset.index(i) + 1)
+				
+				print(f'{excel} done, elapsed : {round(end - start, 1)}, {ind}', end = '\r')
+				
 	
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekdays_std.xlsx')
+			df = None
 			print('{} done'.format(excel), end = '\r')
 			
-			m2_1 = df.loc[:, 'std'].tolist()
-			a, b, s1, s2 = scipy.stats.beta.fit(m2_1)
+			# ~ m2_1 = df.loc[:, 'std'].tolist()
+			# ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_1)
 			
-			ndf.loc['a', f'{facility_name}_주중'] = a
-			ndf.loc['b', f'{facility_name}_주중'] = b
-			ndf.loc['loc', f'{facility_name}_주중'] = s1
-			ndf.loc['scale', f'{facility_name}_주중'] = s2
+			# ~ ndf.loc['a', f'{facility_name}_주중'] = a
+			# ~ ndf.loc['b', f'{facility_name}_주중'] = b
+			# ~ ndf.loc['loc', f'{facility_name}_주중'] = s1
+			# ~ ndf.loc['scale', f'{facility_name}_주중'] = s2
 			
-			
-			
+
 		if '주말' in folder :
 			df = pd.DataFrame(columns = ['excel', 'std'])
 			df_num = 0
 			for excel in os.listdir(tempdir) :
+				#
+				start = time.time()
+				#
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
 				alllist = []
 				all_day = []
+				
+				#
+				m1 = time.time()
+				#
+				
 				for i in range(temp.shape[0]) :
 					tempave = np.average(temp.loc[i, :])
 					all_day.append(tempave)
 				ave_day = np.average(all_day)
+				
+				#
+				m2 = time.time()
+				#
+				
 				for i in range(temp.shape[0]) :
 					for col in temp.columns :
 						alllist.append(temp.loc[i, col] / ave_day)
+				#
+				m3 = time.time()
+				#
+				
 				for index in range(len(alllist)) :
 					df.loc[df_num, 'excel'] = f'{excel}_{index}'
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
-				print(f'{excel} done', end = '\r')
+				#
+				end = time.time()
+				#
+				time_all = [m1 - start, m2 - m1, m3 - m2, end - m3]
+				pset = sorted(time_all)
+				pset.reverse()
+				
+				ind = []
+				
+				for i in time_all :
+					ind.append(pset.index(i) + 1)
+				
+				print(f'{excel} done, elapsed : {round(end - start, 1)}, {ind}', end = '\r')
+				
+				# ~ os.chdir(tempdir)
+				# ~ temp = lib.read_excel(excel)
+				# ~ alllist = []
+				# ~ all_day = []
+				# ~ for i in range(temp.shape[0]) :
+					# ~ tempave = np.average(temp.loc[i, :])
+					# ~ all_day.append(tempave)
+					
+				# ~ ave_day = np.average(all_day)
+				
+				# ~ for i in range(temp.shape[0]) :
+					# ~ for col in temp.columns :
+						# ~ alllist.append(temp.loc[i, col] / ave_day)
+						
+				# ~ for index in range(len(alllist)) :
+					# ~ df.loc[df_num, 'excel'] = f'{excel}_{index}'
+					# ~ df.loc[df_num, 'std'] = alllist[index]
+					
+					# ~ df_num += 1
+				# ~ print(f'{excel} done', end = '\r')
 								
 			os.chdir(model2_dir)
 			df.to_excel('model2_weekends_std.xlsx')
+			df = None
 			print('{} done'.format(excel), end = '\r')
 			
-			m2_2 = df.loc[:, 'std'].tolist()
-			a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
+			# ~ m2_2 = df.loc[:, 'std'].tolist()
+			# ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
 			
-			ndf.loc['a', f'{facility_name}_주중'] = a
-			ndf.loc['b', f'{facility_name}_주중'] = b
-			ndf.loc['loc', f'{facility_name}_주중'] = s1
-			ndf.loc['scale', f'{facility_name}_주중'] = s2
+			# ~ ndf.loc['a', f'{facility_name}_주중'] = a
+			# ~ ndf.loc['b', f'{facility_name}_주중'] = b
+			# ~ ndf.loc['loc', f'{facility_name}_주중'] = s1
+			# ~ ndf.loc['scale', f'{facility_name}_주중'] = s2
 		
 	
-	ndf.to_excel('model_2_beta.xlsx')
-	print('model_2_beta.xlsx saved')
+	# ~ ndf.to_excel('model_2_beta.xlsx')
+	# ~ print('model_2_beta.xlsx saved')
 		
 
 

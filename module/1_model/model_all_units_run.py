@@ -47,10 +47,8 @@ import model_all_units as mu
 for facility in os.listdir(gp_dir) :
 	for group in range(2) :
 		check = 0
-		if (facility == '교육시설') & (group == 1) :
-			check = 1
 			
-		if (facility == '업무시설') & (group == 1):
+		if (facility == '업무시설') : # & (group == 1):
 			check = 1
 
 		if check == 1 :
@@ -65,8 +63,8 @@ for facility in os.listdir(gp_dir) :
 			plot_dir = main_dir + '\\GENERATED_PLOTS\\' + facility
 			dich.newfolder(plot_dir)
 			
-			print('\nmodel_1 running')
-			mu.model_1(facility, final_dir, model1_dir)
+			# ~ print('\nmodel_1 running')
+			# ~ mu.model_1(facility, final_dir, model1_dir)
 			print('\nmodel_2 running')
 			mu.model_2(facility, final_dir, model2_dir)
 			print('\nmodel_3 running')
