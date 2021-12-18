@@ -451,12 +451,13 @@ def model_4(model3_dir, model4_dir) :
 		tempdir = model3_dir + '\\' + folder
 		if os.path.isdir(tempdir) :
 			if '주말' in folder :
-				df = pd.DataFrame(columns = ['excel'] + hours)
-				df_num = 0
-				df.columns = df.columns.astype(str)
+				df_all = pd.DataFrame(columns = ['excel'] + hours)
+				
+				df_all.columns = df_all.columns.astype(str)
 				os.chdir(tempdir)
 				
 				for excel in os.listdir(tempdir) :
+					start = time.time()
 					temp = read_excel(excel)
 					temp.columns = temp.columns.astype(str)
 					
@@ -464,25 +465,36 @@ def model_4(model3_dir, model4_dir) :
 					profile.columns = profile.columns.astype(str)
 					for cat in temp.columns :
 						profile.loc[0, cat] = temp.loc[:, cat].mean()
-						
+					
+					df = pd.DataFrame(columns = ['excel'] + hours)
+					df_num = 0
+					df.columns = df.columns.astype(str)
+					
 					for i in range(temp.shape[0]):
 						df.loc[df_num, 'excel'] = excel + '_{}'.format(i)
 							
 						for cat in temp.columns :
 							df.loc[df_num, str(cat)] = temp.loc[i, str(cat)] - profile.loc[0, str(cat)]
 						df_num += 1
-					print('weekends,{} done'.format(excel), end = '\r')
+					
+					df_all = pd.concat([df_all, df])
+					end = time.time()
+					print('weekends,{} done, elapsed : {}sec'.format(excel, round(end - start, 2)), end = '\r')
+					
+				df_all.reset_index(drop = True, inplace = True)
 					
 				os.chdir(model4_dir)
-				df.to_excel('model4_weekends.xlsx')
+				df_all.to_excel('model4_weekends.xlsx')
+				
 				
 			elif '주중' in folder :
-				df = pd.DataFrame(columns = ['excel'] + hours)
-				df_num = 0
-				df.columns = df.columns.astype(str)
+				df_all = pd.DataFrame(columns = ['excel'] + hours)
+				
+				df_all.columns = df_all.columns.astype(str)
 				os.chdir(tempdir)
 				
 				for excel in os.listdir(tempdir) :
+					start = time.time()
 					temp = read_excel(excel)
 					temp.columns = temp.columns.astype(str)
 					
@@ -490,17 +502,26 @@ def model_4(model3_dir, model4_dir) :
 					profile.columns = profile.columns.astype(str)
 					for cat in temp.columns :
 						profile.loc[0, cat] = temp.loc[:, cat].mean()
-						
+				
+					df = pd.DataFrame(columns = ['excel'] + hours)
+					df_num = 0
+					df.columns = df.columns.astype(str)
+				
 					for i in range(temp.shape[0]):
 						df.loc[df_num, 'excel'] = excel + '_{}'.format(i)
 							
 						for cat in temp.columns :
 							df.loc[df_num, str(cat)] = temp.loc[i, str(cat)] - profile.loc[0, str(cat)]
 						df_num += 1
-					print('weekdays, {} done'.format(excel), end = '\r')
 					
+					df_all = pd.concat([df_all, df])
+					end = time.time()
+					print('weekdays, {} done, elapsed : {}'.format(excel, round(end - start, 2)), end = '\r')
+					
+				df_all.reset_index(drop = True, inplace = True)
+				
 				os.chdir(model4_dir)
-				df.to_excel('model4_weekdays.xlsx')
+				df_all.to_excel('model4_weekdays.xlsx')
 
 
 def model1_plot(facility_name, group, model1_dir, plot_dir) :
@@ -584,19 +605,18 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
 	
 	for i in range(2) :
 		ax = fig.add_subplot(2, 1, 1 + i)
-		
-		facility = info.columns[i]
+
 		
 		if i == 0 :
 			a, b, loc, scale = scipy.stats.beta.fit(m2_day)
 			
 		elif i == 1 :
-			a, b, loc, scale = scipy.stats.beta.fit(m2_all)
+			a, b, loc, scale = scipy.stats.beta.fit(m2_end)
 			
 		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
 		
 		# ~ ax.figure(figsize = (8, 8))
-		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
+		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3)))
 		ax.set_xlabel('model 2')
 		ax.set_ylabel('density')
 		
@@ -619,8 +639,8 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
 	plt.cla()
 	plt.close()
 	
-	temp_day = None
-	temp_end = None
+	m2_day = None
+	m2_end = None
 	pass
 
 
@@ -908,17 +928,16 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
 	for i in range(2) :
 		ax = fig.add_subplot(2, 1, 1 + i)
 		
-		facility = info.columns[i]
 		
 		if i == 0 :
 			a, b, loc, scale = scipy.stats.beta.fit(m2_day)
 			
 		elif i == 1 :
-			a, b, loc, scale = scipy.stats.beta.fit(m2_all)
+			a, b, loc, scale = scipy.stats.beta.fit(m2_end)
 		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
 		
 		# ~ ax.figure(figsize = (8, 8))
-		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility, round(a, 3), round(b, 3)))
+		ax.set_title('{}\nBeta Distribution(a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3)))
 		ax.set_xlabel('model 2')
 		ax.set_ylabel('density')
 		

@@ -48,7 +48,7 @@ for facility in os.listdir(gp_dir) :
 	for group in range(2) :
 		check = 0
 			
-		if (facility == '업무시설') : #& (group == 0):
+		if (facility == '업무시설') & (group == 1):
 			check = 1
 
 		if check == 1 :
