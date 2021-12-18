@@ -133,7 +133,7 @@ def model_1(facility_name, final_dir, model1_dir) :
 
 def model_2(facility_name, final_dir, model2_dir) :
 	
-	ndf = pd.DataFrame(columns = [f'{facility_name}_주중', f'{facility_name}_주말'], index = ['a', 'b', 'loc', 'scale'])
+	# ~ ndf = pd.DataFrame(columns = [f'{facility_name}_주중', f'{facility_name}_주말'], index = ['a', 'b', 'loc', 'scale'])
 	
 	
 	hours = []
@@ -145,12 +145,16 @@ def model_2(facility_name, final_dir, model2_dir) :
 		hours_extend.append(i)
 
 	
-	for folder in os.listdir(final_dir) :
-		tempdir = final_dir + '\\' + folder
+	for folder in os.listdir(final_dir) : # 'raw' 폴
+		tempdir = final_dir + '\\' + folder # ['주중', '주말']
 		if '주중' in folder :
-			df = pd.DataFrame(columns = ['excel', 'std'])
-			df_num = 0
+			df_all = pd.DataFrame(columns = ['excel', 'std'])
+			x = 1
+			
 			for excel in os.listdir(tempdir) :
+
+				df = pd.DataFrame(columns = ['excel', 'std'])
+				df_num = 0
 				#
 				start = time.time()
 				#
@@ -184,6 +188,17 @@ def model_2(facility_name, final_dir, model2_dir) :
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
+					
+				df_all = pd.concat([df_all, df])
+				if df_all.shape[0] > 1000000 :
+					os.chdir(model2_dir)
+					df_all.to_excel(f'model2_weekdays_std_{x}.xlsx')
+					x += 1
+					df_all = None
+					df_all = pd.DataFrame(columns = ['excel', 'std'])
+					
+				df = None
+				
 				#
 				end = time.time()
 				#
@@ -196,27 +211,31 @@ def model_2(facility_name, final_dir, model2_dir) :
 				for i in time_all :
 					ind.append(pset.index(i) + 1)
 				
-				print(f'{excel} done, elapsed : {round(end - start, 1)}, {ind}', end = '\r')
+				print(f'{excel} done, elapsed : {round(end - start, 1)}, concat = {round(end - m3, 1)}, {ind}', end = '\r')
 				
-	
 			os.chdir(model2_dir)
-			df.to_excel('model2_weekdays_std.xlsx')
-			df = None
+			df_all.to_excel(f'model2_weekdays_std_{x}.xlsx')
+			df_all = None
 			print('{} done'.format(excel), end = '\r')
 			
-			# ~ m2_1 = df.loc[:, 'std'].tolist()
-			# ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_1)
+			# ~ m2_1 = df_all.loc[:, 'std'].tolist()
+			# ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
 			
 			# ~ ndf.loc['a', f'{facility_name}_주중'] = a
 			# ~ ndf.loc['b', f'{facility_name}_주중'] = b
 			# ~ ndf.loc['loc', f'{facility_name}_주중'] = s1
 			# ~ ndf.loc['scale', f'{facility_name}_주중'] = s2
-			
+		
+			# ~ m2_1 = None
 
 		if '주말' in folder :
-			df = pd.DataFrame(columns = ['excel', 'std'])
-			df_num = 0
+			df_all = pd.DataFrame(columns = ['excel', 'std'])
+			x = 1
+			
 			for excel in os.listdir(tempdir) :
+
+				df = pd.DataFrame(columns = ['excel', 'std'])
+				df_num = 0
 				#
 				start = time.time()
 				#
@@ -250,6 +269,17 @@ def model_2(facility_name, final_dir, model2_dir) :
 					df.loc[df_num, 'std'] = alllist[index]
 					
 					df_num += 1
+					
+				df_all = pd.concat([df_all, df])
+				if df_all.shape[0] > 1000000 :
+					os.chdir(model2_dir)
+					df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
+					x += 1
+					df_all = None
+					df_all = pd.DataFrame(columns = ['excel', 'std'])
+					
+				df = None
+				
 				#
 				end = time.time()
 				#
@@ -262,7 +292,7 @@ def model_2(facility_name, final_dir, model2_dir) :
 				for i in time_all :
 					ind.append(pset.index(i) + 1)
 				
-				print(f'{excel} done, elapsed : {round(end - start, 1)}, {ind}', end = '\r')
+				print(f'{excel} done, elapsed : {round(end - start, 1)}, concat = {round(end - m3, 1)}, {ind}', end = '\r')
 				
 				# ~ os.chdir(tempdir)
 				# ~ temp = lib.read_excel(excel)
@@ -286,21 +316,23 @@ def model_2(facility_name, final_dir, model2_dir) :
 				# ~ print(f'{excel} done', end = '\r')
 								
 			os.chdir(model2_dir)
-			df.to_excel('model2_weekends_std.xlsx')
-			df = None
+			df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
+			df_all = None
 			print('{} done'.format(excel), end = '\r')
 			
-			# ~ m2_2 = df.loc[:, 'std'].tolist()
+			# ~ m2_2 = df_all.loc[:, 'std'].tolist()
 			# ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
 			
-			# ~ ndf.loc['a', f'{facility_name}_주중'] = a
-			# ~ ndf.loc['b', f'{facility_name}_주중'] = b
-			# ~ ndf.loc['loc', f'{facility_name}_주중'] = s1
-			# ~ ndf.loc['scale', f'{facility_name}_주중'] = s2
-		
+			# ~ ndf.loc['a', f'{facility_name}_주말'] = a
+			# ~ ndf.loc['b', f'{facility_name}_주말'] = b
+			# ~ ndf.loc['loc', f'{facility_name}_주말'] = s1
+			# ~ ndf.loc['scale', f'{facility_name}_주말'] = s2
+
+			# ~ m2_2 = None
 	
 	# ~ ndf.to_excel('model_2_beta.xlsx')
-	# ~ print('model_2_beta.xlsx saved')
+		
+	print('model_2_beta.xlsx saved')
 		
 
 
@@ -508,12 +540,43 @@ def model1_plot(facility_name, group, model1_dir, plot_dir) :
 
 def model2_plot(facility_name, group, model2_dir, plot_dir) :
 	os.chdir(model2_dir)
-	temp_day = read_excel('model2_weekdays_std.xlsx')
-	temp_end = read_excel('model2_weekends_std.xlsx')
+	
+	if 'model2_weekdays_std.xlsx' in os.listdir(model2_dir) :
+		temp_day = read_excel('model2_weekdays_std.xlsx')
+	else :
+		temp_day = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekdays_std_' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_day = pd.concat([temp_day, temp])
+				
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
+		temp = None
+		
+	
+	if 'model2_weekends_std.xlsx' in os.listdir(model2_dir) :
+		temp_end = read_excel('model2_weekends_std.xlsx')
+	else :
+		temp_end = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekends_std' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_end = pd.concat([temp_end, temp])
+				
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
+		temp = None
+		
+				
 	m2_day = temp_day.loc[:, 'std'].tolist()
 	m2_end = temp_end.loc[:, 'std'].tolist()
-	info = read_excel('model_2_beta.xlsx')
-	info.index = ['a', 'b', 'loc', 'scale']
 	
 	min_all = min([min(m2_day), min(m2_end)])
 	max_all = max([max(m2_day), max(m2_end)])
@@ -524,10 +587,12 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
 		
 		facility = info.columns[i]
 		
-		a = info.loc['a', facility]
-		b = info.loc['b', facility]
-		loc = info.loc['loc', facility]
-		scale = info.loc['scale', facility]
+		if i == 0 :
+			a, b, loc, scale = scipy.stats.beta.fit(m2_day)
+			
+		elif i == 1 :
+			a, b, loc, scale = scipy.stats.beta.fit(m2_all)
+			
 		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
 		
 		# ~ ax.figure(figsize = (8, 8))
@@ -538,7 +603,7 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
 		if i == 0 :
 			density_real = kde.gaussian_kde(m2_day)
 			
-		if i == 1 :
+		elif i == 1 :
 			density_real = kde.gaussian_kde(m2_end)
 			
 		x = np.linspace(min_all, max_all, 300)
@@ -553,6 +618,9 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
 	plt.clf()
 	plt.cla()
 	plt.close()
+	
+	temp_day = None
+	temp_end = None
 	pass
 
 
@@ -770,12 +838,68 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
 		smpl2 = [x for x in smpl2 if str(x) != 'nan']
 		
 	os.chdir(model2_dir)
-	temp_day = read_excel('model2_weekdays_std.xlsx')
-	temp_end = read_excel('model2_weekends_std.xlsx')
+	'''
+	if 'model2_weekdays_std.xlsx' in os.listdir(model2_dir) :
+		temp_day = read_excel('model2_weekdays_std.xlsx')
+	else :
+		temp_day = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekdays_std_' in excel :
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_day = pd.concat([temp_day, temp])
+				print(f'{excel} concatenated')
+		temp = None
+		
+	
+	if 'model2_weekends_std.xlsx' in os.listdir(model2_dir) :
+		temp_end = read_excel('model2_weekends_std.xlsx')
+	else :
+		temp_end = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekends_std' in excel :
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_end = pd.concat([temp_end, temp])
+				print(f'{excel} concatenated')
+		temp = None
+	'''
+		
+	if 'model2_weekdays_std.xlsx' in os.listdir(model2_dir) :
+		temp_day = read_excel('model2_weekdays_std.xlsx')
+	else :
+		temp_day = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekdays_std_' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_day = pd.concat([temp_day, temp])
+				
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
+		temp = None
+		
+	
+	if 'model2_weekends_std.xlsx' in os.listdir(model2_dir) :
+		temp_end = read_excel('model2_weekends_std.xlsx')
+	else :
+		temp_end = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(model2_dir) :
+			if 'model2_weekends_std' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(model2_dir)
+				temp = read_excel(excel)
+				temp_end = pd.concat([temp_end, temp])
+				
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
+		temp = None
+		
 	m2_day = temp_day.loc[:, 'std'].tolist()
 	m2_end = temp_end.loc[:, 'std'].tolist()
-	info = read_excel('model_2_beta.xlsx')
-	info.index = ['a', 'b', 'loc', 'scale']
 	
 	min_all = min([min(m2_day), min(m2_end)])
 	max_all = max([max(m2_day), max(m2_end)])
@@ -786,10 +910,11 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
 		
 		facility = info.columns[i]
 		
-		a = info.loc['a', facility]
-		b = info.loc['b', facility]
-		loc = info.loc['loc', facility]
-		scale = info.loc['scale', facility]
+		if i == 0 :
+			a, b, loc, scale = scipy.stats.beta.fit(m2_day)
+			
+		elif i == 1 :
+			a, b, loc, scale = scipy.stats.beta.fit(m2_all)
 		# ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
 		
 		# ~ ax.figure(figsize = (8, 8))
@@ -822,6 +947,9 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
 	plt.clf()
 	plt.cla()
 	plt.close()
+	
+	temp_day = None
+	temp_end = None
 	pass
 	
 	

@@ -48,7 +48,7 @@ for facility in os.listdir(gp_dir) :
 	for group in range(2) :
 		check = 0
 			
-		if (facility == '업무시설') : # & (group == 1):
+		if (facility == '업무시설') : #& (group == 0):
 			check = 1
 
 		if check == 1 :
@@ -63,8 +63,8 @@ for facility in os.listdir(gp_dir) :
 			plot_dir = main_dir + '\\GENERATED_PLOTS\\' + facility
 			dich.newfolder(plot_dir)
 			
-			# ~ print('\nmodel_1 running')
-			# ~ mu.model_1(facility, final_dir, model1_dir)
+			print('\nmodel_1 running')
+			mu.model_1(facility, final_dir, model1_dir)
 			print('\nmodel_2 running')
 			mu.model_2(facility, final_dir, model2_dir)
 			print('\nmodel_3 running')
@@ -72,14 +72,17 @@ for facility in os.listdir(gp_dir) :
 			print('\nmodel_4 running')
 			mu.model_4(model3_dir, model4_dir)
 			
+			plot_solo = plot_dir + '\\solo'
+			dich.newfolder(plot_solo)
+			
 			print('\nmodel_1 plotting')
-			mu.model1_plot(facility, group, model1_dir, plot_dir)
+			mu.model1_plot(facility, group, model1_dir, plot_solo)
 			print('\nmodel_2 plotting')
-			mu.model2_plot(facility, group, model2_dir, plot_dir)
+			mu.model2_plot(facility, group, model2_dir, plot_solo)
 			print('\nmodel_3 plotting')
-			mu.model3_plot(facility, group, model3_dir, plot_dir)
+			mu.model3_plot(facility, group, model3_dir, plot_solo)
 			print('\nmodel_4 plotting')
-			mu.model4_plot(facility, group, model4_dir, plot_dir)
+			mu.model4_plot(facility, group, model4_dir, plot_solo)
 			
 			nplot_dir = plot_dir + '\\compare'
 			dich.newfolder(nplot_dir)
