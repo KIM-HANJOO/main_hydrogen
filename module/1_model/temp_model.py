@@ -67,13 +67,71 @@ model2 : sample : FACILITES/fc/
 '''
 
 
-def model_1_merge(sample_model1_dir, gp_model1_dir) :
-	if 'model_1_var.xlsx' in os.listdir(sample_model1_dir) :
-		sample_m1 = read_excel('model_1.xlsx')
+def model_1_merge(sample_model1_dir, gp_model1_dir. save_dir) :
+	for excel in os.listdir(sample_model1_dir) :
+		if '모델1' in excel :
+			os.chdir(sample_model1_dir)
+			sample_m1 = read_excel(excel)
+		# columns : none, iloc[:, 0]
 
 	if 'model_1_weekdays_std.xlsx' in os.listdir(gp_model1_dir) :
+		os.chdir(gp_model1_dir)
 		gp_m1 = read_excel('model_1_var.xlsx')
+		# columns : ['excel', 'var']
+
+	fitem = sample_m1.columns[0]
+	elist = sample_m1.iloc[:, 0].tolist()
+	elist.append(fitem)
+
+	df = pd.DataFrame(columns = ['sample', 'gprofile'])
+	df_num = 0
+
+	df.loc[:, 'sample'] = elist
+	df.loc[:, 'gprofile'] = gp_m1.loc[:, 'var'].tolist()
+
+	os.chdir(save_dir)
+	df.to_excel('model_1_merge.xlsx')
+
+def model_2_merge(sample_model2_dir, gp_model2_dir, save_dir) :
+	for excel in os.listdir(sample_model2_dir) :
+		if 'daily' in excel :
+			sample_m2 = read_excel(excel)
+
+	if 'model2_weekdays_std.xlsx' in os.listdir(gp_model2_dir) :
+		temp_day = read_excel('model2_weekdays_std.xlsx')
+
+	else :
+		temp_day = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(gp_model2_dir) :
+			if 'model2_weekdays_std_' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(gp_model2_dir)
+				temp = read_excel(excel)
+				temp_day = pd.concat([temp_day.temp])
+
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
 
 	
+	if 'model2_weekends_std.xlsx' in os.listdir(gp_model2_dir) :
+		temp_end = read_excel('model2_weekends_std.xlsx')
+
+	else :
+		temp_end = pd.DataFrame(columns = ['excel', 'std'])
+		for excel in os.listdir(gp_model2_dir) :
+			if 'model2_weekends_std_' in excel :
+				print(f'{excel} loading')
+				start = time.time()
+				os.chdir(gp_model2_dir)
+				temp = read_excel(excel)
+				temp_end = pd.concat([temp_end.temp])
+
+				end = time.time()
+				print(f'{excel} concatenated, elapsed : {round(end - start, 2)}')
+
 	
+
 	
+
+
