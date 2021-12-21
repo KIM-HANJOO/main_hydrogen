@@ -658,4 +658,4 @@ def model1_compare(facility_name, group, tempdir, plot_dir, nfc_dir) :
 	plt.clf()
 	plt.cla()
 	plt.close()
-	pass
+
