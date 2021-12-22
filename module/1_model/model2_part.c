@@ -7,9 +7,6 @@ float ave(float * list1_pointer, int len){
 		}
 	return sum / len ;
 	}
-	
-
-
 
 float model2_part(float * temp, int len)
 {

@@ -7,3 +7,6 @@ module/__pycache__
 FACILITIES/
 GENERATED_PROFILES/
 GENERATED_PROFILES_1/
+*.zip
+.*.swp
+.*.swo

@@ -413,7 +413,7 @@ print(maker_df)
 for facility in facility_list :
 	for group in range(2) : # group_number
 		check = 1
-		if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '문화시설') :
+		if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '업무시설') :
 			check = 0
 			print(f'{facility}, {group} X')
 		# ~ if (facility == '교육시설') & (group == 0) :

@@ -16,7 +16,7 @@ class Info() :
 		self.prep_dir = main_dir + '\\1_preprocessing'
 		self.model_dir = main_dir + '\\2_model'
 		self.module_dir = main_dir + '\\module'
-		self.facility_dir = main_dir + '\\시설군별'
+		self.facility_dir = main_dir + '\\FACILITIES'
 		self.plot_dir = main_dir + '\\plot'
 		self.cluster_dir = main_dir + '\\0_temp_dir(clustering)'
 		self.nfc_dir = main_dir + '\\FACILITIES'
