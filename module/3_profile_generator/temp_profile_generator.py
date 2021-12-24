@@ -16,7 +16,7 @@ facility_df = di.facility_df
 facility_dict = di.facility_dict
 
 sys.path.append(module_dir)
-sys.path.append(module_dir + '\\4_directory_module')
+sys.path.append(module_dir + '//4_directory_module')
 import directory_change as dich
 import model_library as lib
 
@@ -48,23 +48,23 @@ subdir_list = ['raw', 'model1', 'model2', 'model3', 'model4']
 fc_list = ['교육시설', '문화시설', '숙박시설', '업무시설', '판매시설']
 fc_list_2 = ['교육시설', '문화시설', '판매및숙박', '업무시설']
 
-				
-gfc_dir = main_dir + '\\GENERATED_PROFILES'
+                
+gfc_dir = main_dir + '//GENERATED_PROFILES'
 dich.newfolder(gfc_dir)
 
 dich.newfolderlist(gfc_dir, fc_list_2)
 for fc in fc_list_2 :
-	tempdir = gfc_dir + f'\\{fc}'
-	dich.newfolderlist(tempdir, ['group_0', 'group_1'])
-	
-	for i in range(2) :
-		dich.newfolderlist(tempdir + f'\\group_{i}', subdir_list)
-		
-		for sd in subdir_list :
-			if (sd == 'raw') | (sd == 'model3'):
-				dich.newfolderlist(tempdir + f'\\group_{i}\\{sd}', ['주중', '주말'])
-	
-	print(f'{fc} directory all made')
+    tempdir = gfc_dir + f'//{fc}'
+    dich.newfolderlist(tempdir, ['group_0', 'group_1'])
+    
+    for i in range(2) :
+        dich.newfolderlist(tempdir + f'//group_{i}', subdir_list)
+        
+        for sd in subdir_list :
+            if (sd == 'raw') | (sd == 'model3'):
+                dich.newfolderlist(tempdir + f'//group_{i}//{sd}', ['주중', '주말'])
+    
+    print(f'{fc} directory all made')
 
 
 
@@ -76,317 +76,329 @@ note
 facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] #profile_num_maker에서 쓰이며, model1, model2 파일 사전작업에 사용되었음
 
 def profile_num_maker(nfc_dir) :
-	
-	facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박']
-			
-	maker_df = pd.DataFrame(columns = ['facility', 'group', 'number', 'percentage'])
-	maker_num = 0
-	
-	for num, fc in enumerate(facility_list) :
-		for i in range(2) : # group_number
-			tempdir = nfc_dir + f'\\{fc}\\model3\\group_{i}\\group_{i}_model3\\주중'
-			op_num = len(os.listdir(tempdir))
-			
-			maker_df.loc[maker_num, 'facility'] = fc
-			maker_df.loc[maker_num, 'group'] = i
-			maker_df.loc[maker_num, 'number'] = op_num
-			maker_num += 1
-	
-	all_profile_numbers = sum(maker_df.loc[:, 'number'].tolist())
-	
-	for i in range(maker_df.shape[0]) :
-		maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / all_profile_numbers * 100, 2)
-	
-	return maker_df
-			
-	
-	
-def generate_fc(nfc_dir, facility, group) :	
-	# need
-	# facility, save_dir, profile_num, model1_file, \
-	# model2_file, model3_file, model4_file_day, model4_file_end
-	
-	# directories
-	wd = nfc_dir + f'\\{facility}'
-	model1_dir = wd + '\\model1'
-	model2_dir = wd + '\\model2'
-	model3_dir = wd + '\\model3' # + '\\group_0', '\\group_1' -> 'profile_48_group_0.xlsx'
-	model4_dir = wd + '\\model4' # + '\\group_0_model4'
-	
-	# excel names
-	m1_xlna = 'model_1.xlsx'
-	m2_xlna = 'model_2.xlsx'
-	
-	m3_0_xlna = 'profile_48_group_0.xlsx'
-	m3_1_xlna = 'profile_48_group_1.xlsx'
-	
-	m4_day_xlna = 'model4_weekdays.xlsx'
-	m4_end_xlna = 'model4_weekends.xlsx'
-	
-	# import files
-	print(f'\nworking on {facility}')
-	os.chdir(model1_dir)
-	model1_file = dich.read_excel(m1_xlna)
-	print('model1 loaded')
-	
-	os.chdir(model2_dir)
-	model2_file = dich.read_excel(m2_xlna)
-	print('model2 loaded')
+    
+    facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박']
+            
+    maker_df = pd.DataFrame(columns = ['facility', 'group', 'number', 'percentage'])
+    maker_num = 0
+    
+    for num, fc in enumerate(facility_list) :
+        for i in range(2) : # group_number
+            tempdir = nfc_dir + f'//{fc}//model3//group_{i}//group_{i}_model3//주중'
+            op_num = len(os.listdir(tempdir))
+            
+            maker_df.loc[maker_num, 'facility'] = fc
+            maker_df.loc[maker_num, 'group'] = i
+            maker_df.loc[maker_num, 'number'] = op_num
+            maker_num += 1
+    
+    all_profile_numbers = sum(maker_df.loc[:, 'number'].tolist())
+    
+    for i in range(maker_df.shape[0]) :
+        maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / all_profile_numbers * 100, 2)
+    
+    return maker_df
+            
+    
+    
+def generate_fc(nfc_dir, facility, group) :    
+# need
+# facility, save_dir, profile_num, model1_file, \
+# model2_file, model3_file, model4_file_day, model4_file_end
 
-	os.chdir(model3_dir + f'\\group_{group}')
-	model3_file = dich.read_excel(locals()[f'm3_{group}_xlna'])
-	print('model3 loaded')
-	
-	os.chdir(model4_dir + f'\\group_{group}_model4')
-	model4_file_day = dich.read_excel(m4_day_xlna)
-	print('model4 weekdays loaded')
-	model4_file_end = dich.read_excel(m4_end_xlna)
-	print('model4 weekends loaded')
-	
-	main_dir = str(Path(facility_dir).parent.absolute())
-	save_dir = main_dir + f'\\GENERATED_PROFILES\\{facility}\\group_{group}\\raw'
-	save_dir_day = save_dir + '\\주중'
-	save_dir_end = save_dir + '\\주말'
-	
-	file_dict = dict()
+# directories
+    wd = nfc_dir + f'//{facility}'
+    model1_dir = wd + '//model1'
+    model2_dir = wd + '//model2'
+    model3_dir = wd + '//model3' # + '//group_0', '//group_1' -> 'profile_48_group_0.xlsx'
+    model4_dir = wd + '//model4' # + '//group_0_model4'
 
-	key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', \
-	'model1_file', 'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end']
-	
-	for key in key_list :
-		file_dict[key] = locals()[f'{key}']
-	
-	print('files all loaded')
-	
-	return key_list, file_dict
+# excel names
+    m1_xlna = 'model_1.xlsx'
+    m2_xlna = 'model_2.xlsx'
 
-	
-	
-	
-	
-	
-	
-	
+    m3_0_xlna = 'profile_48_group_0.xlsx'
+    m3_1_xlna = 'profile_48_group_1.xlsx'
+
+    m4_day_xlna = 'model4_weekdays.xlsx'
+    m4_end_xlna = 'model4_weekends.xlsx'
+
+# import files
+    print(f'\nworking on {facility}')
+    os.chdir(model1_dir)
+    model1_file = dich.read_excel(m1_xlna)
+    print('model1 loaded')
+
+    os.chdir(model2_dir)
+    model2_file = dich.read_excel(m2_xlna)
+    print('model2 loaded')
+
+    os.chdir(model3_dir + f'//group_{group}')
+    model3_file = dich.read_excel(locals()[f'm3_{group}_xlna'])
+    print('model3 loaded')
+
+    os.chdir(model4_dir + f'//group_{group}_model4')
+    model4_file_day = dich.read_excel(m4_day_xlna)
+    print('model4 weekdays loaded')
+    model4_file_end = dich.read_excel(m4_end_xlna)
+    print('model4 weekends loaded')
+
+    main_dir = str(Path(facility_dir).parent.absolute())
+    save_dir = main_dir + f'//GENERATED_PROFILES//{facility}//group_{group}//raw'
+    save_dir_day = save_dir + '//주중'
+    save_dir_end = save_dir + '//주말'
+    os.chdir(main_dir + '//module//7_plot_use')
+    dayend_perc = dich.read_excel('weekday+end_perc.xlsx')
+
+
+    file_dict = dict()
+
+    key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', \
+    'model1_file', 'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
+
+    for key in key_list :
+        file_dict[key] = locals()[f'{key}']
+
+    print('files all loaded')
+
+    return key_list, file_dict
+
+    
+    
+    
+    
+    
+    
+    
 
 # 원하는 세대 수와 세대 특징 입력된 파일 읽기
 def profile_generator(profile_num, key_list, file_dict) :
-	
-	for key in key_list :
-		globals()[f'{key}'] = file_dict[key]
-		
-	file_dict = None
-		
-	hours = []
-	for i in range(1, 25) :
-		hours.append(str(i))
-	
-	model3_file_day = model3_file.loc[:, '1' : '24']
-	model3_file_end = model3_file.loc[:, '25' : '48']
-	model3_file_end.columns = model3_file_day.columns
-	
-	for profile_num_now in range(profile_num):
-		'''
-		모델 1
-		'''
-		model1_file.index = ['a', 'b', 'loc', 'scale']
-		for col in model1_file.columns :
-			print(col, '\t', facility)
-			if facility in col :
-				a = model1_file.loc['a', col]
-				b = model1_file.loc['b', col]
-				loc = model1_file.loc['loc', col]
-				scale = model1_file.loc['scale', col]
-		
-		ave_week_1day = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
-		ave_weekend_1day = ave_week_1day
-		
-		'''
-		모델2
-		'''
-		model2_file.index = ['a', 'b', 'loc', 'scale']
-	
-		# seperated columns already
-		# ~ model2_file.columns = ['교육주중', '교육주말', '판매숙박주중', '판매숙박주말', '업무주중', '업무주말', \
-								# ~ '문화주중', '문화주말']
-								
-		for col in model2_file.columns :
-			if facility in col :
-				if '주중' in col :
-					print(col)
-					a2 = model2_file.loc['a', col]
-					b2 = model2_file.loc['b', col]
-					loc2 = model2_file.loc['loc', col]
-					scale2 = model2_file.loc['scale', col]
-		
-		st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
-		while st_week < 0 :
-			print('negative value for st_weekend')
-			st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
-			
-		for col in model2_file.columns :
-			if facility in col :
-				if '주말' in col :
-					print(col)
-					a3 = model2_file.loc['a', col]
-					b3 = model2_file.loc['b', col]
-					loc3 = model2_file.loc['loc', col]
-					scale3 = model2_file.loc['scale', col]
-		
-		st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
-		while st_weekend < 0 :
-			print('negative value for st_weekend')
-			st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
-		
-	
-	
-	
-		'''
-		모델3
-		'''
-		
-		# 다변량 이용하여 고정 프로필 1개 만들기(평일)
-		sample = model3_file_day.loc[:, '1' : '24']
-		var_1 = sample.cov()
-		mean_1 = sample.mean()
-	
-		fixed_profile_week = pd.DataFrame()
-	
-		X = np.random.multivariate_normal(mean_1, var_1)
-		while 1:
-			for x in X:
-				if x < 0:
-					X = np.random.multivariate_normal(mean_1, var_1)
-					a = 0
-					break
-				a = 1
-			if a is 0:
-				continue
-			break
-		fixed_profile_week['fixed'] = X
-	
-		# 다변량 이용하여 고정 프로필 1개 만들기(주말)
-		sample = model3_file_end.loc[:, '1' : '24']
-		sample = sample.transpose()
-		sample = sample.transpose()
-		var_1 = sample.cov()
-		mean_1 = sample.mean()
-	
-	
-		fixed_profile_weekend = pd.DataFrame()
-	
-		X = np.random.multivariate_normal(mean_1, var_1)
-		while 1:
-			for x in X:
-				if x < 0:
-					X = np.random.multivariate_normal(mean_1, var_1)
-					a = 0
-					break
-				a = 1
-			if a is 0:
-				continue
-			break
-		fixed_profile_weekend['fixed'] = X
-	
-	
-	
-		'''
-		모델4
-		'''		
-		
-		
-		# 일마다 변하는 프로필 만들기(평일)
-		
-		test = model4_file_day.loc[:, '1' : '24']
-		ncols = []
-		for i in range(24) :
-			ncols.append(i)
-		test.columns = ncols
-		
-		var_1 = test.cov()
-		mean_1 = test.mean()
-		changed_profile_week = pd.DataFrame()
-		
-		for t in range(261):
-			# 평균과 표준편차를 이용하여 1일 사용량 도출
-			while 1:
-				week_1day = np.random.normal(ave_week_1day, st_week)
-				if week_1day > 0:
-					break
-			#weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
-			# 1일 프로필에 변화를 주는 프로필 생산
-			Y = []
-			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-			
-			# check if model3 + model4 < 0 ; if < 0, convert to 0
-			for k in range(24):
-				x = fixed_profile_week.iloc[k,0] + X[k]
-				if x < 0 :
-					X[k] = 0
-						
-			for f in range(24):
-				y = (fixed_profile_week.iloc[f,0] + X[f])
-				Y.append(y)
-			Y = Y/sum(Y)
-			Y = Y * week_1day
-			changed_profile_week['{}일'.format(t+1)] = Y
-	
-		# 일마다 변하는 프로필 만들기(주말)
-	
-		test = model4_file_end.loc[:, '1' : '24']
-		ncols = []
-		for i in range(24) :
-			ncols.append(i)
-		test.columns = ncols
-		var_1 = test.cov()
-		mean_1 = test.mean()
-		changed_profile_weekend = pd.DataFrame()
-	
-		for t in range(104):
-			# 평균과 표준편차를 이용하여 1일 사용량 도출
-			#week_1day = np.random.normal(ave_week_1day, st_week)
-			while 1:
-				weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
-				if weekend_1day > 0:
-					break
-			# 1일 프로필에 변화를 주는 프로필 생산
-			Y = []
-			X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
-			# check if model3 + model4 < 0 ; if < 0, convert to 0
-			for k in range(24):
-				x = fixed_profile_weekend.iloc[k,0] + X[k]
-				if x < 0 :
-					X[k] = 0
-						
-			for f in range(24):
-				y = (fixed_profile_weekend.iloc[f,0] + X[f])
-				Y.append(y)
-			Y = Y/sum(Y)
-			Y = Y * weekend_1day
-			changed_profile_weekend['{}일'.format(t+1)] = Y
-		
-		changed_profile_week = changed_profile_week.transpose()
-		changed_profile_weekend = changed_profile_weekend.transpose()
-		
-		changed_profile_week.reset_index(drop = True, inplace = True)
-		changed_profile_week.columns = hours
-		
-		changed_profile_weekend.reset_index(drop = True, inplace = True)
-		changed_profile_weekend.columns = hours
-			
-		print('{}번째전력프로필 완성'.format(profile_num_now + 1))
-		
-		
-		
-		os.chdir(save_dir)
-		
-		# 완성된 파일 저장
-		os.chdir(save_dir_day)
-		changed_profile_week.to_excel('{}번째 세대 전력프로필(주중).xlsx'.format(profile_num_now + 1))
-		
-		os.chdir(save_dir_end)
-		changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(profile_num_now + 1))
-		
-		
+    
+    for key in key_list :
+        globals()[f'{key}'] = file_dict[key]
+        
+    file_dict = None
+        
+    hours = []
+    for i in range(1, 25) :
+        hours.append(str(i))
+    dayend_perc.index = ['weekday', 'weekend']
+    ave_day = dayend_perc.loc['weekday', facility]    
+    ave_end = dayend_perc.loc['weekend', facility]    
+
+    model3_file_day = model3_file.loc[:, '1' : '24']
+    model3_file_end = model3_file.loc[:, '25' : '48']
+    model3_file_end.columns = model3_file_day.columns
+    
+    for profile_num_now in range(profile_num):
+        '''
+        모델 1
+        '''
+        model1_file.index = ['a', 'b', 'loc', 'scale']
+        for col in model1_file.columns :
+            print(col, '\t', facility)
+            if facility in col :
+                a = model1_file.loc['a', col]
+                b = model1_file.loc['b', col]
+                loc = model1_file.loc['loc', col]
+                scale = model1_file.loc['scale', col]
+        
+        ave_week_1day = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
+        
+        C = (365 * ave_week_1day) / (104 * ave_end + 261 * ave_end)
+
+        ave_weekday_1day = ave_day * C
+        ave_weekend_1day = ave_end * C
+        print(f'average all : {ave_week_1day}') 
+        print(f'average day : {ave_weekday_1day}') 
+        print(f'average end : {ave_weekend_1day}') 
+        '''
+        모델2
+        '''
+        model2_file.index = ['a', 'b', 'loc', 'scale']
+    
+        # seperated columns already
+        # ~ model2_file.columns = ['교육주중', '교육주말', '판매숙박주중', '판매숙박주말', '업무주중', '업무주말', \
+                                # ~ '문화주중', '문화주말']
+                                
+        for col in model2_file.columns :
+            if facility in col :
+                if '주중' in col :
+                    print(col)
+                    a2 = model2_file.loc['a', col]
+                    b2 = model2_file.loc['b', col]
+                    loc2 = model2_file.loc['loc', col]
+                    scale2 = model2_file.loc['scale', col]
+        
+        st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+        while st_week < 0 :
+            print('negative value for st_weekend')
+            st_week = beta.rvs(a2, b2, loc = loc2, scale = scale2, size = 1)
+            
+        for col in model2_file.columns :
+            if facility in col :
+                if '주말' in col :
+                    print(col)
+                    a3 = model2_file.loc['a', col]
+                    b3 = model2_file.loc['b', col]
+                    loc3 = model2_file.loc['loc', col]
+                    scale3 = model2_file.loc['scale', col]
+        
+        st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
+        while st_weekend < 0 :
+            print('negative value for st_weekend')
+            st_weekend = beta.rvs(a3, b3, loc = loc3, scale = scale3, size = 1)
+        
+    
+    
+    
+        '''
+        모델3
+        '''
+        
+        # 다변량 이용하여 고정 프로필 1개 만들기(평일)
+        sample = model3_file_day.loc[:, '1' : '24']
+        var_1 = sample.cov()
+        mean_1 = sample.mean()
+    
+        fixed_profile_week = pd.DataFrame()
+    
+        X = np.random.multivariate_normal(mean_1, var_1)
+        while 1:
+            for x in X:
+                if x < 0:
+                    X = np.random.multivariate_normal(mean_1, var_1)
+                    a = 0
+                    break
+                a = 1
+            if a is 0:
+                continue
+            break
+        fixed_profile_week['fixed'] = X
+    
+        # 다변량 이용하여 고정 프로필 1개 만들기(주말)
+        sample = model3_file_end.loc[:, '1' : '24']
+        sample = sample.transpose()
+        sample = sample.transpose()
+        var_1 = sample.cov()
+        mean_1 = sample.mean()
+    
+    
+        fixed_profile_weekend = pd.DataFrame()
+    
+        X = np.random.multivariate_normal(mean_1, var_1)
+        while 1:
+            for x in X:
+                if x < 0:
+                    X = np.random.multivariate_normal(mean_1, var_1)
+                    a = 0
+                    break
+                a = 1
+            if a is 0:
+                continue
+            break
+        fixed_profile_weekend['fixed'] = X
+    
+    
+    
+        '''
+        모델4
+        '''        
+        
+        
+        # 일마다 변하는 프로필 만들기(평일)
+        
+        test = model4_file_day.loc[:, '1' : '24']
+        ncols = []
+        for i in range(24) :
+            ncols.append(i)
+        test.columns = ncols
+        
+        var_1 = test.cov()
+        mean_1 = test.mean()
+        changed_profile_week = pd.DataFrame()
+        
+        for t in range(261):
+            # 평균과 표준편차를 이용하여 1일 사용량 도출
+            while 1:
+                week_1day = np.random.normal(ave_weekday_1day, st_week)
+                if week_1day > 0:
+                    break
+            #weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
+            # 1일 프로필에 변화를 주는 프로필 생산
+            Y = []
+            X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
+            
+            # check if model3 + model4 < 0 ; if < 0, convert to 0
+            for k in range(24):
+                x = fixed_profile_week.iloc[k,0] + X[k]
+                if x < 0 :
+                    X[k] = 0
+                        
+            for f in range(24):
+                y = (fixed_profile_week.iloc[f,0] + X[f])
+                Y.append(y)
+            Y = Y/sum(Y)
+            Y = Y * week_1day
+            changed_profile_week['{}일'.format(t+1)] = Y
+    
+        # 일마다 변하는 프로필 만들기(주말)
+    
+        test = model4_file_end.loc[:, '1' : '24']
+        ncols = []
+        for i in range(24) :
+            ncols.append(i)
+        test.columns = ncols
+        var_1 = test.cov()
+        mean_1 = test.mean()
+        changed_profile_weekend = pd.DataFrame()
+    
+        for t in range(104):
+            # 평균과 표준편차를 이용하여 1일 사용량 도출
+            #week_1day = np.random.normal(ave_week_1day, st_week)
+            while 1:
+                weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
+                if weekend_1day > 0:
+                    break
+            # 1일 프로필에 변화를 주는 프로필 생산
+            Y = []
+            X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
+            # check if model3 + model4 < 0 ; if < 0, convert to 0
+            for k in range(24):
+                x = fixed_profile_weekend.iloc[k,0] + X[k]
+                if x < 0 :
+                    X[k] = 0
+                        
+            for f in range(24):
+                y = (fixed_profile_weekend.iloc[f,0] + X[f])
+                Y.append(y)
+            Y = Y/sum(Y)
+            Y = Y * weekend_1day
+            changed_profile_weekend['{}일'.format(t+1)] = Y
+        
+        changed_profile_week = changed_profile_week.transpose()
+        changed_profile_weekend = changed_profile_weekend.transpose()
+        
+        changed_profile_week.reset_index(drop = True, inplace = True)
+        changed_profile_week.columns = hours
+        
+        changed_profile_weekend.reset_index(drop = True, inplace = True)
+        changed_profile_weekend.columns = hours
+            
+        print('{}번째전력프로필 완성'.format(profile_num_now + 1))
+        
+        
+        
+        os.chdir(save_dir)
+        
+        # 완성된 파일 저장
+        os.chdir(save_dir_day)
+        changed_profile_week.to_excel('{}번째 세대 전력프로필(주중).xlsx'.format(profile_num_now + 1))
+        
+        os.chdir(save_dir_end)
+        changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(profile_num_now + 1))
+        
+        
 print('\n\n######################################################\n\n')
 
 facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
@@ -394,45 +406,45 @@ all_profiles_perc = 100 #%
 
 maker_df = profile_num_maker(nfc_dir)
 for i in range(maker_df.shape[0]) :
-	maker_df.loc[i, 'number'] = round(maker_df.loc[i, 'number'] * all_profiles_perc / 100)
+    maker_df.loc[i, 'number'] = round(maker_df.loc[i, 'number'] * all_profiles_perc / 100)
 
 tempsum = sum(maker_df.loc[:, 'number'].tolist())
 
 for i in range(maker_df.shape[0]) :
-	maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / tempsum * 100, 2)
+    maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / tempsum * 100, 2)
 
 for i in range(maker_df.shape[0]) :
-	print(f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group']}, generate n = {maker_df.loc[i, 'number']}\n")
+    print(f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group']}, generate n = {maker_df.loc[i, 'number']}\n")
 # ~ for i in range(maker_df.shape[0]) :
-	# ~ if maker_df.loc[i, 'number'] > 100 :
-		# ~ maker_df.loc[i, 'number'] = 100
-		
+    # ~ if maker_df.loc[i, 'number'] > 100 :
+        # ~ maker_df.loc[i, 'number'] = 100
+        
 print(maker_df)
 
 
 for facility in facility_list :
-	for group in range(2) : # group_number
-		check = 1
-		if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '업무시설') :
-			check = 0
-			print(f'{facility}, {group} X')
-		# ~ if (facility == '교육시설') & (group == 0) :
-			# ~ check = 0
-			# ~ print(f'{facility}, {group} X')
-		if check == 1 :
-			for i in range(maker_df.shape[0]) :
-				if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
-					profile_num = maker_df.loc[i, 'number']
-			print(f"{facility}, group_{group}, n = {profile_num}")
-			key_list, file_dict = generate_fc(nfc_dir, facility, group)
-			profile_generator(profile_num, key_list, file_dict)
+    for group in range(2) : # group_number
+        check = 1
+#        if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '업무시설') :
+#            check = 0
+#            print(f'{facility}, {group} X')
+#        # ~ if (facility == '교육시설') & (group == 0) :
+#            # ~ check = 0
+#            # ~ print(f'{facility}, {group} X')
+        if check == 1 :
+            for i in range(maker_df.shape[0]) :
+                if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
+                    profile_num = maker_df.loc[i, 'number']
+            print(f"{facility}, group_{group}, n = {profile_num}")
+            key_list, file_dict = generate_fc(nfc_dir, facility, group)
+            profile_generator(profile_num, key_list, file_dict)
 
-	
-	
-	
-	
+    
+    
+    
+    
 
-# ~ os.chdir(main_dir + '\\temp')
+# ~ os.chdir(main_dir + '//temp')
 # ~ model1_file = lib.read_excel('model1_beta_fitting.xlsx')
 # ~ model2_file = lib.read_excel('model2_beta_fitting.xlsx')
 
@@ -444,7 +456,7 @@ for facility in facility_list :
 # ~ model4_file_day = lib.read_excel('model4_weekdays.xlsx')
 # ~ model4_file_end = lib.read_excel('model4_weekends.xlsx')
 
-# ~ save_dir = main_dir + '\\temp'
+# ~ save_dir = main_dir + '//temp'
 # ~ profile_num = 5
 
 
