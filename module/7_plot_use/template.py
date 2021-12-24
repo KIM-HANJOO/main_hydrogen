@@ -13,7 +13,6 @@ plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df
 
-os.chdir(module_dir)
 sys.path.append(module_dir)
 sys.path.append(module_dir + '//4_directory_module')
 import directory_change as dich
@@ -24,7 +23,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import font_manager, rc
-font_path = "C:/Windows/Fonts/malgunbd.TTF"
+#font_path = "C:/Windows/Fonts/malgunbd.TTF"
 font_path = "/mnt/c/Windows/Fonts/malgunbd.TTF"
 font = font_manager.FontProperties(fname=font_path).get_name()
 rc('font', family=font)
@@ -41,6 +40,7 @@ import time
 '''
 note
 '''
+cwdir = os.getcwd()
 
 def read_excel(excel) :
     df = pd.read_excel(excel)
@@ -56,6 +56,12 @@ def ave(list1) :
 	return sum(list1) / len(list1)
 
 print(facility_dir)
+
+fc_list = []
+for fc in os.listdir(facility_dir) :
+    fc_list.append(fc)
+
+df = pd.DataFrame(columns = fc_list, index = ['weekday', 'weekend'])
 
 for fc in os.listdir(facility_dir) :
     fcdir = os.path.join(facility_dir, fc)
@@ -90,4 +96,11 @@ for fc in os.listdir(facility_dir) :
 
             print(f'{excel} calc', end = '\r')
             
+    df.loc['weekday', fc] = day_ave
+    df.loc['weekend', fc] = end_ave
+
     print(f'{fc}, {de}, weekend = {round(end_ave, 3)}, weekday = {round(day_ave, 3)}')
+
+os.chdir(cwdir)
+df.to_excel('weekday+end_perc.xlsx')
+print(df)
