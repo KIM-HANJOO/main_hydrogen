@@ -13,14 +13,14 @@ class Info() :
 		self.main_dir = str(Path(module_dir).parent.absolute())
 		
 		main_dir = self.main_dir
-		self.prep_dir = main_dir + '//1_preprocessing'
-		self.model_dir = main_dir + '//2_model'
-		self.module_dir = main_dir + '//module'
-		self.facility_dir = main_dir + '//FACILITIES'
-		self.plot_dir = main_dir + '//plot'
-		self.cluster_dir = main_dir + '//0_temp_dir(clustering)'
-		self.nfc_dir = main_dir + '//FACILITIES'
-		self.gp_dir = main_dir + '//GENERATED_PROFILES'
+		self.prep_dir = main_dir + '\\1_preprocessing'
+		self.model_dir = main_dir + '\\2_model'
+		self.module_dir = main_dir + '\\module'
+		self.facility_dir = main_dir + '\\FACILITIES'
+		self.plot_dir = main_dir + '\\plot'
+		self.cluster_dir = main_dir + '\\0_temp_dir(clustering)'
+		self.nfc_dir = main_dir + '\\FACILITIES'
+		self.gp_dir = main_dir + '\\GENERATED_PROFILES'
 		self.cluster_info = [2, 2, 2, 2, 2]
 		
 		
@@ -71,7 +71,8 @@ class Info() :
 		# ~ for i in range(facility_df.shape[0]) :
 			# ~ for cat in facility_df.columns :
 				# ~ if str(facility_df.loc[i, cat]) != 'empty' :
-					# ~ facility_df.loc[i, cat] = self.model_dir + '//' + str(facility_df.loc[i, cat])
+					# ~ facility_df.loc[i, cat] = self.model_dir + '\\' + str(facility_df.loc[i, cat])
+					
 
 		# ~ # preprocessing - sub directories
 		# ~ sub_directories = ['1_weekends/weekdays', '2_delete_below_missing_data_standard', \
