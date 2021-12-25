@@ -155,33 +155,25 @@ def model_2(facility_name, final_dir, model2_dir) :
 
 				df = pd.DataFrame(columns = ['excel', 'std'])
 				df_num = 0
-				#
 				start = time.time()
-				#
 				os.chdir(tempdir)
 				temp = lib.read_excel(excel)
 				alllist = []
 				all_day = []
 				
-				#
 				m1 = time.time()
-				#
 				
 				for i in range(temp.shape[0]) :
 					tempave = np.average(temp.loc[i, :])
 					all_day.append(tempave)
 				ave_day = np.average(all_day)
 				
-				#
 				m2 = time.time()
-				#
 				
 				for i in range(temp.shape[0]) :
 					for col in temp.columns :
 						alllist.append(temp.loc[i, col] / ave_day)
-				#
 				m3 = time.time()
-				#
 				
 				for index in range(len(alllist)) :
 					df.loc[df_num, 'excel'] = f'{excel}_{index}'
@@ -199,9 +191,7 @@ def model_2(facility_name, final_dir, model2_dir) :
 					
 				df = None
 				
-				#
 				end = time.time()
-				#
 				time_all = [m1 - start, m2 - m1, m3 - m2, end - m3]
 				pset = sorted(time_all)
 				pset.reverse()

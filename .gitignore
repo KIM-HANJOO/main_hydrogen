@@ -6,7 +6,7 @@ module/.ipynb_checkpoints
 module/__pycache__
 FACILITIES/
 GENERATED_PROFILES/
-GENERATED_PROFILES_1/
+GENERATED_PROFILES_*/
 *.zip
 .*.swp
 .*.swo

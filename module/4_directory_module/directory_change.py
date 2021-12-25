@@ -19,7 +19,7 @@ cluster_dir = di.cluster_dir
 facility_df = di.facility_df
 
 sys.path.append(module_dir)
-sys.path.append(module_dir + '\\4_directory_moduel')
+sys.path.append(module_dir + '//4_directory_moduel')
 import directory_change as dich
 import model_library as lib
 
@@ -69,8 +69,8 @@ def remove(path):
 
 
 def copyfile(src_dir, dst_dir, src_file) :
-    src = src_dir + '\\' + src_file
-    dst = dst_dir + '\\' + src_file
+    src = src_dir + '//' + src_file
+    dst = dst_dir + '//' + src_file
     shutil.copyfile(src, dst)
     print(f'{src_file} copied')
     
@@ -107,7 +107,7 @@ def newfolder(directory):
 
 def newfolderlist(directory, folderlist):
     for i, names in enumerate(folderlist):
-        directory_temp = directory + '\\' + names
+        directory_temp = os.path.join(directory, names) #directory + '//' + names
         try:
             if not os.path.exists(directory_temp):
                 os.makedirs(directory_temp)

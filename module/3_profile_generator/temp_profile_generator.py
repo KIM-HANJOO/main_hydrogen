@@ -49,20 +49,22 @@ fc_list = ['교육시설', '문화시설', '숙박시설', '업무시설', '판�
 fc_list_2 = ['교육시설', '문화시설', '판매및숙박', '업무시설']
 
                 
-gfc_dir = main_dir + '//GENERATED_PROFILES'
+#gfc_dir = main_dir + '//GENERATED_PROFILES'
+gfc_dir = os.path.join(main_dir, 'GENERATED_PROFILES')
 dich.newfolder(gfc_dir)
 
 dich.newfolderlist(gfc_dir, fc_list_2)
 for fc in fc_list_2 :
-    tempdir = gfc_dir + f'//{fc}'
+    tempdir = os.path.join(gfc_dir, fc)
+
     dich.newfolderlist(tempdir, ['group_0', 'group_1'])
     
     for i in range(2) :
-        dich.newfolderlist(tempdir + f'//group_{i}', subdir_list)
+        dich.newfolderlist(os.path.join(tempdir, f'group_{i}'), subdir_list)
         
         for sd in subdir_list :
-            if (sd == 'raw') | (sd == 'model3'):
-                dich.newfolderlist(tempdir + f'//group_{i}//{sd}', ['주중', '주말'])
+#            if (sd == 'raw') | (sd == 'model3'):
+            dich.newfolderlist(os.path.join(tempdir, f'group_{i}//{sd}'), ['주중', '주말'])
     
     print(f'{fc} directory all made')
 
@@ -195,14 +197,23 @@ def profile_generator(profile_num, key_list, file_dict) :
         모델 1
         '''
         model1_file.index = ['a', 'b', 'loc', 'scale']
-        for col in model1_file.columns :
-            print(col, '\t', facility)
-            if facility in col :
-                a = model1_file.loc['a', col]
-                b = model1_file.loc['b', col]
-                loc = model1_file.loc['loc', col]
-                scale = model1_file.loc['scale', col]
-        
+        if facility == '판매및숙박' :
+
+            break
+
+        else :
+            for col in model1_file.columns :
+                print(col, '\t', facility)
+                if facility in col :
+                    a = model1_file.loc['a', col]
+                    b = model1_file.loc['b', col]
+                    loc = model1_file.loc['loc', col]
+                    scale = model1_file.loc['scale', col]
+        print('########################')
+        print(facility)
+        print(model1_file)
+        print(a, b, loc, scale)
+
         ave_week_1day = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
         
         C = (365 * ave_week_1day) / (104 * ave_end + 261 * ave_end)
@@ -425,7 +436,7 @@ print(maker_df)
 for facility in facility_list :
     for group in range(2) : # group_number
         check = 1
-#        if (facility == '판매및숙박') | (facility == '교육시설') | (facility == '업무시설') :
+#        if (facility == '문화시설') | (facility == '교육시설') | (facility == '업무시설') :
 #            check = 0
 #            print(f'{facility}, {group} X')
 #        # ~ if (facility == '교육시설') & (group == 0) :
