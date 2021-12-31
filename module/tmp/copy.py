@@ -57,3 +57,9 @@ def read_excel(excel) :
 
 def ave(list1) :
 	return sum(list1) / len(list1)
+
+
+
+# -----------------------------------------------------
+# fitting beta, burr distribution
+# -----------------------------------------------------

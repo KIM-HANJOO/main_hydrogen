@@ -1,0 +1,113 @@
+import os
+import sys
+import get_dir
+di = get_dir.get_info()
+
+main_dir = di.main_dir
+prep_dir = di.prep_dir
+model_dir = di.model_dir
+module_dir = di.module_dir
+facility_dir = di.facility_dir
+plot_dir = di.plot_dir
+cluster_dir = di.cluster_dir
+facility_df = di.facility_df
+facility_dict = di.facility_dict
+
+sys.path.append(module_dir)
+sys.path.append(os.path.join(module_dir, '4_directory_module'))
+sys.path.append(module_dir + '//4_directory_module')
+print(module_dir + '//4_directory_module')
+print(os.listdir(os.path.join(main_dir,'main_hydrogen', 'module', '4_directory_module')))
+
+import directory_change as dich
+import discordlib_pyplot as dlt
+import model_library as lib
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+from pathlib import Path
+import glob
+import os.path
+import math
+import random
+from scipy.stats import beta, burr, kde
+import scipy.stats
+import shutil
+
+'''
+note
+'''
+cwdir = os.getcwd()
+
+def read_excel(excel) :
+    df = pd.read_excel(excel)
+    if 'Unnamed: 0' in df.columns :
+        df.drop('Unnamed: 0', axis = 1, inplace = True)
+
+    if 'Unnamed: 0.1' in df.columns :
+        df.drop('Unnamed: 0.1', axis = 1, inplace = True)
+
+    return df
+
+def ave(list1) :
+	return sum(list1) / len(list1)
+
+
+
+# -----------------------------------------------------
+# fitting beta, burr distribution
+# -----------------------------------------------------
+
+
+for subdir in os.listdir(facility_dir) :
+    model2_dir = os.path.join(facility_dir, subdir, 'model2')
+    model2 = read_excel('Model2_daily fractoin.xlsx')
+
+    ncols = []
+    for col in model2.columns :
+        if subdir in col :
+            ncols.append(col)
+
+    model2 = model2[ncols]
+    df_beta = pd.DataFrame(columns = ncols)
+    df_burr = pd.DataFrame(columsn = ncols)
+
+    df_beta.index = ['a', 'b', 'loc', 'scale']
+    df_burr.index = ['c', 'd', 'loc', 'scale']
+
+    for col in model2.columns :
+        tmp = model2.loc[:, col].tolist()
+        tmp = [x for x in tmp if str(x) != 'nan']
+        a, b, s1, s2 = scipy.stats.beta.fit(x)
+
+        df_beta.loc['a', col] = a
+        df_beta.loc['b', col] = b
+        df_beta.loc['loc', col] = s1
+        df_beta.loc['scale', col] = s2
+
+        # r = beta.rvs(a, b, loc = s1, scale = s2, size = n)
+
+        c, d, s3, s4 = scipy.stats.burr.fit(x)
+
+        df_burr.loc['c', col] = c
+        df_burr.loc['d', col] = d
+        df_burr.loc['loc', col] = s3
+        df_burr.loc['scale', col] = s4
+        
+        # r2 = burr.rvs(c, d, loc = s3, scale = s4, size = n)
+
+
+
+# -----------------------------------------------------
+# plotting beta distribution
+# -----------------------------------------------------
+    print(df_beta)
+    print(df_burr)
+
+
+
+# -----------------------------------------------------
+# plotting burr distribution 
+# -----------------------------------------------------

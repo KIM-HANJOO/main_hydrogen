@@ -25,10 +25,14 @@ import model_library as lib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib import font_manager, rc
+
 font_path = "/mnt/c/Users/joo09/Documents/Github/fonts/D2Coding.ttf"
 font = font_manager.FontProperties(fname = font_path).get_name()
 rc('font', family = font)
+
+plt.rc('font', family = 'D2Coding')
 
 import os
 from pathlib import Path
@@ -57,3 +61,23 @@ def read_excel(excel) :
 
 def ave(list1) :
 	return sum(list1) / len(list1)
+
+
+
+# -----------------------------------------------------
+# fitting beta, burr distribution
+# -----------------------------------------------------
+
+
+
+fig = plt.figure(figsize = (50, 15))
+
+for i in range(1, 17) :
+    ax = fig.add_subplot(2, 8, i)
+    ax.plot([1, 2], [3, 4])
+    ax.set_title('한글폰트확인 0 -1 1')
+save_dir = os.path.join(gp_plot, 'temp')
+dich.newfolder(save_dir)
+os.chdir(save_dir)
+
+dlt.savefig(save_dir, 'temp_plot.png', 400)

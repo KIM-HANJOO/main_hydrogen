@@ -55,13 +55,23 @@ def read_excel(excel) :
 def ave(list1) :
 	return sum(list1) / len(list1)
 
+def pjoin(p1, p2) :
+    return os.path.join(p1, p2) 
+
+def pjoin(plist) :
+    tempdir = plist[0]
+    for i in range(len(plist)) :
+        if i != 0 :
+            tempdir = os.path.join(tempdir, plist[i])
+
+    return tempdir
+
 print(facility_dir)
 
-fc_list = []
-for fc in os.listdir(facility_dir) :
-    fc_list.append(fc)
 
-df = pd.DataFrame(columns = fc_list, index = ['weekday', 'weekend'])
+df_all = pd.DataFrame(columns = ['m1_accom', 'm1_deal', 'm3_group0', 'm3_group1'])
+
+# model3 | get daily average value with AMI Data
 
 for facility in os.listdir(facility_dir) :
     if facility == '판매및숙박' :
@@ -72,30 +82,36 @@ for facility in os.listdir(facility_dir) :
         model4_dir = os.path.join(fcdir, 'model4')
         pre_dir = os.path.join(fcdir, 'preprocessed')
 
-        df = pd.DataFrame(columns = ['group_0', 'group_1'])
         for group in range(2) :
             df_num = 0
             tdir = model3_dir + f'//group_{group}//group_{group}_preprocessed'
             
             for de in os.listdir(tdir) : #[weekday, weekend]
-                print(f'working on {fc}, group_{group}, {de}')
+                print(f'working on {facility}, group_{group}, {de}')
                 tempdir = os.path.join(tdir, de)
                 os.chdir(tempdir)
                 for excel in os.listdir(tempdir) :
                     temp = read_excel(excel)
                     templist = []
-                    for index in range(temp.shape[0]) :
-                        tempsum = temp.loc[index, :].sum()
-                        templist.append(tempsum)
+                    allsum = temp.sum().sum()
+                    allnum = temp.shape[0]
 
-                    temp_ave = ave(templist)
-                    df.loc[df_num, f'group_{group}'] = temp_ave
+                    df_all.loc[df_num, f'm3_group{group}'] = allsum / allnum 
                     df_num += 1
-            
-        os.chdir(cwdir)
-        print(df)
-        df.to_excel('deal_accom_ami.xlsx')
 
+#                    for index in range(temp.shape[0]) :
+#                        tempsum = temp.loc[index, :].sum()
+#                        templist.append(tempsum)
+#
+#                    temp_ave = ave(templist)
+#                    df_all.loc[df_num, f'm3_group{group}'] = temp_ave
+#                    df_num += 1
+            
+        #print(df)
+        #df.to_excel('deal_accom_ami.xlsx')
+
+
+#model1 | daily average value of SEUM Data
 
 for facility in os.listdir(facility_dir) :
     if facility == '판매및숙박' :
@@ -105,4 +121,30 @@ for facility in os.listdir(facility_dir) :
         model3_dir = os.path.join(fcdir, 'model3')
         model4_dir = os.path.join(fcdir, 'model4')
         pre_dir = os.path.join(fcdir, 'preprocessed')
+
+        os.chdir(model1_dir)
+        temp_accom = read_excel("모델1_숙박시설.xlsx")
+        temp_deal = read_excel("모델1_판매시설.xlsx")
+
+        accom_list = temp_accom.iloc[:, 2].tolist()
+        deal_list = temp_deal.iloc[:, 2].tolist()        
+        accom_list.append(float(temp_accom.columns[2]))
+        deal_list.append(float(temp_accom.columns[2]))
+
+
+df_num = 0
+for i in range(len(accom_list)) :
+    df_all.loc[df_num, 'm1_accom'] = accom_list[i]
+    df_num += 1
+
+
+df_num = 0
+for i in range(len(deal_list)) :
+    df_all.loc[df_num, 'm1_deal'] = deal_list[i]
+    df_num += 1
+
+
+print(df_all)
+os.chdir(cwdir)
+df_all.to_excel('accom_deal_m1_m3.xlsx')
 
