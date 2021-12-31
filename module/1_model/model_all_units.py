@@ -12,6 +12,7 @@ plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df
 facility_dict = di.facility_dict
+gp_dir = di.gp_dir
 gp_plot = di.gp_plot
 print(f'main_dir = {main_dir}\n')
 
@@ -709,21 +710,32 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
     m2_day = temp_day.loc[:, 'std'].tolist()
     m2_end = temp_end.loc[:, 'std'].tolist()
     
-    print(m2_day)
-    print(m2_end)
+#    print(m2_day)
+#    print(m2_end)
     min_all = min([min(m2_day), min(m2_end)])
     max_all = max([max(m2_day), max(m2_end)])
     fig = plt.figure(figsize = (16, 10))
     
+    os.chdir(os.path.join(gp_dir, 'params'))
+    model2_burr = read_excel('model2_burr_fitted.xlsx')
+    model2_burr.index = ['c', 'd', 'loc', 'scale']
+
+
     for i in range(2) :
         ax = fig.add_subplot(2, 1, 1 + i)
 
-        
-        if i == 0 :
-            c, d, loc, scale = scipy.stats.burr.fit(m2_day)
-            
-        elif i == 1 :
-            c, d, loc, scale = scipy.stats.burr.fit(m2_end)
+        for col in model2_burr.columns :
+            if facility_name in col :
+                if i == 0 :
+                    c = model2_burr.loc['c', col]
+                    d = model2_burr.loc['d', col]
+                    loc = model2_burr.loc['loc', col]
+                    scale = model2_burr.loc['scale', col]
+                elif i == 1 :
+                    c = model2_burr.loc['c', col]
+                    d = model2_burr.loc['d', col]
+                    loc = model2_burr.loc['loc', col]
+                    scale = model2_burr.loc['scale', col]
             
         # ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
         
@@ -745,6 +757,7 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
         ax.plot(x, y_real, 'r', label = 'real value')
         ax.legend()
         
+    plt.subplots_adjust(hspace = 0.35)
     os.chdir(plot_dir)
     plt.savefig(f'model2_{facility_name}_{group}_all.png', dpi = 400)
     dlt.savefig(plot_dir, f'model2_{facility_name}_{group}_all.png', 400)
@@ -844,8 +857,9 @@ def model4_plot(facility_name, group, model4_dir, plot_dir) :
     fig = plt.figure(figsize = (10, 5))
     ax = fig.add_subplot(1, 1, 1)
     
-    flierprops = dict(marker='o', markerfacecolor='g', markersize= 2 ,\
-                    linestyle='none', markeredgecolor='dimgrey')
+    flierprops = dict(marker='o', markerfacecolor='k', markersize= 2 ,\
+                    linestyle='none', markeredgecolor='black')
+
     xticks_48 = []
     hours_ex = []
     for i in range(1, 49) :
@@ -876,7 +890,7 @@ def model4_plot(facility_name, group, model4_dir, plot_dir) :
     
     ax.set_xlim([0, 49])
     ax.set_ylim([-0.2, 1])
-    ax.grid()
+    #ax.grid()
 
     os.chdir(plot_dir)
     plt.savefig('{}_{}_model4.png'.format(facility_name, group), dpi = 400)
@@ -893,7 +907,7 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
     tdir = os.path.join(nfc_dir, facility_name, 'model1')
     os.chdir(tdir) # nfc_dir + f'\\{facility_name}\\model1')
     
-    smpl = read_excel('model_1.xlsx')
+    smpl = read_excel('model_1.xlsx') # fitted a, b, loc, scale of sample datas (2) used for profile_generator
     smpl.index = ['a', 'b', 'loc', 'scale']
     
     if facility_name == '판매및숙박' :
@@ -910,9 +924,10 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
         
     else :
         smvar = read_excel(f'모델1_{facility_name}.xlsx')
-        smvar = smvar.iloc[:, 0].tolist()
+        smvar = smvar.iloc[:, 0].tolist() # actual average daily of sample datas (1)
         
         
+    smpl_size = len(smvar)
         
     ass = smpl.loc['a', facility_name]
     bs = smpl.loc['b', facility_name]
@@ -920,9 +935,10 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
     scales = smpl.loc['scale', facility_name]
     
     os.chdir(model1_dir)
-    temp = read_excel('model_1_var.xlsx')
-    info = read_excel('model_1_beta.xlsx')
+    temp = read_excel('model_1_var.xlsx') # actual average daily of generated profiles (3)
+    info = read_excel('model_1_beta.xlsx') # fitted a, b, loc, scale of generated profiles
     info.index = ['a', 'b', 'loc', 'scale']
+
     
     a = info.loc['a', facility_name]
     b = info.loc['b', facility_name]
@@ -932,24 +948,39 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
     m1 = temp.loc[:, 'var'].tolist()
     
     plt.figure(figsize = (8, 8))
-    plt.title('{}\nBeta Distribution(a = {}, b = {}) \n(smpl : a = {}, b = {})'.format(facility_name, round(a, 3), round(b, 3), round(ass, 3), round(bs, 3)))
+    plt.title('{}, group = {}\nBeta Distribution(a = {}, b = {}, size = {})'.format(facility_name, group, round(ass, 3), round(bs, 3), smpl_size))
     plt.xlabel('model 1')
     plt.ylabel('density')
+
+
+    # are going to use :
+    # smvar as actual values(sample profiles) : smvar
+    # smpl for fitted values (fitted plot) : ass, bs, locs, scales
+    # temp for actual values (generated profiles) : m1
+
+    r_fitted = beta.rvs(ass, bs, loc = locs, scale = scales, size = smpl_size)
+
+    min_list = [min(smvar), min(r_fitted), min(m1)]
+    max_list = [max(smvar), max(r_fitted), max(m1)]
+
+    x = np.linspace(min(min_list), max(max_list), smpl_size)
+    #x = np.linspace(min(smvar), max(smvar), smpl_size)
     
-    r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
-    density = kde.gaussian_kde(m1)
+    
     density_smpl = kde.gaussian_kde(smvar)
+    density_fitted = kde.gaussian_kde(r_fitted)
+    density_gp = kde.gaussian_kde(m1)
     
-    x_smpl = np.linspace(min(smvar), max(smvar), 300)
-    y_smpl = density_smpl(x_smpl)
-    
-    x = np.linspace(min(m1), max(m1), 300)
-    y_real = density(x)
+    y_smpl = density_smpl(x)
+    y_fitted = density_fitted(x)
+    y_gp = density_gp(x)
     
     plt.grid()
     # ~ plt.plot(x, y_sample, 'b--', label = 'random variates')
-    plt.plot(x_smpl, y_smpl, 'b--', label = 'sample')
-    plt.plot(x, y_real, 'r', label = 'generated profiles')
+    plt.plot(x, y_smpl, 'b--', label = 'sample')
+    plt.plot(x, y_fitted, 'g--',  label = 'beta fitted')
+    plt.plot(x, y_gp, 'r', label = 'generated profiles')
+
     plt.legend()
     os.chdir(plot_dir)
     plt.savefig(f'model1_{facility_name}_{group}_compare.png', dpi = 400)
@@ -979,34 +1010,13 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
         smpl2 = smpl.loc[:, col_list[1]].tolist()
         smpl2 = [x for x in smpl2 if str(x) != 'nan']
         
+    # import burr fitted info data
+    os.chdir(os.path.join(gp_dir, 'params'))
+    model2_burr = read_excel('model2_burr_fitted.xlsx')
+    model2_burr.index = ['c', 'd', 'loc', 'scale']
+
+    # import model 2 from generated profile directory
     os.chdir(model2_dir)
-    '''
-    if 'model2_weekdays_std.xlsx' in os.listdir(model2_dir) :
-        temp_day = read_excel('model2_weekdays_std.xlsx')
-    else :
-        temp_day = pd.DataFrame(columns = ['excel', 'std'])
-        for excel in os.listdir(model2_dir) :
-            if 'model2_weekdays_std_' in excel :
-                os.chdir(model2_dir)
-                temp = read_excel(excel)
-                temp_day = pd.concat([temp_day, temp])
-                print(f'{excel} concatenated')
-        temp = None
-        
-    
-    if 'model2_weekends_std.xlsx' in os.listdir(model2_dir) :
-        temp_end = read_excel('model2_weekends_std.xlsx')
-    else :
-        temp_end = pd.DataFrame(columns = ['excel', 'std'])
-        for excel in os.listdir(model2_dir) :
-            if 'model2_weekends_std' in excel :
-                os.chdir(model2_dir)
-                temp = read_excel(excel)
-                temp_end = pd.concat([temp_end, temp])
-                print(f'{excel} concatenated')
-        temp = None
-    '''
-        
     if 'model2_weekdays_std.xlsx' in os.listdir(model2_dir) :
         temp_day = read_excel('model2_weekdays_std.xlsx')
     else :
@@ -1046,44 +1056,68 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
     min_all = min([min(m2_day), min(m2_end)])
     max_all = max([max(m2_day), max(m2_end)])
     fig = plt.figure(figsize = (16, 10))
+
+    # make density plot
     
     for i in range(2) :
         ax = fig.add_subplot(2, 1, 1 + i)
-        
-        
-        if i == 0 :
-            c, d, loc, scale = scipy.stats.burr.fit(m2_day)
-            
-        elif i == 1 :
-            c, d, loc, scale = scipy.stats.burr.fit(m2_end)
-        # ~ r = burr.rvs(a, b, loc = loc, scale = scale, size = 10000)
-        
+
+        for col in model2_burr.columns :
+            if facility_name in col :
+                if i == 0 : #주중
+                    c = model2_burr.loc['c', col]
+                    d = model2_burr.loc['d', col]
+                    loc = model2_burr.loc['loc', col]
+                    scale = model2_burr.loc['scale', col]
+                    m2_size = len(m2_day)
+
+                elif i == 1 : # 주말
+                    c = model2_burr.loc['c', col]
+                    d = model2_burr.loc['d', col]
+                    loc = model2_burr.loc['loc', col]
+                    scale = model2_burr.loc['scale', col]
+                    m2_size = len(m2_end)
         # ~ ax.figure(figsize = (8, 8))
-        ax.set_title('{}\nBurr Distribution(c = {}, d = {})'.format(facility_name, round(c, 3), round(d, 3)))
-        ax.set_xlabel('model 2')
-        ax.set_ylabel('density')
+        print('all loaded')
+        r_fitted = burr.rvs(c, d, loc = loc, scale = scale, size = m2_size)
+        density_fitted = kde.gaussian_kde(r_fitted)
+        print('density for fitted lists are made ...')
+
         
         if i == 0 :
             density_real = kde.gaussian_kde(m2_day)
             density_smpl = kde.gaussian_kde(smpl1)
-            xs = np.linspace(min(m2_day), min(m2_end))
-            #xs = np.linspace(min(smpl1), max(smpl1), 300)
+            #xs = np.linspace(min(m2_day), min(m2_end))
+            xs = np.linspace(min(smpl1), max(smpl1), 300)
+            add_title = '주중'
         if i == 1 :
             density_real = kde.gaussian_kde(m2_end)
             density_smpl = kde.gaussian_kde(smpl2)
             xs = np.linspace(min(smpl2), max(smpl2), 300)
+            add_title = '주말'
         
-        
+        # min, max for all range (merge range)
+        print('density list for sample n generated profiles are made ...')
+
+        xn = np.linspace(min(min(smpl1), min(smpl2)), max(max(smpl1), max(smpl2)), m2_size)
+
+        ax.set_title('{}, group = {}, {}\nBurr Distribution(c = {}, d = {}, size = {})'.format(facility_name, group, add_title, round(c, 3), round(d, 3), m2_size))
+        ax.set_xlabel('model 2')
+        ax.set_ylabel('density')
         
         #x = np.linspace(min_all, max_all, 300)
 
-        y_real = density_real(xs)
-        y_smpl = density_smpl(xs)
+        y_fitted = density_fitted(xn)
+        y_real = density_real(xn)
+        y_smpl = density_smpl(xn)
         
         ax.grid()
-        ax.plot(xs, y_smpl, 'b--', label = 'sample')
-        ax.plot(xs, y_real, 'r', label = 'generated profiles')
+        ax.plot(xn, y_smpl, 'b--', label = 'sample')
+        ax.plot(xn, y_fitted, 'g--', label = 'burr fitted')
+        ax.plot(xn, y_real, 'r', label = 'generated profiles')
         ax.legend()
+
+        print('plotted')
         
     plt.subplots_adjust(hspace = 0.35)
     os.chdir(plot_dir)

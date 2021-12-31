@@ -234,9 +234,6 @@ def profile_generator(profile_num, key_list, file_dict) :
     model3_file_day = model3_file.loc[:, '1' : '24']
     model3_file_end = model3_file.loc[:, '25' : '48']
     model3_file_end.columns = model3_file_day.columns
-    
-    all_ave = []
-    all_st = []
 
     for profile_num_now in range(profile_num):
         '''
@@ -279,10 +276,13 @@ def profile_generator(profile_num, key_list, file_dict) :
                     loc2 = model2_file.loc['loc', col]
                     scale2 = model2_file.loc['scale', col]
         
-        st_week = burr.rvs(c2, d2, loc = loc2, scale = scale2, size = 1)
-        while st_week < 0 :
-            print('negative value for st_weekend')
-            st_week = burr.rvs(c2, d2, loc = loc2, scale = scale2, size = 1)
+        st_week = burr.rvs(c2, d2, loc = loc2, scale = scale2, size = 261)
+        st_week = st_week.tolist()
+        for i in range(len(st_week)) :
+            while st_week[i] <= 0 :
+                print('negative value for st_weekend')
+                st_week[i] = burr.rvs(c2, d2, loc = loc2, scale = scale2, size = 1)
+            
             
         for col in model2_file.columns :
             if facility in col :
@@ -293,13 +293,12 @@ def profile_generator(profile_num, key_list, file_dict) :
                     loc3 = model2_file.loc['loc', col]
                     scale3 = model2_file.loc['scale', col]
         
-        st_weekend = burr.rvs(c3, d3, loc = loc3, scale = scale3, size = 1)
-        while st_weekend < 0 :
-            print('negative value for st_weekend')
-            st_weekend = burr.rvs(c3, d3, loc = loc3, scale = scale3, size = 1)
-
-        all_st.append(st_weekend)
-        all_st.append(st_week)
+        st_weekend = burr.rvs(c3, d3, loc = loc3, scale = scale3, size = 104)
+        st_weekend = st_weekend.tolist()
+        for i in range(len(st_weekend)) :
+            while st_weekend[i] <= 0 :
+                print('negative value for st_weekend')
+                st_weekend[i] = burr.rvs(c3, d3, loc = loc3, scale = scale3, size = 1)
     
     
         '''
@@ -367,17 +366,19 @@ def profile_generator(profile_num, key_list, file_dict) :
         var_1 = test.cov()
         mean_1 = test.mean()
         changed_profile_week = pd.DataFrame()
+
+        '''
+        프로필 생성
+        '''
         
         for t in range(261):
             # 평균과 표준편차를 이용하여 1일 사용량 도출
             while 1:
                 #week_1day = np.random.normal(ave_weekday_1day, st_week)
-                week_1day = ave_weekday_1day * st_week
+                week_1day = ave_weekday_1day * st_week[t]
                 if week_1day > 0:
                     break
-            all_ave.append(week_1day)
-            print(week_1day)
-            print("day sum / ave_day")
+
             #weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
             # 1일 프로필에 변화를 주는 프로필 생산
             Y = []
@@ -395,9 +396,6 @@ def profile_generator(profile_num, key_list, file_dict) :
                 Y.append(y)
 
 
-            for f in range(24) :
-                if Y[f] < 0 :
-                    print('HHHHHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLL')
             Y = Y/sum(Y)
             Y = Y * week_1day
             changed_profile_week['{}일'.format(t+1)] = Y
@@ -417,11 +415,10 @@ def profile_generator(profile_num, key_list, file_dict) :
             # 평균과 표준편차를 이용하여 1일 사용량 도출
             #week_1day = np.random.normal(ave_week_1day, st_week)
             while 1:
-                weekend_1day = ave_weekend_1day * st_weekend
+                weekend_1day = ave_weekend_1day * st_weekend[t]
                 #weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
                 if weekend_1day > 0:
                     break
-            all_ave.append(weekend_1day)
             # 1일 프로필에 변화를 주는 프로필 생산
             Y = []
             X = np.random.multivariate_normal(mean_1, var_1, check_valid='ignore')
@@ -461,16 +458,7 @@ def profile_generator(profile_num, key_list, file_dict) :
         changed_profile_weekend.to_excel('{}번째 세대 전력프로필(주말).xlsx'.format(profile_num_now + 1))
         
 
-    print(all_st)
-    print(all_ave)
 
-
-    print('#####################')
-    print('model2 max - min :')
-    print(max(all_st) - min(all_st))
-    print('ave max - min :')
-    print(max(all_ave) - min(all_ave))
-    print('#####################')
 print('\n\n######################################################\n\n')
 
 facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
