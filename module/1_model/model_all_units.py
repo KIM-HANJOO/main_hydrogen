@@ -340,7 +340,7 @@ def model_2(facility_name, final_dir, model2_dir) :
                 print(f'{excel} done, elapsed : {round(end - start, 1)}, concat = {round(end - m3, 1)}, {ind}', end = '\r')
 
             os.chdir(model2_dir)
-            df_all.to_excel(f'model2_weekdays_std_{x}.xlsx')
+            df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
             df_all = None
             print('{} done'.format(excel), end = '\r')
 #                df = pd.DataFrame(columns = ['excel', 'std'])
@@ -712,6 +712,8 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
     
 #    print(m2_day)
 #    print(m2_end)
+    print(min(m2_day))
+    print(min(m2_end))
     min_all = min([min(m2_day), min(m2_end)])
     max_all = max([max(m2_day), max(m2_end)])
     fig = plt.figure(figsize = (16, 10))

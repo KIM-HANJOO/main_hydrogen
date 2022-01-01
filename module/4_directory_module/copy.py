@@ -79,17 +79,6 @@ subdir_list = ['raw', 'model1', 'model2', 'model3', 'model4']
 fc_list = ['교육시설', '문화시설', '숙박시설', '업무시설', '판매시설', 'params']
 fc_list_2 = ['교육시설', '문화시설', '판매및숙박', '업무시설', 'params']
 
-#make gp_plot
-dich.newfolder(gp_dir)
-for fc in fc_list_2 :
-    if 'params' != fc :
-        tempdir = os.path.join(gp_dir, fc)
-        dich.newfolder(tempdir)
-        for ssub in ['compare', 'solo'] :
-            ttempdir = os.path.join(tempdir, ssub)
-            dich.newfolder(ttempdir)
-
-dich.newfolder(os.path.join(gp_dir, 'model2_fitted'))
                 
 #gfc_dir = main_dir + '//GENERATED_PROFILES'
 gfc_dir = os.path.join(main_dir, 'GENERATED_PROFILES')

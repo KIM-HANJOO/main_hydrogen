@@ -91,7 +91,7 @@ for facility in os.listdir(gp_dir) :
                 model3_dir = os.path.join(nmaindir, 'model3')
                 model4_dir = os.path.join(nmaindir, 'model4')
                 final_dir = os.path.join(nmaindir, 'raw')
-                plot_dir = os.path.join(nmaindir, 'GENERATED_PLOTS', facility)
+                plot_dir = os.path.join(gp_plot, facility)
                 dich.newfolder(plot_dir)
 
 
