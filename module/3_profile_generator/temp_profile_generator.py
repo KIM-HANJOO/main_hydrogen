@@ -256,8 +256,6 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
 #        globals()[f'{key}'] = file_dict[key]
 #    file_dict = None
         
-    print(model2_file)
-    print(model1_file)
     hours = []
     for i in range(1, 25) :
         hours.append(str(i))
@@ -278,8 +276,6 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
         model1_file.index = ['a', 'b', 'loc', 'scale']
 
         if facility == '판매및숙박' :
-            model1_file = model1_file.loc[:, facility_add]
-            print(model1_file)
             a = model1_file.loc['a', facility_add]
             b = model1_file.loc['b', facility_add]
             loc = model1_file.loc['loc', facility_add]
@@ -331,7 +327,6 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
         for col in model2_file.columns :
             if facility in col :
                 if '주말' in col :
-                    print(col)
                     c3 = model2_file.loc['c', col]
                     d3 = model2_file.loc['d', col]
                     loc3 = model2_file.loc['loc', col]

@@ -73,12 +73,20 @@ use 'model_all_units.py' as one and only module
 '''
 import model_all_units as mu
 
-for facility in os.listdir(gp_dir) :
+facility_list = ['업무시설', '판매시설', '숙박시설']
+
+for facility in facility_list : #os.listdir(gp_dir) :
     if 'params' != facility :
         for group in range(2) :
             check = 0 
                 
-            if (facility == '업무시설') & (group == 0):
+#            if (facility == '업무시설') | (facility == '판매및숙박') : #& (group == 0):
+#                if facility == '업무시설' :
+#                    if group == 1 :
+#                        check = 1
+#                else :
+#                    check = 1
+            if facility != '업무시설' : 
                 check = 1
 
             if check == 1 :
@@ -97,12 +105,12 @@ for facility in os.listdir(gp_dir) :
 
 
 
-#                print('\nmodel_1 running')
-#                mu.model_1(facility, final_dir, model1_dir)
-#                print('\nmodel_2 running')
-#                mu.model_2(facility, final_dir, model2_dir)
-#                print('\nmodel_3 running')
-#                mu.model_3(final_dir, model3_dir)
+                print('\nmodel_1 running')
+                mu.model_1(facility, final_dir, model1_dir)
+                print('\nmodel_2 running')
+                mu.model_2(facility, final_dir, model2_dir)
+                print('\nmodel_3 running')
+                mu.model_3(final_dir, model3_dir)
                 print('\nmodel_4 running')
                 mu.model_4(model3_dir, model4_dir)
                
@@ -121,13 +129,13 @@ for facility in os.listdir(gp_dir) :
                 nplot_dir = os.path.join(plot_dir, 'compare')
                 dich.newfolder(nplot_dir)
                 
-                print('\nmodel_1 compare')
-                mu.model1_compare(facility, group, model1_dir, nplot_dir, nfc_dir)
-                print('\nmodel_2_all')
-                mu.model2_all(facility, model2_dir, plot_dir, nfc_dir)
-                print('\nmodel_2 compare')
-                mu.model2_compare(facility, group, model2_dir, nplot_dir, nfc_dir)
-                print('\nmodel_3 compare')
-                mu.model3_compare(facility, group, model3_dir, nplot_dir, nfc_dir)
-                print('\nmodel_4 compare')
-                mu.model4_compare(facility, group, model4_dir, nplot_dir, nfc_dir)
+#                print('\nmodel_1 compare')
+#                mu.model1_compare(facility, group, model1_dir, nplot_dir, nfc_dir)
+##                print('\nmodel_2_all')
+##                mu.model2_all(facility, model2_dir, plot_dir, nfc_dir)
+#                print('\nmodel_2 compare')
+#                mu.model2_compare(facility, group, model2_dir, nplot_dir, nfc_dir)
+#                print('\nmodel_3 compare')
+#                mu.model3_compare(facility, group, model3_dir, nplot_dir, nfc_dir)
+#                print('\nmodel_4 compare')
+#                mu.model4_compare(facility, group, model4_dir, nplot_dir, nfc_dir)
