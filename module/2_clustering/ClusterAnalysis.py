@@ -133,9 +133,10 @@ def all_score_plot(X, all_score_df, plot) :
             hours_ex = []
             for i in range(1, X.shape[1] + 1) :
                 hours_ex.append(i)
-            
+
+            X.reset_index(drop = True, inplace = True)
             for i in range(X.shape[0]) :
-                plt.plot(hours_ex, X[i])
+                plt.plot(hours_ex, X.loc[i, '1':])
             
             plt.xlim(1, X.shape[1])
             plt.xlabel('hours')
@@ -171,7 +172,7 @@ def all_score_plot(X, all_score_df, plot) :
         plt.ylabel('score (normalized)')
         plt.grid(True, axis='x', color='black', alpha = 0.5, linestyle='--')
         plt.legend()
-        plt.show()
+        #plt.show()
     
     
     df_optimal = pd.DataFrame(columns = ['silhouette_score', 'dunn index', 'calinski_harabasz_score', 'davies_bouldin_score'])

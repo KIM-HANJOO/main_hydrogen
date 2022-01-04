@@ -89,7 +89,23 @@ for fc in fc_list_2 :
             ttempdir = os.path.join(tempdir, ssub)
             dich.newfolder(ttempdir)
 
-dich.newfolder(os.path.join(gp_dir, 'model2_fitted'))
+dich.newfolder(os.path.join(gp_plot, 'model2_fitted'))
+
+# copy 'model2_fitted' folder
+model2_fitted_dir = os.path.join(main_dir, 'temp', 'model2_fitted')
+dst_dir = gp_plot
+#dst_dir = os.path.join(gp_plot, 'model2_fitted')
+dich.copydir_f(model2_fitted_dir, dst_dir)
+check = 0
+for f in os.listdir(dst_dir) :
+    if 'model2_fitted' == f :
+        check = 1
+
+if check == 1:
+    print('model2_fitted folder copied to GENERATED_PLOTS dir')
+else :
+    print('33333333333333333333333warning33333333333333333333\n' * 100)
+
                 
 #gfc_dir = main_dir + '//GENERATED_PROFILES'
 gfc_dir = os.path.join(main_dir, 'GENERATED_PROFILES')
@@ -151,13 +167,16 @@ def profile_num_maker(nfc_dir) :
             
     
     
-def generate_fc(nfc_dir, facility, group) :    
+def generate_fc(nfc_dir, facility, group, facility_add) :    
 # need
 # facility, save_dir, profile_num, model1_file, \
 # model2_file, model3_file, model4_file_day, model4_file_end
 
 
 # directories
+    key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', 'model1_file', \
+    'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
+
     wd = os.path.join(nfc_dir, facility)
     model1_dir = os.path.join(wd, 'model1')
     model2_dir = os.path.join(wd, 'model2')
@@ -211,28 +230,27 @@ def generate_fc(nfc_dir, facility, group) :
     save_dir_end = os.path.join(save_dir, '주말')
     os.chdir(os.path.join(main_dir, 'module', '7_plot_use'))
     dayend_perc = dich.read_excel('weekday+end_perc.xlsx')
-
+    if facility == '판매및숙박' :
+        save_dir = os.path.join(gp_dir, facility_add, f'group_{group}', 'raw')
+        save_dir_day = os.path.join(save_dir, '주중')
+        save_dir_end = os.path.join(save_dir, '주말')
 
     file_dict = dict()
 
-    key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', \
-    'model1_file', 'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
+    key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', 'model1_file', \
+    'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
 
     for key in key_list :
         file_dict[key] = locals()[f'{key}']
-
     print('files all loaded')
+    print(len(file_dict.keys()))
 
     return key_list, file_dict
 
     
-
-# 원하는 세대 수와 세대 특징 입력된 파일 읽기
 def profile_generator(profile_num, key_list, file_dict) :
-    
     for key in key_list :
         globals()[f'{key}'] = file_dict[key]
-        
     file_dict = None
         
     hours = []
@@ -241,19 +259,28 @@ def profile_generator(profile_num, key_list, file_dict) :
     dayend_perc.index = ['weekday', 'weekend']
     ave_day = dayend_perc.loc['weekday', facility]    
     ave_end = dayend_perc.loc['weekend', facility]    
-
+    print(dayend_perc)
+    print('percentage for weekday, weekend')
+    print(ave_day, ave_end)
     model3_file_day = model3_file.loc[:, '1' : '24']
     model3_file_end = model3_file.loc[:, '25' : '48']
     model3_file_end.columns = model3_file_day.columns
 
     for profile_num_now in range(profile_num):
+        model1_file = file_dict['model1_file']
+
         '''
         모델 1
         '''
         model1_file.index = ['a', 'b', 'loc', 'scale']
-        if facility == '판매및숙박' :
 
-            break
+        if facility == '판매및숙박' :
+            model1_file = model1_file[facility_add]
+            a = model1_file.loc['a', facility_add]
+            b = model1_file.loc['b', facility_add]
+            loc = model1_file.loc['loc', facility_add]
+            scale = model1_file.loc['scale', facility_add]
+
 
         else :
             for col in model1_file.columns :
@@ -264,12 +291,14 @@ def profile_generator(profile_num, key_list, file_dict) :
                     loc = model1_file.loc['loc', col]
                     scale = model1_file.loc['scale', col]
 
-        ave_week_1day = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
+        ave_day_beta = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
         
-        C = (365 * ave_week_1day) / (104 * ave_end + 261 * ave_end)
+        constant_weekday = ave_day * (365 / (261 * ave_day + 104 * ave_end))
+        constant_weekend = ave_end * (365 / (261 * ave_day + 104 * ave_end))
 
-        ave_weekday_1day = ave_day * C
-        ave_weekend_1day = ave_end * C
+        ave_weekday_1day = ave_day_beta * constant_weekday
+        ave_weekend_1day = ave_day_beta * constant_weekend
+
         '''
         모델2
         '''
@@ -386,6 +415,8 @@ def profile_generator(profile_num, key_list, file_dict) :
             # 평균과 표준편차를 이용하여 1일 사용량 도출
             while 1:
                 #week_1day = np.random.normal(ave_weekday_1day, st_week)
+                '''
+                '''
                 week_1day = ave_weekday_1day * st_week[t]
                 if week_1day > 0:
                     break
@@ -426,6 +457,8 @@ def profile_generator(profile_num, key_list, file_dict) :
             # 평균과 표준편차를 이용하여 1일 사용량 도출
             #week_1day = np.random.normal(ave_week_1day, st_week)
             while 1:
+                '''
+                '''
                 weekend_1day = ave_weekend_1day * st_weekend[t]
                 #weekend_1day = np.random.normal(ave_weekend_1day, st_weekend)
                 if weekend_1day > 0:
@@ -495,10 +528,10 @@ print(maker_df)
 
 for facility in facility_list :
     for group in range(2) : # group_number
-        check = 1
+        check = 0
         if facility == '판매및숙박' :
-            check == 0
-            print(f'{facility}, {group} X')
+            check = 1
+#            print(f'{facility}, {group} X')
 #        if (facility == '문화시설') | (facility == '교육시설') | (facility == '업무시설') :
 #            check = 0
 #            print(f'{facility}, {group} X')
@@ -509,9 +542,17 @@ for facility in facility_list :
             for i in range(maker_df.shape[0]) :
                 if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
                     profile_num = maker_df.loc[i, 'number']
-            print(f"{facility}, group_{group}, n = {profile_num}")
-            key_list, file_dict = generate_fc(nfc_dir, facility, group)
-            profile_generator(profile_num, key_list, file_dict)
+            if facility == '판매및숙박' :
+                for facility_add in ['판매시설', '숙박시설'] :
+                    print(f"{facility}, group_{group}, n = {profile_num}")
+                    key_list, file_dict = generate_fc(nfc_dir, facility, group, facility_add)
+                    profile_generator(profile_num, key_list, file_dict)
+
+            else :
+                facility_add = None
+                print(f"{facility}, group_{group}, n = {profile_num}")
+                key_list, file_dict = generate_fc(nfc_dir, facility, group, facility_add)
+                profile_generator(profile_num, key_list, file_dict)
 
     
     

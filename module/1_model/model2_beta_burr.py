@@ -73,6 +73,8 @@ burr_index = ['c', 'd', 'loc', 'scale']
 df_beta = pd.DataFrame(columns = [], index = beta_index)
 df_burr = pd.DataFrame(columns = [], index = burr_index)
 
+df_burr_barplot = pd.DataFrame()
+
 for fac_num, subdir in enumerate(os.listdir(facility_dir)) :
     model2_dir = os.path.join(facility_dir, subdir, 'model2')
     os.chdir(model2_dir)
@@ -136,7 +138,8 @@ for fac_num, subdir in enumerate(os.listdir(facility_dir)) :
         print(len(density_burr))
 #        all_min = min(min(density_smpl), min(density_beta), min(density_burr))
 #        all_max = max(max(density_smpl), max(density_beta), max(densityu_burr))
-
+        print(tmp_burr.tolist())
+        print(density_burr.tolist())
         
 # -----------------------------------------------------
 # plotting beta distribution

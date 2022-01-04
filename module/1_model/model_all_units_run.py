@@ -76,10 +76,10 @@ import model_all_units as mu
 for facility in os.listdir(gp_dir) :
     if 'params' != facility :
         for group in range(2) :
-            check = 1
+            check = 0 
                 
-            if (facility == '판매및숙박') : #& (group == 1):
-                check = 0
+            if (facility == '업무시설') & (group == 0):
+                check = 1
 
             if check == 1 :
 
@@ -97,12 +97,12 @@ for facility in os.listdir(gp_dir) :
 
 
 
-                print('\nmodel_1 running')
-                mu.model_1(facility, final_dir, model1_dir)
-                print('\nmodel_2 running')
-                mu.model_2(facility, final_dir, model2_dir)
-                print('\nmodel_3 running')
-                mu.model_3(final_dir, model3_dir)
+#                print('\nmodel_1 running')
+#                mu.model_1(facility, final_dir, model1_dir)
+#                print('\nmodel_2 running')
+#                mu.model_2(facility, final_dir, model2_dir)
+#                print('\nmodel_3 running')
+#                mu.model_3(final_dir, model3_dir)
                 print('\nmodel_4 running')
                 mu.model_4(model3_dir, model4_dir)
                

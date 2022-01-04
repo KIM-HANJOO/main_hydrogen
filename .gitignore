@@ -6,6 +6,7 @@ model/
 module/.ipynb_checkpoints
 module/__pycache__
 FACILITIES/
+
 GENERATED_PROFILES/
 GENERATED_PROFILES*/
 *.zip

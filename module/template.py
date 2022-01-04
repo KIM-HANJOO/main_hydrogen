@@ -12,6 +12,7 @@ plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df
 facility_dict = di.facility_dict
+gp_dir = di.gp_dir
 gp_plot = di.gp_plot
 print(f'main_dir = {main_dir}\n')
 
@@ -39,6 +40,7 @@ import random
 from scipy.stats import beta, burr, kde
 import scipy.stats
 import shutil
+import time
 
 '''
 note
