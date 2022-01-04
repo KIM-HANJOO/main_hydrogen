@@ -235,24 +235,29 @@ def generate_fc(nfc_dir, facility, group, facility_add) :
         save_dir_day = os.path.join(save_dir, '주중')
         save_dir_end = os.path.join(save_dir, '주말')
 
+
     file_dict = dict()
-
-    key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', 'model1_file', \
-    'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
-
-    for key in key_list :
-        file_dict[key] = locals()[f'{key}']
+    key_list = None
+#
+#    key_list = ['model1_file', 'facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', \
+#    'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
+#
+#    for key in key_list :
+#        file_dict[key] = locals()[f'{key}']
     print('files all loaded')
     print(len(file_dict.keys()))
 
-    return key_list, file_dict
+    return key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc
 
     
-def profile_generator(profile_num, key_list, file_dict) :
-    for key in key_list :
-        globals()[f'{key}'] = file_dict[key]
-    file_dict = None
+def profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc
+) :
+#    for key in file_dict.keys() :
+#        globals()[f'{key}'] = file_dict[key]
+#    file_dict = None
         
+    print(model2_file)
+    print(model1_file)
     hours = []
     for i in range(1, 25) :
         hours.append(str(i))
@@ -267,15 +272,14 @@ def profile_generator(profile_num, key_list, file_dict) :
     model3_file_end.columns = model3_file_day.columns
 
     for profile_num_now in range(profile_num):
-        model1_file = file_dict['model1_file']
-
         '''
         모델 1
         '''
         model1_file.index = ['a', 'b', 'loc', 'scale']
 
         if facility == '판매및숙박' :
-            model1_file = model1_file[facility_add]
+            model1_file = model1_file.loc[:, facility_add]
+            print(model1_file)
             a = model1_file.loc['a', facility_add]
             b = model1_file.loc['b', facility_add]
             loc = model1_file.loc['loc', facility_add]
@@ -290,7 +294,7 @@ def profile_generator(profile_num, key_list, file_dict) :
                     b = model1_file.loc['b', col]
                     loc = model1_file.loc['loc', col]
                     scale = model1_file.loc['scale', col]
-
+#
         ave_day_beta = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
         
         constant_weekday = ave_day * (365 / (261 * ave_day + 104 * ave_end))
@@ -545,14 +549,14 @@ for facility in facility_list :
             if facility == '판매및숙박' :
                 for facility_add in ['판매시설', '숙박시설'] :
                     print(f"{facility}, group_{group}, n = {profile_num}")
-                    key_list, file_dict = generate_fc(nfc_dir, facility, group, facility_add)
-                    profile_generator(profile_num, key_list, file_dict)
+                    key_list, file_dict,model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc  = generate_fc(nfc_dir, facility, group, facility_add)
+                    profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc)
 
             else :
                 facility_add = None
                 print(f"{facility}, group_{group}, n = {profile_num}")
-                key_list, file_dict = generate_fc(nfc_dir, facility, group, facility_add)
-                profile_generator(profile_num, key_list, file_dict)
+                key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc = generate_fc(nfc_dir, facility, group, facility_add)
+                profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc)
 
     
     
