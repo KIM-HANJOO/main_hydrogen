@@ -75,6 +75,7 @@ df_burr = pd.DataFrame(columns = [], index = burr_index)
 
 df_burr_barplot = pd.DataFrame()
 facility_list = [x for x in os.listdir(facility_dir) if x != 'params']
+facility_list = ['업무시설', '판매및숙박', '교육시설', '문화시설']
 
 ncols = []
 for fc in facility_list :
@@ -157,13 +158,13 @@ for fac_num, subdir in enumerate(facility_list) :
         df_num = 0
         for index in range(len(r_burr.tolist())) :
             if '주중' in col :
-                df_density.loc[df_num, f'{subdir}_weekdays'] = r_burr.tolist()[index]
-                df_num += 1
-                print(f'{subdir}, 주중', df_num / len(r_burr.tolist()))
+                temp_df_burr = pd.DataFrame(r_burr.tolist(), columns = [f'{subdir}_weekdays'])
+                df_density[f'{subdir}_weekdays'] = temp_df_burr
             else :
-                df_density.loc[df_num, f'{subdir}_weekends'] = r_burr.tolist()[index]
-                df_num += 1
-                print(f'{subdir}, 주말', df_num / len(r_burr.tolist()))
+                temp_df_burr = pd.DataFrame(r_burr.tolist(), columns = [f'{subdir}_weekends'])
+                df_density[f'{subdir}_weekends'] = temp_df_burr
+
+
         print(f'ended for {subdir}')
 
 #        #df_density.loc[:, subdir] = np.array(density_burr).transpose()

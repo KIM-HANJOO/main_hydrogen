@@ -727,18 +727,38 @@ def model2_plot(facility_name, group, model2_dir, plot_dir) :
         ax = fig.add_subplot(2, 1, 1 + i)
 
         for col in model2_burr.columns :
-            if facility_name in col :
-                if i == 0 :
-                    c = model2_burr.loc['c', col]
-                    d = model2_burr.loc['d', col]
-                    loc = model2_burr.loc['loc', col]
-                    scale = model2_burr.loc['scale', col]
-                elif i == 1 :
-                    c = model2_burr.loc['c', col]
-                    d = model2_burr.loc['d', col]
-                    loc = model2_burr.loc['loc', col]
-                    scale = model2_burr.loc['scale', col]
-            
+            if (facility_name == '판매시설') | (facility_name == '숙박시설') :
+                if '판매및숙박' in col :
+                    if i == 0 :
+                        if '주중' in col :
+                            ncol = col
+                            c = model2_burr.loc['c', ncol]
+                            d = model2_burr.loc['d', ncol]
+                            loc = model2_burr.loc['loc', ncol]
+                            scale = model2_burr.loc['scale', ncol]
+                    elif i == 1 :
+                        if '주말' in col :
+                            ncol = col
+                            c = model2_burr.loc['c', ncol]
+                            d = model2_burr.loc['d', ncol]
+                            loc = model2_burr.loc['loc', ncol]
+                            scale = model2_burr.loc['scale', ncol]
+
+            else :
+                if facility_name in col :
+                    if i == 0 :
+                        if '주중' in col :
+                            c = model2_burr.loc['c', col]
+                            d = model2_burr.loc['d', col]
+                            loc = model2_burr.loc['loc', col]
+                            scale = model2_burr.loc['scale', col]
+                    elif i == 1 :
+                        if '주말' in col :
+                            c = model2_burr.loc['c', col]
+                            d = model2_burr.loc['d', col]
+                            loc = model2_burr.loc['loc', col]
+                            scale = model2_burr.loc['scale', col]
+                
         # ~ r = beta.rvs(a, b, loc = loc, scale = scale, size = 10000)
         
         # ~ ax.figure(figsize = (8, 8))
@@ -912,6 +932,8 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
     for group in range(2) :
         tdir = os.path.join(nfc_dir, facility_name, 'model1')
         os.chdir(tdir) # nfc_dir + f'\\{facility_name}\\model1')
+        if (facility_name == '판매시설') | (facility_name == '숙박시설') :
+            os.chdir(os.path.join(nfc_dir, '판매및숙박', 'model1')
         
         smpl = read_excel('model_1.xlsx') # fitted a, b, loc, scale of sample datas (2) used for profile_generator
         smpl.index = ['a', 'b', 'loc', 'scale']
@@ -1208,6 +1230,7 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
     # make density plot
     
     for i in range(2) :
+        print(f'{i} / 2')
         ax = fig.add_subplot(2, 1, 1 + i)
 
         for col in model2_burr.columns :
@@ -1391,7 +1414,7 @@ def model4_compare(facility_name, group, model4_dir, plot_dir, nfc_dir) :
     
     ax.set_xlim([0, 49])
     ax.set_ylim([-0.2, 1])
-    ax.grid()
+    #ax.grid()
 
     ##
     
@@ -1412,7 +1435,7 @@ def model4_compare(facility_name, group, model4_dir, plot_dir, nfc_dir) :
     
     ax2.set_xlim([0, 49])
     ax2.set_ylim([-0.2, 1])
-    ax2.grid()
+    #ax2.grid()
     
     ##
     

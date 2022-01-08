@@ -55,6 +55,15 @@ def copyfolderlist(directory1, directory2) :
         folderlist.append(folder)
     newfolderlist(directory2, folderlist)
 
+def remove_inside_folder(path) :
+    for item in os.listdir(path) :
+        rmdir = os.path.join(path, item)
+        if os.path.isfile(rmdir) or os.path.islink(rmdir) :
+            os.remove(rmdir)
+        elif os.path.isdir(rmdir) :
+            shutil.rmtree(rmdir)
+        else :
+            raise ValueError(f"{item} is not a file or dir")
 
 def remove(path):
     # """ param <path> could either be relative or absolute. """

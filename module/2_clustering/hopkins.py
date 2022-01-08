@@ -42,6 +42,7 @@ import scipy.stats
 import shutil
 import time
 from pyclustertend import hopkins
+from statsmodels.multivariate.manova import MANOVA
 
 '''
 note
@@ -112,4 +113,98 @@ print(tendency_group)
 os.chdir(cwdir)
 tendency_all.to_excel('cluster_tendency_facilities.xlsx')
 tendency_group.to_excel('cluster_tendency_group.xlsx')
+
+model2_col = []
+for fc in facility_list :
+    for de in ['주중', '주말'] :
+        model2_col.append(f'{fc}_{de}')
+
+model4_col = []
+for fc in facility_list :
+    for group in [0, 1] :
+        for de in ['주중', '주말'] :
+            model4_col.append(f'{fc}_{group}_{de}')
+
+model1_hopkins = pd.DataFrame(columns = facility_list)
+model2_hopkins = pd.DataFrame(columns = model2_col)
+model4_hopkins = pd.DataFrame(columns = model4_col)
+
+cols = ['group']
+for i in range(1, 49) :
+    cols.append(str(i))
+
+manova_model4_day = pd.DataFrame(columns = cols)
+manova_model4_end = pd.DataFrame(columns = cols)
+
+for fc in facility_list :
+
+    model1_file = f'모델1_{fc}.xlsx'
+    model2_file = 'Model2_daily fraction.xlsx'
+    model3_file = 'profile_48_group_0.xlsx'
+    model4_weekdays_file = 'model4_weekdays.xlsx'
+    model4_weekends_file = 'model4_weekends.xlsx'
+
+
+    tempdir = os.path.join(facility_dir, fc)
+    model1_dir = os.path.join(tempdir, 'model1')
+    model2_dir = os.path.join(tempdir, 'model2')
+    model3_dir = []
+    for excel in os.listdir(model2_dir) :
+        if 'Model2_daily' in excel :
+            model2_file = excel
+    
+#    # model 1 hopkins
+#    os.chdir(model1_dir)
+#    temp = read_excel(model1_file)
+#    temp = pd.DataFrame(temp.iloc[:, 0].tolist(), columns = ['target'])
+#
+#    model1_hopkins.loc[0, fc] = hopkins(temp, temp.shape[0])
+#
+#    # model 2 hopkins
+#    os.chdir(model2_dir)
+#    temp = read_excel(model2_file)
+#    for de in ['주중', '주말'] :
+#        column_now = f'{fc}_{de}'
+#        temp = temp.loc[:, column_now]
+#        model2_hopkins.loc[0, column_now] = hopkins(temp, temp.shape[0])
+
+    # model 4 hopkins
+
+    for group in [0, 1] :
+        model3_dir.append(os.path.join(tempdir, 'model3', f'group_{group}'))
+        pass
+
+    model4_dir = os.path.join(tempdir, 'model4')
+    for group in [0, 1] :
+        model4_group_dir = os.path.join(model4_dir, f'group_{group}_model4')
+        os.chdir(model4_group_dir)
+        temp_day = read_excel(model4_weekdays_file)
+        temp_end = read_excel(model4_weekends_file)
+
+        temp_day.drop(['excel'], axis = 1, inplace = True)
+        temp_end.drop(['excel'], axis = 1, inplace = True)
+
+        temp_day = temp_day.loc[:, '1' :]
+        model4_hopkins.loc[0, f'{fc}_{group}_주중'] = hopkins(temp_day, temp_day.shape[0])
+        model4_hopkins.loc[0, f'{fc}_{group}_주말'] = hopkins(temp_end, temp_end.shape[0])
+
+#        temp_day['group'] = f'{fc}_{group}_주중'
+#        temp_end['group'] = f'{fc}_{group}_주말'
+
+#        print(temp_day)
+        
+    # model 4 MANOVA
+#        manova_model4_day = pd.concat([manova_model4_day, temp_day])
+#        manova_model4_end = pd.concat([manova_model4_end, temp_end])
+
+os.chdir(cwdir)
+#print(model4_hopkins)
+#model1_hopkins.to_excel('model1_hopkins')
+#model2_hopkins.to_excel('model2_hopkins')
+model4_hopkins.to_excel('model4_hopkins')
+
+#manova_model4_day.to_excel('manova_model4_day.xlsx')
+#manova_model4_end.to_excel('manova_model4_end.xlsx')
+
+
 
