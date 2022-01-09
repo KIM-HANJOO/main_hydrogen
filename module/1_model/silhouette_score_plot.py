@@ -302,7 +302,10 @@ for facility in facility_list :
     ax1.set_title('silhouette scores')
     ax1.set_xlabel('silhouette scores')
     ax1.set_ylabel('sample data')
-    ax1.set_xlim(-0.2, 1)
+    if facility == '업무시설' :
+        ax1.set_xlim(-0.3, 1)
+    else :
+        ax1.set_xlim(-0.2, 1)
 
     ax2.set_title('model3')
     ax2.set_xlabel('hours')
