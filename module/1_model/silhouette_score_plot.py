@@ -232,11 +232,25 @@ for facility in facility_list :
 
     # initial point for y-axis range
     y_lower = 10
+    
+    df_silhouette = pd.DataFrame(columns = ['cluster', 'silhouette_score'])
+    start_num = 0
 
     for i in range(number_clusters) :
         ith_cluster_silhouette_values = sample_silhouette_values[cluster_labels == i]
         ith_cluster_silhouette_values.sort()
         print(ith_cluster_silhouette_values.shape)
+
+
+        # concat silhouette scores for all buildings to df_silhouette
+        temp = ith_cluster_silhouette_values.tolist()
+        temp_df =  pd.DataFrame(columns = ['cluster', 'silhouette_score'])
+
+        temp_df.loc[: , 'silhouette_score'] = temp
+        temp_df.loc[0 : len(temp) -1, 'cluster'] = i
+
+        df_silhouette = pd.concat([df_silhouette, temp_df], ignore_index = True)
+
 
         # make the range of y-axis for each cluster (y_lower + size of cluster)
         size_cluster_i = ith_cluster_silhouette_values.shape[0]
@@ -296,9 +310,11 @@ for facility in facility_list :
     fig.suptitle(f'{facility}, 2 groups\nSilhouette Method', fontsize = 15)
 
     os.chdir(cwdir)
-#    plt.savefig(f'{facility}_silhouette_plot.png', dpi = 400)
-#    dlt.savefig(cwdir, f'{facility}_silhouette_plot.png', dpi = 400)
+    plt.savefig(f'{facility}_silhouette_plot.png', dpi = 400)
+    dlt.savefig(cwdir, f'{facility}_silhouette_plot.png', dpi = 400)
 
+    df_silhouette.to_excel(f'{facility}_silhouette_scores.xlsx')
+    dlt.shoot_file(cwdir, f'{facility}_silhouette_scores.xlsx')
 
     plt.cla()
     plt.clf()
