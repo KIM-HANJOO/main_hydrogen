@@ -1,5 +1,11 @@
 import os
 import sys
+
+# placed on subdirectory
+from pathlib import Path
+cwdir = os.getcwd()
+profile_generator_dir = str(Path(cwdir).parent.absolute())
+sys.path.append(profile_generator_dir)
 import get_dir
 di = get_dir.get_info()
 
@@ -8,7 +14,7 @@ prep_dir = di.prep_dir
 model_dir = di.model_dir
 module_dir = di.module_dir
 facility_dir = di.facility_dir
-nfc_dir = di.nfc_dir
+facility_dir = di.facility_dir
 plot_dir = di.plot_dir
 cluster_dir = di.cluster_dir
 facility_df = di.facility_df
@@ -16,7 +22,6 @@ facility_dict = di.facility_dict
 gp_dir = di.gp_dir
 gp_plot = di.gp_plot
 params = di.params
-print(f'main_dir = {main_dir}\n')
 
 sys.path.append(module_dir)
 sys.path.append(os.path.join(module_dir, '4_directory_module'))
@@ -74,13 +79,165 @@ run 'generated_profiles_directory.py'
 
 '''
 
+# ---------------------------------------------
+# copy datas from facility to 'main_hydrogen/accom_deal_profile_48/'
+# ---------------------------------------------
 
+
+
+# ---------------------------------------------
+# make new directories
+# ---------------------------------------------
+
+ad_dir = os.path.join(facility_dir, '판매및숙박')
+
+model1_dir = os.path.join(ad_dir, 'model1')
+model2_dir = os.path.join(ad_dir, 'model2')
+model3_dir = os.path.join(ad_dir, 'model3')
+model4_dir = os.path.join(ad_dir, 'model4')
+preprocessed_dir = os.path.join(ad_dir, 'preprocessed')
+
+# inside accom_deal_profile_48
+
+# make accomodation, dealership directory under accom_deal_profile_48
+
+accom_deal_dir = os.path.join(main_dir, 'accom_deal_profile_48')
+main_dir = accom_deal_dir
+facility_dir = os.path.join(accom_deal_dir, 'FACILITIES')
+gp_dir = os.path.join(accom_deal_dir, 'GENERATED_PROFILES')
+gp_plot = os.path.join(accom_deal_dir, 'GENERATED_PLOTS')
+
+print(f'main_dir = {main_dir}\n')
+
+
+
+
+# ---------------------------------------------
+# copy files from org_facility_dir to new directories
+# ---------------------------------------------
+
+# inside facility_dir 
+
+
+
+#dich.newfolderlist(gp_dir, ['숙박시설', '판매시설'])
+#
+#accom_dir = os.path.join(facility_dir, '숙박시설')
+#deal_dir = os.path.join(facility_dir, '판매시설')
+#
+#nfolderlist = ['model1', 'model2', 'model3', 'model4']
+#group_list = ['group_0', 'group_1']
+#
+#dich.remove_inside_folder(accom_dir)
+#dich.remove_inside_folder(deal_dir)
+#
+#print('118. line')
+#dich.newfolderlist(accom_dir, nfolderlist)
+#dich.newfolderlist(deal_dir, nfolderlist)
+#
+#
+#accom_model1 = os.path.join(accom_dir, 'model1')
+#accom_model2 = os.path.join(accom_dir, 'model2')
+#accom_model3 = os.path.join(accom_dir, 'model3')
+#accom_model4 = os.path.join(accom_dir, 'model4')
+#accom_preprocessed = os.path.join(accom_dir, 'preprocessed')
+#
+#deal_model1 = os.path.join(deal_dir, 'model1')
+#deal_model2 = os.path.join(deal_dir, 'model2')
+#deal_model3 = os.path.join(deal_dir, 'model3')
+#deal_model4 = os.path.join(deal_dir, 'model4')
+#deal_preprocessed = os.path.join(deal_dir, 'preprocessed')
+#
+## model 3 
+#dich.newfolderlist(accom_model3, group_list)
+#dich.newfolderlist(deal_model3, group_list)
+#
+## model 4
+#dich.newfolderlist(accom_model4, group_list)
+#dich.newfolderlist(deal_model4, group_list)
+#
+#for group_dir in group_list :
+#    add_subdir = f'{group_dir}_model4'
+#    tempdir_accom = os.path.join(accom_model3, add_subdir)
+#    tempdir_deal = os.path.join(deal_model3, add_subdir)
+#
+## add weekend / weekdays to 'preprocessed' dir
+#dich.newfolderlist(accom_preprocessed, ['주중', '주말'])
+#dich.newfolderlist(deal_preprocessed, ['주중', '주말'])
+#
+#
+#
+#### copy files fromt accom+deal to sep directories
+#
+## copy 'model1' from accom+deal to sep directories
+#for excel in os.listdir(model1_dir) :
+#    if '숙박시설' in excel :
+#        dich.copyfile(model1_dir, accom_model1, excel)
+#    elif '판매시설' in excel :
+#        dich.copyfile(model1_dir, deal_model1, excel)
+#    else :
+#        dich.copyfile(model1_dir, deal_model1, excel)
+#        dich.copyfile(model1_dir, accom_model1, excel)
+#
+#
+## copy 'model2' from accom+deal to sep directories
+#dich.copyfile(model2_dir, accom_model2, 'Model2_daily fractoin.xlsx')
+#dich.copyfile(model2_dir, deal_model2, 'Model2_daily fractoin.xlsx')
+#
+#
+## copy 'model3' from accom+deal to sep directories
+#
+#dich.copydir_f(model3_dir, accom_model3)
+#dich.copydir_f(model3_dir, deal_model3)
+#
+## copy 'model4' from accom+deal to sep directories
+#dich.copydir_f(model4_dir, accom_model4)
+#dich.copydir_f(model4_dir, deal_model4)
+#
+## copy 'preprocessed' from accom+deal to sep directories
+#dich.copydir_f(preprocessed_dir, accom_preprocessed)
+#dich.copydir_f(preprocessed_dir, deal_preprocessed)
+#
+#print('coping direcotries done')
+
+
+# ---------------------------------------------
+# make profiles
+# notion !
+# ratio : by each building type from AMI
+# ---------------------------------------------
+
+
+# ---------------------------------------------
+
+# 1. make directory variables
+
+# 2. def profile_num_maker // 사전에 시설군들의 비중을 확인하기 위해 사용
+
+# 3. generate_fc // 디렉토리 위치, model 1 ~ 4 파일 정보를 변수로 저장해서 profile_generator 에 넘겨줌
+
+# 4. profile_generator // generate_fc 에서 받은 데이터프레임, 정보를 이용해 주어진 저장 위치에 프로필 생성
+#       model 1 : beta, model 2 : burr, model 3 + 4 : multivariate distribution
+
+# ---------------------------------------------
+
+
+# make directories
+'''
+facility_dir : '판매시설', '숙박시설' 포함된 디렉토리
+gp_dir : 생성된 프로필
+gp_plot : 그래프 
+
+'''
+
+# lists
 subdir_list = ['raw', 'model1', 'model2', 'model3', 'model4']
 fc_list = ['교육시설', '문화시설', '숙박시설', '업무시설', '판매시설', 'params']
-fc_list_2 = ['교육시설', '문화시설', '판매및숙박', '업무시설', 'params']
+fc_list_2 = ['숙박시설', '판매시설']
 
-#make gp_plot
+#make gp_dir
 dich.newfolder(gp_dir)
+
 for fc in fc_list_2 :
     if 'params' != fc :
         tempdir = os.path.join(gp_dir, fc)
@@ -92,11 +249,16 @@ for fc in fc_list_2 :
 dich.newfolder(os.path.join(gp_plot, 'model2_fitted'))
 
 # copy 'model2_fitted' folder
-model2_fitted_dir = os.path.join(main_dir, 'temp', 'model2_fitted')
+model2_fitted_dir = os.path.join(di.main_dir, 'temp', 'model2_fitted')
+
 dst_dir = gp_plot
-#dst_dir = os.path.join(gp_plot, 'model2_fitted')
+dst_dir = os.path.join(gp_plot, 'model2_fitted')
+dich.newfolder(dst_dir)
 dich.copydir_f(model2_fitted_dir, dst_dir)
 check = 0
+
+print(dst_dir)
+print(os.listdir(dst_dir))
 for f in os.listdir(dst_dir) :
     if 'model2_fitted' == f :
         check = 1
@@ -104,16 +266,15 @@ for f in os.listdir(dst_dir) :
 if check == 1:
     print('model2_fitted folder copied to GENERATED_PLOTS dir')
 else :
-    print('33333333333333333333333warning33333333333333333333\n' * 100)
+    print('33333333333333333333333warning33333333333333333333\n')
 
                 
-#gfc_dir = main_dir + '//GENERATED_PROFILES'
-gfc_dir = os.path.join(main_dir, 'GENERATED_PROFILES')
-dich.newfolder(gfc_dir)
+#gp_dir = main_dir + '//GENERATED_PROFILES'
+dich.newfolder(gp_dir)
 
-dich.newfolderlist(gfc_dir, fc_list_2)
+dich.newfolderlist(gp_dir, fc_list_2)
 for fc in fc_list_2 :
-    tempdir = os.path.join(gfc_dir, fc)
+    tempdir = os.path.join(gp_dir, fc)
 
     if fc != 'params' : 
         dich.newfolderlist(tempdir, ['group_0', 'group_1'])
@@ -130,27 +291,36 @@ for fc in fc_list_2 :
 
 
 os.chdir(params)
-os.system('cp ../../GENERATED_PLOTS/model2_fitted/model2_burr_fitted.xlsx ./')
+dich.copyfile(os.path.join(gp_plot, 'model2_fitted'), params, 'model2_burr_fitted.xlsx')
 print(os.listdir(params))
 
 '''
 note
 '''
 
+print('starts, 276. line')
 
-facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] #profile_num_maker에서 쓰이며, model1, model2 파일 사전작업에 사용되었음
+facility_list = ['판매시설', '숙박시설'] #profile_num_maker에서 쓰이며, model1, model2 파일 사전작업에 사용되었음
 
-def profile_num_maker(nfc_dir) :
+
+# ---------------------------------------------
+# make functions
+# ---------------------------------------------
+
+
+# profile_num_maker 은 사전에 전체 시설군에 대한 건물 비중을 확인하기 위해 사용
+# 실제로 프로필 생성에 영향을 주는 함수는 아님
+def profile_num_maker(facility_dir) :
     
-    facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박']
+    facility_list = ['판매시설', '숙박시설']
             
     maker_df = pd.DataFrame(columns = ['facility', 'group', 'number', 'percentage'])
     maker_num = 0
     
     for num, fc in enumerate(facility_list) :
         for i in range(2) : # group_number
-            tempdir = os.path.join(nfc_dir, fc, 'model3', f'group_{i}', f'group_{i}_model3', '주중')
-#            tempdir = nfc_dir + f'//{fc}//model3//group_{i}//group_{i}_model3//주중'
+            tempdir = os.path.join(facility_dir, fc, 'model3', f'group_{i}', f'group_{i}_model3', '주중')
+#            tempdir = facility_dir + f'//{fc}//model3//group_{i}//group_{i}_model3//주중'
             op_num = len(os.listdir(tempdir))
             
             maker_df.loc[maker_num, 'facility'] = fc
@@ -167,7 +337,7 @@ def profile_num_maker(nfc_dir) :
             
     
     
-def generate_fc(nfc_dir, facility, group, facility_add) :    
+def generate_fc(facility_dir, facility, group, facility_add) :    
 # need
 # facility, save_dir, profile_num, model1_file, \
 # model2_file, model3_file, model4_file_day, model4_file_end
@@ -177,18 +347,20 @@ def generate_fc(nfc_dir, facility, group, facility_add) :
     key_list = ['facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', 'model1_file', \
     'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
 
-    wd = os.path.join(nfc_dir, facility)
+    print(f'starting from {facility_dir} . . .')
+    wd = os.path.join(facility_dir, facility)
     model1_dir = os.path.join(wd, 'model1')
     model2_dir = os.path.join(wd, 'model2')
     model3_dir = os.path.join(wd, 'model3')
     model4_dir = os.path.join(wd, 'model4')
 
 
-#    wd = nfc_dir + f'//{facility}'
+#    wd = facility_dir + f'//{facility}'
 #    model1_dir = wd + '//model1'
 #    model2_dir = wd + '//model2'
 #    model3_dir = wd + '//model3' # + '//group_0', '//group_1' -> 'profile_48_group_0.xlsx'
 #    model4_dir = wd + '//model4' # + '//group_0_model4'
+
 
 # excel names
     m1_xlna = 'model_1.xlsx'
@@ -204,7 +376,9 @@ def generate_fc(nfc_dir, facility, group, facility_add) :
 # import files
     print(f'\nworking on {facility}')
     os.chdir(model1_dir)
+    
     model1_file = dich.read_excel(m1_xlna)
+    model1_file = model1_file[[f'{facility}']]
     print('model1 loaded')
 
 #    os.chdir(model2_dir)
@@ -224,34 +398,45 @@ def generate_fc(nfc_dir, facility, group, facility_add) :
     model4_file_end = dich.read_excel(m4_end_xlna)
     print('model4 weekends loaded')
 
+# set directories
+    dich.newfolder(gp_dir)
+    dich.newfolder(gp_plot)
+    print(f'generated profiles to {gp_dir}')
+    print(f'generated plots to {gp_plot}')
+
     main_dir = str(Path(facility_dir).parent.absolute())
+    print(f'main_dir is {main_dir}')
     save_dir = os.path.join(gp_dir, facility, f'group_{group}', 'raw')
+    
+    dich.newfolder(save_dir)
+
     save_dir_day = os.path.join(save_dir, '주중')
     save_dir_end = os.path.join(save_dir, '주말')
-    os.chdir(os.path.join(main_dir, 'module', '7_plot_use'))
+
+    os.chdir(os.path.join(di.main_dir, 'module', '7_plot_use'))
     dayend_perc = dich.read_excel('weekday+end_perc.xlsx')
+
     if facility == '판매및숙박' :
         save_dir = os.path.join(gp_dir, facility_add, f'group_{group}', 'raw')
         save_dir_day = os.path.join(save_dir, '주중')
         save_dir_end = os.path.join(save_dir, '주말')
 
+        dich.newfolder(save_dir)
+        dich.newfolderlist(save_dir, ['주중', '주말'])
+
+
+
 
     file_dict = dict()
     key_list = None
-#
-#    key_list = ['model1_file', 'facility', 'save_dir', 'save_dir_day', 'save_dir_end', 'facility_add', \
-#    'model2_file', 'model3_file', 'model4_file_day', 'model4_file_end', 'dayend_perc']
-#
-#    for key in key_list :
-#        file_dict[key] = locals()[f'{key}']
+
     print('files all loaded')
     print(len(file_dict.keys()))
 
     return key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc
 
     
-def profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc
-) :
+def profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc) :
 #    for key in file_dict.keys() :
 #        globals()[f'{key}'] = file_dict[key]
 #    file_dict = None
@@ -260,11 +445,12 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
     for i in range(1, 25) :
         hours.append(str(i))
     dayend_perc.index = ['weekday', 'weekend']
+    dayend_perc = dayend_perc[['판매및숙박']]
+
+    dayend_perc.columns = [f'{facility}']
     ave_day = dayend_perc.loc['weekday', facility]    
     ave_end = dayend_perc.loc['weekend', facility]    
-    print(dayend_perc)
     print('percentage for weekday, weekend')
-    print(ave_day, ave_end)
     model3_file_day = model3_file.loc[:, '1' : '24']
     model3_file_end = model3_file.loc[:, '25' : '48']
     model3_file_end.columns = model3_file_day.columns
@@ -275,21 +461,13 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
         '''
         model1_file.index = ['a', 'b', 'loc', 'scale']
 
-        if facility == '판매및숙박' :
-            a = model1_file.loc['a', facility_add]
-            b = model1_file.loc['b', facility_add]
-            loc = model1_file.loc['loc', facility_add]
-            scale = model1_file.loc['scale', facility_add]
-
-
-        else :
-            for col in model1_file.columns :
-                print(col, '\t', facility)
-                if facility in col :
-                    a = model1_file.loc['a', col]
-                    b = model1_file.loc['b', col]
-                    loc = model1_file.loc['loc', col]
-                    scale = model1_file.loc['scale', col]
+        for col in model1_file.columns :
+            print(col, '\t', facility)
+            if facility in col :
+                a = model1_file.loc['a', col]
+                b = model1_file.loc['b', col]
+                loc = model1_file.loc['loc', col]
+                scale = model1_file.loc['scale', col]
 #
         ave_day_beta = beta.rvs(a, b, loc = loc, scale = scale, size = 1)
         
@@ -309,7 +487,7 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
                                 # ~ '문화주중', '문화주말']
                                 
         for col in model2_file.columns :
-            if facility in col :
+            if '판매및숙박' in col :
                 if '주중' in col :
                     c2 = model2_file.loc['c', col]
                     d2 = model2_file.loc['d', col]
@@ -325,7 +503,7 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
             
             
         for col in model2_file.columns :
-            if facility in col :
+            if '판매및숙박' in col :
                 if '주말' in col :
                     c3 = model2_file.loc['c', col]
                     d3 = model2_file.loc['d', col]
@@ -504,39 +682,46 @@ def profile_generator(profile_num, key_list, file_dict, model1_file, facility, s
 
 print('\n\n######################################################\n\n')
 
-facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
+# facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박'] 
+facility_list = ['판매시설', '숙박시설']
 all_profiles_perc = 100 #%
 
-maker_df = profile_num_maker(nfc_dir)
-for i in range(maker_df.shape[0]) :
-    maker_df.loc[i, 'number'] = round(maker_df.loc[i, 'number'] * all_profiles_perc / 100)
+maker_df_col = ['facility', 'group', 'number', 'percentage']
 
-tempsum = sum(maker_df.loc[:, 'number'].tolist())
+maker_df = pd.DataFrame(columns = maker_df_col)
+df_num = 0
 
-for i in range(maker_df.shape[0]) :
-    maker_df.loc[i, 'percentage'] = round(maker_df.loc[i, 'number'] / tempsum * 100, 2)
+for facility in facility_list :
+    fc_dir = os.path.join(facility_dir, facility)
+    for group in [0, 1] :
+        model3_dir = os.path.join(fc_dir, 'model3', f'group_{group}', f'group_{group}_preprocessed', '주말')
 
-for i in range(maker_df.shape[0]) :
-    print(f"{maker_df.loc[i, 'facility']}, group_{maker_df.loc[i, 'group']}, generate n = {maker_df.loc[i, 'number']}\n")
-# ~ for i in range(maker_df.shape[0]) :
-    # ~ if maker_df.loc[i, 'number'] > 100 :
-        # ~ maker_df.loc[i, 'number'] = 100
+        excel_num = 0
+        for excel in os.listdir(model3_dir) :
+            if facility == '판매시설' :
+                if 'G' in excel :
+                    excel_num += 1
+            elif facility == '숙박시설' :
+                if 'I' in excel :
+                    excel_num += 1
+
+        maker_df.loc[df_num, 'facility'] = facility
+        maker_df.loc[df_num, 'group'] = group
+        maker_df.loc[df_num, 'number'] = excel_num
         
+        df_num += 1
+
+all_sum = maker_df.loc[:, 'number'].sum()
+for index in range(maker_df.shape[0]) :
+    maker_df.loc[index, 'percentage'] = round(maker_df.loc[index, 'number'] / all_sum * 100, 2)
+
 print(maker_df)
 
 
 for facility in facility_list :
     for group in range(2) : # group_number
-        check = 0
-        if facility == '판매및숙박' :
-            check = 1
-#            print(f'{facility}, {group} X')
-#        if (facility == '문화시설') | (facility == '교육시설') | (facility == '업무시설') :
-#            check = 0
-#            print(f'{facility}, {group} X')
-#        # ~ if (facility == '교육시설') & (group == 0) :
-#            # ~ check = 0
-#            # ~ print(f'{facility}, {group} X')
+        check = 1
+
         if check == 1 :
             for i in range(maker_df.shape[0]) :
                 if (maker_df.loc[i, 'facility'] == facility) & (int(maker_df.loc[i, 'group']) == group) :
@@ -544,33 +729,17 @@ for facility in facility_list :
             if facility == '판매및숙박' :
                 for facility_add in ['판매시설', '숙박시설'] :
                     print(f"{facility}, group_{group}, n = {profile_num}")
-                    key_list, file_dict,model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc  = generate_fc(nfc_dir, facility, group, facility_add)
+                    key_list, file_dict,model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc  = generate_fc(facility_dir, facility, group, facility_add)
                     profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc)
 
             else :
                 facility_add = None
                 print(f"{facility}, group_{group}, n = {profile_num}")
-                key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc = generate_fc(nfc_dir, facility, group, facility_add)
+                key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc = generate_fc(facility_dir, facility, group, facility_add)
                 profile_generator(profile_num, key_list, file_dict, model1_file, facility, save_dir, save_dir_day, save_dir_end, facility_add, model2_file, model3_file, model4_file_day, model4_file_end, dayend_perc)
 
     
     
     
     
-
-# ~ os.chdir(main_dir + '//temp')
-# ~ model1_file = lib.read_excel('model1_beta_fitting.xlsx')
-# ~ model2_file = lib.read_excel('model2_beta_fitting.xlsx')
-
-# ~ facility = '교육'
-# ~ excel_name = '[P.교육 서비스업(85)]_0_'
-# ~ model3_file = lib.read_excel('profile_48_group_0.xlsx')
-
-
-# ~ model4_file_day = lib.read_excel('model4_weekdays.xlsx')
-# ~ model4_file_end = lib.read_excel('model4_weekends.xlsx')
-
-# ~ save_dir = main_dir + '//temp'
-# ~ profile_num = 5
-
 

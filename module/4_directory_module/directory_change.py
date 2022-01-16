@@ -64,6 +64,7 @@ def remove_inside_folder(path) :
             shutil.rmtree(rmdir)
         else :
             raise ValueError(f"{item} is not a file or dir")
+    print('everything inside path removed')
 
 def remove(path):
     # """ param <path> could either be relative or absolute. """

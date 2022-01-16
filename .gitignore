@@ -6,6 +6,7 @@ model/
 module/.ipynb_checkpoints
 module/__pycache__
 FACILITIES/
+accom_deal_profile_48/
 
 GENERATED_PROFILES/
 GENERATED_PROFILES*/

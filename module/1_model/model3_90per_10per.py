@@ -63,10 +63,238 @@ def ave(list1) :
 # -----------------------------------------------------
 # MODEL 3 get 90%, 10%
 # -----------------------------------------------------
+#
+## merged version for accomodation & dealership facilities
+#
+## set top_percentile, middle_percentile, bottom_percentile
+#top_percentile = 90
+#middle_percentile = None # middle percentile : average
+#bottom_percentile = 10
+#
+#facility_name = []
+#for subdir in os.listdir(facility_dir) :
+#    if 'params' != subdir :
+#        facility_name.append(subdir)
+#
+#ncols = []
+#for i in range(1, 49) :
+#    ncols.append(str(i))
+#
+#nindex = []
+#for facility in facility_name :
+#    for group in [0, 1] :   
+#        for which in ['top', 'middle', 'bottom'] :
+#            nindex.append(f'{facility}_{group}_{which}')
+#
+#boundaries = pd.DataFrame(columns = ncols, index = nindex)
+#
+#for facility in facility_name :
+#    model3_dir = os.path.join(facility_dir, facility, 'model3')
+#
+#    for group in [0, 1] :
+#        group_dir = os.path.join(model3_dir, f'group_{group}')
+#        os.chdir(group_dir)
+#        profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+#
+#        for i in range(1, 49) :
+#            temp_list = sorted(profile_48.loc[:, str(i)].tolist())
+#
+#            now_index_name = f'{facility}_{group}'
+#            top_index_name = f'{now_index_name}_top'
+#            middle_index_name = f'{now_index_name}_middle'
+#            bottom_index_name = f'{now_index_name}_bottom'
+#            boundaries.loc[top_index_name, str(i)] = \
+#                    np.percentile(temp_list, top_percentile)
+#            boundaries.loc[bottom_index_name, str(i)] = \
+#                    np.percentile(temp_list, bottom_percentile)
+#            boundaries.loc[middle_index_name, str(i)] = \
+#                    ave(temp_list)
+#
+#        print(f'{facility}, group_{group} done')
+#
+#        # for later plots
+#        if '교육시설' in facility :
+#            if group == 0 :
+#                target_profile_48 = profile_48.copy()
+#
+#
+#print(boundaries)
+#os.chdir(cwdir)
+#boundaries.to_excel('model3_boundaries_90%_10%.xlsx')
+#dlt.shoot_file(cwdir, 'model3_boundaries_90%_10%.xlsx')
+# 
+#
+#xvalues = []
+#for i in range(1, 49) :
+#    xvalues.append(i)
+#
+#for facility in facility_name :
+#    for group in [0, 1] :
+#        # indside profile_48 excel file
+#
+#        group_dir = os.path.join(facility_dir, facility, 'model3', f'group_{group}')
+#        os.chdir(group_dir)
+#        profile_48_check = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+#
+#        for index in range(profile_48_check.shape[0]) :
+#            plt.plot(xvalues, profile_48_check.loc[index, '1' : '48'], 'black', alpha = 0.2)
+#
+#
+#        # inside boundaries DataFrame
+#        for target_index in boundaries.index.tolist() :
+#            if facility in target_index :
+#                if str(group) in target_index :
+#                    if 'top' in target_index : 
+#                        print(f'top : {target_index}')
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
+#                    elif 'bottom' in target_index :
+#                        print(f'bottom : {target_index}')
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
+#                    else :
+#                        print(f'average : {target_index}')
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
+#
+#
+#
+#
+#        plt.xlim(1, 48)
+#        plt.xlabel('hours')
+#        plt.legend()
+#        plt.title(f'{facility}, group_{group}\n80% boundaries')
+#        plt.xticks(xvalues, ncols, rotation = 90)
+#        plt.grid()
+#
+#        plt.savefig(f'model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+#        dlt.savefig(cwdir,f'model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+#
+#        plt.clf()
+#
+#
+
+# -----------------------------------------------------
+# MODEL 3 get 90%, 10% for gp_dir
+# -----------------------------------------------------
+
+## merged version for accomodation & dealership facilities
+#
+## set top_percentile, middle_percentile, bottom_percentile
+#top_percentile = 90
+#middle_percentile = None # middle percentile : average
+#bottom_percentile = 10
+#
+#facility_name = []
+#for subdir in os.listdir(facility_dir) :
+#    if 'params' != subdir :
+#        facility_name.append(subdir)
+#
+#ncols = []
+#for i in range(1, 49) :
+#    ncols.append(str(i))
+#
+#nindex = []
+#for facility in facility_name :
+#    for group in [0, 1] :   
+#        for which in ['top', 'middle', 'bottom'] :
+#            nindex.append(f'{facility}_{group}_{which}')
+#
+#boundaries = pd.DataFrame(columns = ncols, index = nindex)
+#
+#for facility in facility_name :
+#    if '판매및숙박' != facility :
+#        for group in [0, 1] :
+#            group_dir = os.path.join(gp_dir, facility, f'group_{group}', 'model3')
+#     
+#            os.chdir(group_dir)
+#            profile_48 = read_excel('profile_48.xlsx').loc[:, '1' : '48']
+#
+#            for i in range(1, 49) :
+#                temp_list = sorted(profile_48.loc[:, str(i)].tolist())
+#
+#                now_index_name = f'{facility}_{group}'
+#                top_index_name = f'{now_index_name}_top'
+#                middle_index_name = f'{now_index_name}_middle'
+#                bottom_index_name = f'{now_index_name}_bottom'
+#                boundaries.loc[top_index_name, str(i)] = \
+#                        np.percentile(temp_list, top_percentile)
+#                boundaries.loc[bottom_index_name, str(i)] = \
+#                        np.percentile(temp_list, bottom_percentile)
+#                boundaries.loc[middle_index_name, str(i)] = \
+#                        ave(temp_list)
+#
+#            print(f'{facility}, group_{group} done')
+#
+#            # for later plots
+#            if '교육시설' in facility :
+#                if group == 0 :
+#                    target_profile_48 = profile_48.copy()
+#
+#
+#print(boundaries)
+#os.chdir(cwdir)
+#boundaries.to_excel('generated_model3_boundaries_90%_10%.xlsx')
+#dlt.shoot_file(cwdir, 'generated_model3_boundaries_90%_10%.xlsx')
+# 
+#
+#xvalues = []
+#for i in range(1, 49) :
+#    xvalues.append(i)
+#
+#for facility in facility_name :
+#    if '판매및숙박' != facility :
+#        for group in [0, 1] :
+#            # indside profile_48 excel file
+#            group_dir = os.path.join(gp_dir, facility, f'group_{group}', 'model3')
+#            os.chdir(group_dir)
+#            profile_48_check = read_excel(f'profile_48.xlsx').loc[:, '1' : '48']
+#
+#            for index in range(profile_48_check.shape[0]) :
+#                plt.plot(xvalues, profile_48_check.loc[index, '1' : '48'], 'black', alpha = 0.2)
+#
+#
+#            # inside boundaries DataFrame
+#            for target_index in boundaries.index.tolist() :
+#                if facility in target_index :
+#                    if str(group) in target_index :
+#                        if 'top' in target_index : 
+#                            print(f'top : {target_index}')
+#                            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
+#                        elif 'bottom' in target_index :
+#                            print(f'bottom : {target_index}')
+#                            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
+#                        else :
+#                            print(f'average : {target_index}')
+#                            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
+#
+#
+#
+#
+#            plt.xlim(1, 48)
+#            plt.xlabel('hours')
+#            plt.legend()
+#            plt.title(f'{facility}, group_{group}\n80% boundaries')
+#            plt.xticks(xvalues, ncols, rotation = 90)
+#            plt.grid()
+#
+#            os.chdir(cwdir)
+#            plt.savefig(f'generated_model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+#            dlt.savefig(cwdir,f'generated_model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+#
+#            plt.clf()
+#
+#
+
+# -----------------------------------------------------
+# MODEL 3 get 90%, 10% for gp_dir
+# -----------------------------------------------------
 
 # merged version for accomodation & dealership facilities
 
 # set top_percentile, middle_percentile, bottom_percentile
+
+profile_dir = os.path.join(main_dir, 'profile_48_gen')
+result_dir = os.path.join(profile_dir, 'result')
+
+
 top_percentile = 90
 middle_percentile = None # middle percentile : average
 bottom_percentile = 10
@@ -88,14 +316,23 @@ for facility in facility_name :
 
 boundaries = pd.DataFrame(columns = ncols, index = nindex)
 
-for facility in facility_name :
-    model3_dir = os.path.join(facility_dir, facility, 'model3')
+excel_df = pd.DataFrame(columns = facility_name)
+excel_df.loc[0 , :] = ['edu', 'cul', 'off', 'accom_deal']
 
-    for group in [0, 1] :
-        group_dir = os.path.join(model3_dir, f'group_{group}')
-        os.chdir(group_dir)
-        profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
 
+for excel in os.listdir(profile_dir) :
+    if 'result' != excel :
+        os.chdir(profile_dir)
+        profile_48 = read_excel(excel)
+        # find facility, group
+        for col in excel_df.columns :
+            for group_num in [0, 1] :
+                if excel_df.loc[0, col] in excel :
+                    facility = col
+                if str(group_num) in excel :
+                    group = group_num
+        
+        # find boundaries
         for i in range(1, 49) :
             temp_list = sorted(profile_48.loc[:, str(i)].tolist())
 
@@ -118,27 +355,40 @@ for facility in facility_name :
                 target_profile_48 = profile_48.copy()
 
 
+
 print(boundaries)
 os.chdir(cwdir)
-boundaries.to_excel('model3_boundaries_90%_10%.xlsx')
-dlt.shoot_file(cwdir, 'model3_boundaries_90%_10%.xlsx')
+os.chdir(result_dir)
+boundaries.to_excel('new_generated_model3_boundaries_90%_10%.xlsx')
+dlt.shoot_file(cwdir, 'new_generated_model3_boundaries_90%_10%.xlsx')
  
 
 xvalues = []
 for i in range(1, 49) :
     xvalues.append(i)
 
-for facility in facility_name :
-    for group in [0, 1] :
-        # indside profile_48 excel file
 
-        group_dir = os.path.join(facility_dir, facility, 'model3', f'group_{group}')
-        os.chdir(group_dir)
-        profile_48_check = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+for excel in os.listdir(profile_dir) :
+    if 'result' != excel :
+        os.chdir(profile_dir)
+        profile_48 = read_excel(excel)
+
+        # find facility, group
+        for col in excel_df.columns :
+            for group_num in [0, 1] :
+                if excel_df.loc[0, col] in excel :
+                    facility = col
+                if str(group_num) in excel :
+                    group = group_num
+
+
+        # indside profile_48 excel file
+        profile_48_check = profile_48.copy().loc[:, '1' : '48']
 
         for index in range(profile_48_check.shape[0]) :
             plt.plot(xvalues, profile_48_check.loc[index, '1' : '48'], 'black', alpha = 0.2)
 
+        print(facility, group)
 
         # inside boundaries DataFrame
         for target_index in boundaries.index.tolist() :
@@ -156,7 +406,6 @@ for facility in facility_name :
 
 
 
-
         plt.xlim(1, 48)
         plt.xlabel('hours')
         plt.legend()
@@ -164,10 +413,10 @@ for facility in facility_name :
         plt.xticks(xvalues, ncols, rotation = 90)
         plt.grid()
 
-        plt.savefig(f'model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
-        dlt.savefig(cwdir,f'model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+        os.chdir(cwdir)
+        os.chdir(result_dir)
+        plt.savefig(f'new_generated_model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
+        dlt.savefig(result_dir,f'new_generated_model3_{facility}_{group}_boundaries_90%_10%.png', dpi = 400)
 
         plt.clf()
-
-
 
