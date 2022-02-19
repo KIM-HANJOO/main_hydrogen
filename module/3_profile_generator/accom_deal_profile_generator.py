@@ -291,7 +291,7 @@ for fc in fc_list_2 :
 
 
 os.chdir(params)
-dich.copyfile(os.path.join(gp_plot, 'model2_fitted'), params, 'model2_burr_fitted.xlsx')
+dich.copyfile(os.path.join(di.gp_plot, 'model2_fitted'), params, 'model2_burr_fitted.xlsx')
 print(os.listdir(params))
 
 '''

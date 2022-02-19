@@ -61,40 +61,53 @@ def ave(list1) :
 	return sum(list1) / len(list1)
 
 # ----------------------------------------------------------
-# find manova data
+# make model_1.xlsx in accomodation & dealership folder
 # ----------------------------------------------------------
+# import scipy.stats
+from scipy.stats import beta
 
-facility_list = []
-for facility in os.listdir(facility_dir) :
-    if 'params' != facility :
-        facility_list.append(facility)
+# re-declare directories
 
-ad_dir = os.path.join(main_dir, 'accom_deal_profile_48')
-os.chdir(ad_dir)
+accom_deal_profile_48 = os.path.join(main_dir, 'accom_deal_profile_48')
+facility_list = ['판매시설', '숙박시설']
+facility_dir = os.path.join(accom_deal_profile_48, 'FACILITIES')
 
-all_df = pd.DataFrame()
+model1_df = pd.DataFrame(columns = facility_list, index = ['a', 'b', 'loc', 'scale'])
+model1_iloc = pd.DataFrame(columns = facility_list, index = ['a', 'b', 'loc', 'scale'])
 
-for excel in os.listdir(ad_dir) :
-    if ('all' not in excel) & ('.xlsx' in excel):
-        os.chdir(ad_dir)
-        profile_48 = read_excel(excel)
+for facility in facility_list :
+    fc_dir = os.path.join(facility_dir, facility)
+    model1_dir = os.path.join(fc_dir, 'model1')
+
+    os.chdir(model1_dir)
+    model1_all = read_excel(f'모델1_{facility}.xlsx')
         
-#        for index in range(profile_48.shape[0]) :
-#            if 'G' in profile_48.loc[index, 'excel'] :
-#                profile_48.loc[index, 'excel'] = 'G'
-#            elif 'I' in profile_48.loc[index, 'excel'] :
-#                profile_48.loc[index, 'excel'] = 'I'
+    model1_part = model1_all.iloc[:, 0].tolist()
+    model1_part.append(model1_all.columns[0])
 
-        all_df = pd.concat([all_df, profile_48], ignore_index = True)
-        print(f'{excel} done')
+    a, b, loc, scale = beta.fit(model1_part)
+    a2, b2, loc2, scale2 = beta.fit(model1_all.iloc[:, 0])
 
-ncols = ['group']
+    model1_df.loc[:, facility] = [a, b, loc, scale]
+    model1_iloc.loc[:, facility] = [a2, b2, loc2, scale2]
 
-for i in range(1, 49) :
-    ncols.append(f'hour_{i}')
+    mini = (
 
-all_df.columns = ncols
 
-#all_df.to_excel('profile_48_all.xlsx')
-all_df.to_excel('profile_48_all_realname.xlsx')
-print('excel saved')
+print(model1_df)
+
+fig = plt.figure(figsize = [20, 20])
+for num, col in enumerate(model1_df.columns) :
+    a, b, c, d = model1_df.loc[:, col]
+    a1, b1, c1, d1 = model1_iloc.loc[:, col]
+
+    x = np.linspace(min(
+
+    n = 10000
+    r = beta.rvs(a, b, loc = c, scale = d, size = n)
+    r2 = beta.rvs(a1, b1, loc = c1, scale = d1, size = n)
+
+    ax = fig.add_subplot(2, 1, num + 1)
+    ax.plot(
+
+

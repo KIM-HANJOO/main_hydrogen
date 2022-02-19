@@ -70,7 +70,35 @@ save_dir = os.path.join(profile_dir, 'saved')
 dich.newfolder(save_dir)
 
 os.chdir(profile_dir)
-profile_48 = read_excel('profile_48_all.xlsx')
+# profile_48 = read_excel('profile_48_all.xlsx')
+profile_48 = read_excel('profile_48_all_realname.xlsx')
+
+
+# load original dataframe
+
+profile_0 = read_excel('profile_48_group_0.xlsx')
+profile_1 = read_excel('profile_48_group_1.xlsx')
+
+df_0 = pd.DataFrame()
+df_1 = pd.DataFrame()
+
+df_0 = pd.concat([df_0, profile_0['excel']], axis = 0)
+df_1 = pd.concat([df_1, profile_1['excel']], axis = 0)
+
+df_0.columns = ['excel']
+df_1.columns = ['excel']
+
+df_0.loc[:, 'group'] = 0
+df_1.loc[:, 'group'] = 1
+
+
+df = pd.concat([df_0, df_1], axis = 0, ignore_index = True)
+
+print(df_0.head())
+print(df_1.head())
+print(df.head())
+
+# make merged_cluster_df
 
 ncols = ['excel']
 manova_cols = ['excel']
@@ -84,14 +112,17 @@ group_cols = ncols
 group_cols.append('group')
 
 facility = '판매및숙박'
+
+excel_name = pd.DataFrame(profile_48['excel'])
 all_labels = ss.silhouette_score_make(facility, profile_48, save_dir)
 
 index_G = []
 index_I = []
+
 for index in range(profile_48.shape[0]) :
-    if profile_48.loc[index, 'excel'] == 'G' :
+    if 'G' in profile_48.loc[index, 'excel'] :
         index_G.append(index)
-    else :
+    elif 'I' in profile_48.loc[index, 'excel'] :
         index_I.append(index)
 
 all_labels.colums = group_cols
@@ -127,9 +158,29 @@ print(I_labels.head())
 
 merged_labels = pd.concat([G_labels, I_labels], axis = 0, ignore_index = True)
 merged_labels.columns = manova_cols
-merged_labels = merged_labels.loc[:, 'hours_1' : 'group']
+# merged_labels = merged_labels.loc[:, 'hours_1' : 'group']
+
+# match whole-set clusters & splitted clusters
+
+merged_labels['org_group'] = None
+
+group_0_excel = df_0.loc[:, 'excel'].tolist()
+group_1_excel = df_1.loc[:, 'excel'].tolist()
+print(group_0_excel)
+
+for index in range(merged_labels.shape[0]) :
+    if merged_labels.loc[index, 'excel'] in group_0_excel :
+        merged_labels.loc[index, 'org_group'] = 0
+    elif merged_labels.loc[index, 'excel'] in group_1_excel :
+        merged_labels.loc[index, 'org_group'] = 1
+
+    else :
+        print(merged_labels.loc[index, 'excel'])
+
+
+
 print(merged_labels.head())
-merged_labels.to_excel('merged_labels.xlsx')
+merged_labels.to_excel('merged_labels_groups_added.xlsx')
  
 
 

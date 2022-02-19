@@ -60,41 +60,42 @@ def read_excel(excel) :
 def ave(list1) :
 	return sum(list1) / len(list1)
 
-# ----------------------------------------------------------
-# find manova data
-# ----------------------------------------------------------
+# -------------------------------------
+# model 2 merge
+# -------------------------------------
 
-facility_list = []
-for facility in os.listdir(facility_dir) :
-    if 'params' != facility :
-        facility_list.append(facility)
+facility_list = ['교육시설', '문화시설', '업무시설', '판매및숙박']
 
-ad_dir = os.path.join(main_dir, 'accom_deal_profile_48')
-os.chdir(ad_dir)
+save_dir = os.path.join(main_dir, 'temp', 'model2_all')
+tdir = os.path.join(facility_dir, '교육시설', 'model2')
+os.chdir(tdir)
+for excel in os.listdir(tdir) :
+    if 'Model2_daily' in excel :
+        excel_name = excel
 
-all_df = pd.DataFrame()
+model2 = read_excel(excel_name)
 
-for excel in os.listdir(ad_dir) :
-    if ('all' not in excel) & ('.xlsx' in excel):
-        os.chdir(ad_dir)
-        profile_48 = read_excel(excel)
-        
-#        for index in range(profile_48.shape[0]) :
-#            if 'G' in profile_48.loc[index, 'excel'] :
-#                profile_48.loc[index, 'excel'] = 'G'
-#            elif 'I' in profile_48.loc[index, 'excel'] :
-#                profile_48.loc[index, 'excel'] = 'I'
+all_model2 = []
+for col in model2.columns :
+    all_model2 += [x for x in model2.loc[:, col].tolist() if str(x) != 'nan']
 
-        all_df = pd.concat([all_df, profile_48], ignore_index = True)
-        print(f'{excel} done')
+c, d, loc, scale = scipy.stats.burr.fit(all_model2)
+rv = burr(c, d, loc, scale)
 
-ncols = ['group']
+print(all_model2[ : 10])
+print(len(all_model2))
+print(c, d, loc, scale)
 
-for i in range(1, 49) :
-    ncols.append(f'hour_{i}')
+fig = plt.figure(figsize = (7, 7))
+x = np.linspace(min(all_model2), max(all_model2), 10000)
 
-all_df.columns = ncols
+plt.plot(x, rv.pdf(x), 'k-', label = 'burr fitted line')
+plt.hist(all_model2, density = True, bins = 100)
 
-#all_df.to_excel('profile_48_all.xlsx')
-all_df.to_excel('profile_48_all_realname.xlsx')
-print('excel saved')
+
+plt.grid()
+plt.legend()
+plt.title(f'all facilities, model2\nsample number = {len(all_model2)}\nc, d, loc, scale = {round(c, 3), round(d, 3), round(loc, 3), round(scale, 3)}')
+
+os.chdir(save_dir)
+plt.savefig('model2_all.png', dpi = 400)

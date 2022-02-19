@@ -42,17 +42,6 @@ import scipy.stats
 import shutil
 import time
 
-# -----------------------------------------------------
-# re-declare directories
-# -----------------------------------------------------
-
-accom_deal_profile_48 = os.path.join(main_dir, 'accom_deal_profile_48')
-main_dir = accom_deal_profile_48
-
-facility_dir = os.path.join(main_dir, 'FACILITIES')
-gp_dir = os.path.join(main_dir, 'GENERATED_PROFILES')
-gp_plot = os.path.join(main_dir, 'GENERATED_PLOTS')
-
 '''
 note
 '''
@@ -228,6 +217,70 @@ def model_2(facility_name, final_dir, model2_dir) :
             df_all.to_excel(f'model2_weekdays_std_{x}.xlsx')
             df_all = None
             print('{} done'.format(excel), end = '\r')
+#                #
+#                m1 = time.time()
+#                #
+#                
+#                for i in range(temp.shape[0]) :
+#                    tempave = np.average(temp.loc[i, :])
+#                    all_day.append(tempave)
+#                ave_day = np.average(all_day)
+#                
+#                #
+#                m2 = time.time()
+#                #
+#                
+#                for i in range(temp.shape[0]) :
+#                    for col in temp.columns :
+#                        alllist.append(temp.loc[i, col] / ave_day)
+#                #
+#                m3 = time.time()
+#                #
+#                
+#                for index in range(len(alllist)) :
+#                    df.loc[df_num, 'excel'] = f'{excel}_{index}'
+#                    df.loc[df_num, 'std'] = alllist[index]
+#                    
+#                    df_num += 1
+#                    
+#                df_all = pd.concat([df_all, df])
+#                if df_all.shape[0] > 1000000 :
+#                    os.chdir(model2_dir)
+#                    df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
+#                    x += 1
+#                    df_all = None
+#                    df_all = pd.DataFrame(columns = ['excel', 'std'])
+#                    
+#                df = None
+#                
+#                #
+#                end = time.time()
+#                #
+#                time_all = [m1 - start, m2 - m1, m3 - m2, end - m3]
+#                pset = sorted(time_all)
+#                pset.reverse()
+#                
+#                ind = []
+#                
+#                for i in time_all :
+#                    ind.append(pset.index(i) + 1)
+#                
+#                print(f'{excel} done, elapsed : {round(end - start, 1)}, concat = {round(end - m3, 1)}, {ind}', end = '\r')
+#
+#            os.chdir(model2_dir)
+#            df_all.to_excel(f'model2_weekdays_std_{x}.xlsx')
+#            df_all = None
+#            print('{} done'.format(excel), end = '\r')
+#            
+#            # ~ m2_1 = df_all.loc[:, 'std'].tolist()
+#            # ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
+#            
+#            # ~ ndf.loc['a', f'{facility_name}_주중'] = a
+#            # ~ ndf.loc['b', f'{facility_name}_주중'] = b
+#            # ~ ndf.loc['loc', f'{facility_name}_주중'] = s1
+#            # ~ ndf.loc['scale', f'{facility_name}_주중'] = s2
+#        
+#            # ~ m2_1 = None
 
         if '주말' in folder :
             df_all = pd.DataFrame(columns = ['excel', 'std'])
@@ -290,6 +343,103 @@ def model_2(facility_name, final_dir, model2_dir) :
             df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
             df_all = None
             print('{} done'.format(excel), end = '\r')
+#                df = pd.DataFrame(columns = ['excel', 'std'])
+#                df_num = 0
+#                #
+#                start = time.time()
+#                #
+#                os.chdir(tempdir)
+#                temp = lib.read_excel(excel)
+#                alllist = []
+#                all_day = []
+#                
+#                #
+#                m1 = time.time()
+#                #
+#                
+#                for i in range(temp.shape[0]) :
+#                    tempave = np.average(temp.loc[i, :])
+#                    all_day.append(tempave)
+#                ave_day = np.average(all_day)
+#                
+#                #
+#                m2 = time.time()
+#                #
+#                
+#                for i in range(temp.shape[0]) :
+#                    for col in temp.columns :
+#                        alllist.append(temp.loc[i, col] / ave_day)
+#                #
+#                m3 = time.time()
+#                #
+#                
+#                for index in range(len(alllist)) :
+#                    df.loc[df_num, 'excel'] = f'{excel}_{index}'
+#                    df.loc[df_num, 'std'] = alllist[index]
+#                    
+#                    df_num += 1
+#                    
+#                df_all = pd.concat([df_all, df])
+#                if df_all.shape[0] > 1000000 :
+#                    os.chdir(model2_dir)
+#                    df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
+#                    x += 1
+#                    df_all = None
+#                    df_all = pd.DataFrame(columns = ['excel', 'std'])
+#                    
+#                df = None
+#                
+#                #
+#                end = time.time()
+#                #
+#                time_all = [m1 - start, m2 - m1, m3 - m2, end - m3]
+#                pset = sorted(time_all)
+#                pset.reverse()
+#                
+#                ind = []
+#                
+#                for i in time_all :
+#                    ind.append(pset.index(i) + 1)
+#                
+#                print(f'{excel} done, elapsed : {round(end - start, 1)}, concat = {round(end - m3, 1)}, {ind}', end = '\r')
+#                
+#                # ~ os.chdir(tempdir)
+#                # ~ temp = lib.read_excel(excel)
+#                # ~ alllist = []
+#                # ~ all_day = []
+#                # ~ for i in range(temp.shape[0]) :
+#                    # ~ tempave = np.average(temp.loc[i, :])
+#                    # ~ all_day.append(tempave)
+#                    
+#                # ~ ave_day = np.average(all_day)
+#                
+#                # ~ for i in range(temp.shape[0]) :
+#                    # ~ for col in temp.columns :
+#                        # ~ alllist.append(temp.loc[i, col] / ave_day)
+#                        
+#                # ~ for index in range(len(alllist)) :
+#                    # ~ df.loc[df_num, 'excel'] = f'{excel}_{index}'
+#                    # ~ df.loc[df_num, 'std'] = alllist[index]
+#                    
+#                    # ~ df_num += 1
+#                # ~ print(f'{excel} done', end = '\r')
+#                                
+#            os.chdir(model2_dir)
+#            df_all.to_excel(f'model2_weekends_std_{x}.xlsx')
+#            df_all = None
+#            print('{} done'.format(excel), end = '\r')
+#            
+            # ~ m2_2 = df_all.loc[:, 'std'].tolist()
+            # ~ a, b, s1, s2 = scipy.stats.beta.fit(m2_2)
+            
+            # ~ ndf.loc['a', f'{facility_name}_주말'] = a
+            # ~ ndf.loc['b', f'{facility_name}_주말'] = b
+            # ~ ndf.loc['loc', f'{facility_name}_주말'] = s1
+            # ~ ndf.loc['scale', f'{facility_name}_주말'] = s2
+
+            # ~ m2_2 = None
+    
+    # ~ ndf.to_excel('model_2_beta.xlsx')
         
     print('model_2_burr.xlsx saved')
         
@@ -774,14 +924,19 @@ def model4_plot(facility_name, group, model4_dir, plot_dir) :
     pass
 
 
-def model1_compare(facility_name, group, model1_dir, plot_dir, facility_dir) :
+def model1_compare(facility_name, group, model1_dir, plot_dir, nfc_dir) :
+
+
     all_group_smpl = []
     all_group_gp = []
     all_group_fitted = []
 
     for group in range(2) :
-        tdir = os.path.join(facility_dir, facility_name, 'model1')
-        os.chdir(tdir) # facility_dir + f'\\{facility_name}\\model1')
+#        tdir = os.path.join(nfc_dir, facility_name, 'model1')
+        tdir = os.path.join(nfc_dir, '판매및숙박', 'model1')
+        os.chdir(tdir) # nfc_dir + f'\\{facility_name}\\model1')
+        if (facility_name == '판매시설') | (facility_name == '숙박시설') :
+            os.chdir(os.path.join(nfc_dir, '판매및숙박', 'model1'))
         
         smpl = read_excel('model_1.xlsx') # fitted a, b, loc, scale of sample datas (2) used for profile_generator
         smpl.index = ['a', 'b', 'loc', 'scale']
@@ -822,6 +977,8 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, facility_dir) :
         scale = info.loc['scale', facility_name]
         
         m1 = temp.loc[:, 'var'].tolist()
+        print(len(m1))
+        #print(m1)
         
         plt.figure(figsize = (8, 8))
         plt.title('{}, group = {}\nBeta Distribution(a = {}, b = {}, size = {})'.format(facility_name, group, round(ass, 3), round(bs, 3), smpl_size))
@@ -834,7 +991,13 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, facility_dir) :
         # smpl for fitted values (fitted plot) : ass, bs, locs, scales
         # temp for actual values (generated profiles) : m1
 
-        r_fitted = beta.rvs(ass, bs, loc = locs, scale = scales, size = smpl_size)
+        r_fitted = beta.rvs(a, b, loc = loc, scale = scale, size = smpl_size)
+#        print(smvar)
+#        print(r_fitted)
+#        print('sample length')
+#        print(len(smvar))
+#        print('r_fitted length')
+#        print(len(r_fitted))
 
         min_list = [min(smvar), min(r_fitted), min(m1)]
         max_list = [max(smvar), max(r_fitted), max(m1)]
@@ -855,12 +1018,22 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, facility_dir) :
         y_smpl = density_smpl(x)
         y_fitted = density_fitted(x)
         y_gp = density_gp(x)
+
+        bins = 10
         
         plt.grid()
         # ~ plt.plot(x, y_sample, 'b--', label = 'random variates')
-        plt.plot(x, y_smpl, 'b--', label = 'sample')
+        #plt.plot(x, y_smpl, 'b--', label = 'sample')
+#        plt.hist(r_fitted, alpha = 0.8, label = 'beta rvs', bins = 50, density = True)
+        plt.hist(m1, alpha = 0.4, label = 'generated profiles', bins = bins, density = True)
+        plt.hist(smvar, alpha = 0.8, label = 'sample', bins = bins, density = True)
         plt.plot(x, y_fitted, 'g--',  label = 'beta fitted')
-        plt.plot(x, y_gp, 'r', label = 'generated profiles')
+#        plt.plot(x, y_gp, 'r', label = 'generated profiles')
+        
+        #x = np.linspace(.01, .99, 99)
+        y1 = beta(a, b, loc, scale).pdf(x)
+        plt.plot(x, y1, label = 'beta fitted line')
+
 
         plt.legend()
         os.chdir(plot_dir)
@@ -904,12 +1077,12 @@ def model1_compare(facility_name, group, model1_dir, plot_dir, facility_dir) :
     plt.savefig(f'model1_{facility_name}_{group}_compare_all.png', dpi = 400)
     dlt.savefig(plot_dir, f'model1_{facility_name}_{group}_compare_all.png', 400)
 
-def model2_all(facility_name, model2_dir, plot_dir, facility_dir) :
+def model2_all(facility_name, model2_dir, plot_dir, nfc_dir) :
     print(plot_dir) 
     if facility_name == '판매및숙박' :
         pass
     else :
-        os.chdir(os.path.join(facility_dir, facility_name, 'model2'))
+        os.chdir(os.path.join(nfc_dir, facility_name, 'model2'))
         smpl = read_excel('Model2_daily fractoin.xlsx')
         
         col_list = []
@@ -1009,20 +1182,26 @@ def model2_all(facility_name, model2_dir, plot_dir, facility_dir) :
     
     
     
-def model2_compare(facility_name, group, model2_dir, plot_dir, facility_dir) :
+def model2_compare(facility_name, group, model2_dir, plot_dir, nfc_dir) :
     
     if facility_name == '판매및숙박' :
         pass
     else :
-        os.chdir(os.path.join(facility_dir, facility_name, 'model2'))
+        #os.chdir(os.path.join(nfc_dir, facility_name, 'model2'))
+        os.chdir(os.path.join(nfc_dir, '판매및숙박', 'model2'))
         smpl = read_excel('Model2_daily fractoin.xlsx')
+
+        print(facility_name)
+        print(smpl.columns)
         
         col_list = []
         for col in smpl.columns :
-            if '판매및숙박' in col :
+            if facility_name in col :
                 col_list.append(col)
-        print(smpl)
                 
+        print(smpl.shape[0])
+        print(col_list)
+        print(col_list[0])
         smpl1 = smpl.loc[:, col_list[0]].tolist()
         smpl1 = [x for x in smpl1 if str(x) != 'nan']
         
@@ -1083,7 +1262,7 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, facility_dir) :
         ax = fig.add_subplot(2, 1, 1 + i)
 
         for col in model2_burr.columns :
-            if '판매및숙박' in col :
+            if facility_name in col :
                 if i == 0 : #주중
                     c = model2_burr.loc['c', col]
                     d = model2_burr.loc['d', col]
@@ -1153,9 +1332,9 @@ def model2_compare(facility_name, group, model2_dir, plot_dir, facility_dir) :
     pass
     
     
-def model3_compare(facility_name, group, model3_dir, plot_dir, facility_dir) :
+def model3_compare(facility_name, group, model3_dir, plot_dir, nfc_dir) :
     
-    tdir = os.path.join(facility_dir, facility_name, 'model3', f'group_{group}')
+    tdir = os.path.join(nfc_dir, facility_name, 'model3', f'group_{group}')
     os.chdir(tdir)
     org_48 = read_excel(f'profile_48_group_{group}.xlsx')
     
@@ -1222,7 +1401,7 @@ def model3_compare(facility_name, group, model3_dir, plot_dir, facility_dir) :
     plt.close()
     pass
 
-def model4_compare(facility_name, group, model4_dir, plot_dir, facility_dir) :
+def model4_compare(facility_name, group, model4_dir, plot_dir, nfc_dir) :
     fig = plt.figure(figsize = (10, 10))
     ax = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
@@ -1237,7 +1416,7 @@ def model4_compare(facility_name, group, model4_dir, plot_dir, facility_dir) :
         
     line_1 = 22.5
     line_2 = 45.5
-    tdir = os.path.join(facility_dir, facility_name, 'model4', f'group_{group}_model4')
+    tdir = os.path.join(nfc_dir, facility_name, 'model4', f'group_{group}_model4')
     os.chdir(tdir)
     smpl_day = read_excel('model4_weekdays.xlsx')
     smpl_end = read_excel('model4_weekends.xlsx')

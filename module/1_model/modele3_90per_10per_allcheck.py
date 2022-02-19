@@ -80,6 +80,10 @@ ncols = []
 for i in range(1, 49) :
     ncols.append(str(i))
 
+facility_dir = os.path.join(main_dir, 'accom_deal_profile_48', 'FACILITIES')
+facility_name = ['판매시설', '숙박시설']
+
+
 nindex = []
 for facility in facility_name :
     for group in [0, 1] :   
@@ -87,14 +91,19 @@ for facility in facility_name :
             nindex.append(f'{facility}_{group}_{which}')
 
 boundaries = pd.DataFrame(columns = ncols, index = nindex)
+facility_dir = os.path.join(main_dir, 'accom_deal_profile_48', 'GENERATED_PROFILES')
+facility_name = ['판매시설', '숙박시설']
 
 for facility in facility_name :
-    model3_dir = os.path.join(facility_dir, facility, 'model3')
+    #model3_dir = os.path.join(facility_dir, facility, 'model3')
 
     for group in [0, 1] :
-        group_dir = os.path.join(model3_dir, f'group_{group}')
+        #group_dir = os.path.join(model3_dir, f'group_{group}')
+        group_dir = os.path.join(facility_dir, facility, f'group_{group}', 'model3')
+
         os.chdir(group_dir)
-        profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+        #profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+        profile_48 = read_excel('profile_48.xlsx')
 
         for i in range(1, 49) :
             temp_list = sorted(profile_48.loc[:, str(i)].tolist())
@@ -112,70 +121,65 @@ for facility in facility_name :
 
         print(f'{facility}, group_{group} done')
 
-        # for later plots
-        if '교육시설' in facility :
-            if group == 0 :
-                target_profile_48 = profile_48.copy()
-
 
 print(boundaries)
 os.chdir(cwdir)
-boundaries.to_excel('model3_boundaries_90%_10%.xlsx')
-dlt.shoot_file(cwdir, 'model3_boundaries_90%_10%.xlsx')
- 
-
-xvalues = []
-for i in range(1, 49) :
-    xvalues.append(i)
-
-for facility in facility_name :
-    for group in [0, 1] :
-        if 'top' in target_index : 
-            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
-        elif 'bottom' in target_index :
-            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
-        else :
-            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
-
-
-
-        for target_index in boundaries.index.tolist() :
-
-
-
-
-
-            if facility in target_index :
-
-                if '0' in target_index :
-                    if 'top' in target_index : 
-                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
-                    elif 'bottom' in target_index :
-                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
-                    else :
-                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
-
-        for index in range(target_profile_48.shape[0]) :
-            plt.plot(xvalues, target_profile_48.loc[index, '1' : '48'], 'black', alpha = 0.2)
-
-
-        for facility in facility_name :
-            model3_dir = os.path.join(facility_dir, facility, 'model3')
-
-            for group in [0, 1] :
-                group_dir = os.path.join(model3_dir, f'group_{group}')
-                os.chdir(group_dir)
-                profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
-
-        plt.xlim(1, 48)
-        plt.xlabel('hours')
-        plt.legend()
-        plt.title('교육시설, 80% boundaries')
-        plt.xticks(xvalues, ncols, rotation = 90)
-        plt.grid()
-
-        plt.savefig('model3_boundaries_90%_10%.png', dpi = 400)
-        dlt.savefig(cwdir,'model3_boundaries_90%_10%.png', dpi = 400)
-
-
-
+boundaries.to_excel('accom_deal_model3_boundaries_90%_10%.xlsx')
+#dlt.shoot_file(cwdir, 'model3_boundaries_90%_10%.xlsx')
+# 
+#
+#xvalues = []
+#for i in range(1, 49) :
+#    xvalues.append(i)
+#
+#for facility in facility_name :
+#    for group in [0, 1] :
+#        if 'top' in target_index : 
+#            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
+#        elif 'bottom' in target_index :
+#            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
+#        else :
+#            plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
+#
+#
+#
+#        for target_index in boundaries.index.tolist() :
+#
+#
+#
+#
+#
+#            if facility in target_index :
+#
+#                if '0' in target_index :
+#                    if 'top' in target_index : 
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'upper')
+#                    elif 'bottom' in target_index :
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'b--', linewidth = 2, label = 'bottom')
+#                    else :
+#                        plt.plot(xvalues, boundaries.loc[target_index, '1' : '48'], 'r', linewidth = 3, label = 'average')
+#
+#        for index in range(target_profile_48.shape[0]) :
+#            plt.plot(xvalues, target_profile_48.loc[index, '1' : '48'], 'black', alpha = 0.2)
+#
+#
+#        for facility in facility_name :
+#            model3_dir = os.path.join(facility_dir, facility, 'model3')
+#
+#            for group in [0, 1] :
+#                group_dir = os.path.join(model3_dir, f'group_{group}')
+#                os.chdir(group_dir)
+#                profile_48 = read_excel(f'profile_48_group_{group}.xlsx').loc[:, '1' : '48']
+#
+#        plt.xlim(1, 48)
+#        plt.xlabel('hours')
+#        plt.legend()
+#        plt.title('교육시설, 80% boundaries')
+#        plt.xticks(xvalues, ncols, rotation = 90)
+#        plt.grid()
+#
+#        plt.savefig('model3_boundaries_90%_10%.png', dpi = 400)
+#        dlt.savefig(cwdir,'model3_boundaries_90%_10%.png', dpi = 400)
+#
+#
+#
